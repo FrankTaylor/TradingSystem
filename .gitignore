@@ -10,3 +10,4 @@ WebRoot/WEB-INF/classes/
 .project
 
 build/
+.jar
