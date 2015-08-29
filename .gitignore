@@ -1,0 +1,12 @@
+.git/
+.myeclipse/
+.settings/
+
+*.classes
+WebRoot/WEB-INF/classes/
+
+.classpath
+.mymetadata
+.project
+
+build/
