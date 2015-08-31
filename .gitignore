@@ -1,10 +1,8 @@
+target
+
 .git/
-.myeclipse/
 .settings/
-
-target/classes/
-target/test-classes/
-
+.myeclipse/
 .classpath
 .project
 
