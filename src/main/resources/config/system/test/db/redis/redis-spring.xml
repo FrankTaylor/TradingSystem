@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd "
+	default-autowire="byName">
+	
+	<context:annotation-config />
+	
+	<!-- 读取配置文件 -->
+    <context:property-placeholder location="classpath:config/system/test/db/redis/*.properties" ignore-unresolvable="true" />
+    
+	<!-- jedis pool配置 -->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig"
+        p:maxTotal="${jedisPool.maxTotal}"
+        p:maxIdle="${jedisPool.maxIdle}"
+        p:minIdle="${jedisPool.minIdle}"
+        p:maxWaitMillis="${jedisPool.maxWaitMillis}"
+        p:blockWhenExhausted="${jedisPool.blockWhenExhausted}"
+        
+        p:testOnCreate="${jedisPool.testOnCreate}"
+        p:testOnBorrow="${jedisPool.testOnBorrow}"
+        p:testWhileIdle="${jedisPool.testWhileIdle}"
+        p:testOnReturn="${jedisPool.testOnReturn}"
+        
+        p:evictionPolicyClassName="${jedisPool.evictionPolicyClassName}"
+        p:timeBetweenEvictionRunsMillis="${jedisPool.timeBetweenEvictionRunsMillis}"
+        p:minEvictableIdleTimeMillis="${jedisPool.minEvictableIdleTimeMillis}"
+        p:softMinEvictableIdleTimeMillis="${jedisPool.softMinEvictableIdleTimeMillis}"
+        p:numTestsPerEvictionRun="${jedisPool.numTestsPerEvictionRun}"
+        
+        p:fairness="${jedisPool.fairness}"
+        p:lifo="${jedisPool.lifo}"
+        
+        p:jmxEnabled="${jedisPool.jmxEnabled}"
+        p:jmxNameBase="${jedisPool.jmxNameBase}"
+        p:jmxNamePrefix="${jedisPool.jmxNamePrefix}" />
+    
+    <!-- spring data redis 配置 -->
+    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+    	<property name="master">
+    		<bean class="org.springframework.data.redis.connection.RedisNode">
+    			<property name="name" value="mymaster"></property>
+    		</bean>
+    	</property>
+    	
+    	<property name="sentinels">
+    		<set>
+    			<bean class="org.springframework.data.redis.connection.RedisNode">
+    				<constructor-arg index="0" value="192.168.1.102" />
+    				<constructor-arg index="1" value="6380" />
+    			</bean>
+    			
+    			<bean class="org.springframework.data.redis.connection.RedisNode">
+    				<constructor-arg index="0" value="192.168.1.103" />
+    				<constructor-arg index="1" value="6381" />
+    			</bean>
+    			<bean class="org.springframework.data.redis.connection.RedisNode">
+    				<constructor-arg index="0" value="192.168.1.104" />
+    				<constructor-arg index="1" value="6382" />
+    			</bean>
+    		</set>
+    	</property>
+    </bean>
+
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" p:use-pool="true">
+    	<property name="usePool" value="${spring.data.jedis.usePool}" />
+    	
+    	<property name="hostName" value="${spring.data.jedis.hostName}" />
+    	<property name="port" value="${spring.data.jedis.port}" />
+    	<property name="timeout" value="${spring.data.jedis.timeout}" />
+    	<property name="database" value="${spring.data.jedis.database}" />
+    	
+    	<property name="convertPipelineAndTxResults" value="${spring.data.jedis.convertPipelineAndTxResults}" />
+    	
+    	<property name="poolConfig" ref="jedisPoolConfig" />
+    	<!-- 由于项目中没有用到分片，所以暂不考虑。
+    	<constructor-arg index="0" ref="redisSentinelConfiguration" />
+    	<constructor-arg index="1" ref="jedisPoolConfig" />
+    	<property name="shardInfo" ref="shardInfo" />
+    	 -->
+    </bean>
+    
+    <!--  
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">  
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+        <property name="keySerializer">
+        	<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+    </bean>  
+    
+    <bean id="objJedisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+    	<property name="connectionFactory" ref="jedisConnectionFactory" />
+        <property name="keySerializer">
+        	<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+    </bean>
+  	-->
+</beans:beans>

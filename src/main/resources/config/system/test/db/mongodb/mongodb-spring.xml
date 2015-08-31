@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans
+	xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd "
+	default-autowire="byName">
+	
+	<context:annotation-config />
+	
+	<!-- 读取配置文件 -->
+    <context:property-placeholder location="classpath:config/system/test/db/mongodb/*.properties" ignore-unresolvable="true" />
+    
+	<mongo:mongo host="${host}" port="${port}">
+        <mongo:options connections-per-host="${connections-per-host}" 
+                       threads-allowed-to-block-for-connection-multiplier="${threads-allowed-to-block-for-connection-multiplier}"
+                       max-wait-time="${max-wait-time}"
+                       connect-timeout="${connect-timeout}"
+                       auto-connect-retry="${auto-connect-retry}"
+                       socket-keep-alive="${socket-keep-alive}"
+                       socket-timeout="${socket-timeout}"
+                       slave-ok="${slave-ok}"
+                       write-number="${write-number}"
+                       write-timeout="${write-timeout}"
+                       write-fsync="${write-fsync}" />
+    </mongo:mongo>
+    
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+    	<constructor-arg ref="mongo"/>
+  		<constructor-arg name="databaseName" value="tradingSystem"/>
+	</bean>
+
+</beans:beans>
