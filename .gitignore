@@ -2,12 +2,12 @@
 .myeclipse/
 .settings/
 
-*.classes
 WebRoot/WEB-INF/classes/
+WebRoot/WEB-INF/test-classes/
+*.classes
+*.jar
 
 .classpath
 .mymetadata
 .project
 
-build/
-.jar
