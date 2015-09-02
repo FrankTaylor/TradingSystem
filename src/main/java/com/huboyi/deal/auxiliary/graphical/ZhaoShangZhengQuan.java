@@ -23,7 +23,7 @@ import com.huboyi.system.po.EverySumPositionInfoPO;
  * @version 1.0
  */
 public class ZhaoShangZhengQuan {
-	
+
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(ZhaoShangZhengQuan.class);
 	
