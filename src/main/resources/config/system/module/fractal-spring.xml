@@ -21,13 +21,6 @@
 	
 	<context:annotation-config />
 	
-	<!-- ###################### 交易规则 ###################### -->
-	
-    <!-- 计算顶底分型交易系统中所需数据的计算类。-->
-    <bean id="fractalDataCalculator" class="com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator" />
-	<!-- 日线级别的顶底分型交易系统进出场规则。-->
-    <bean id="fractalDealRuleForDay" class="com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay" />
-    
     <!-- ###################### 测试交易规则 ###################### -->
     
     <!-- 测试顶底分型交易系统的引擎类。-->

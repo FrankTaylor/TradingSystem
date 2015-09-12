@@ -48,14 +48,7 @@ public class TestFractalForDayEngine {
 	/** 装载股票数据的引擎类。*/
 	@Resource(name="winLoadEngine")
 	private LoadEngine loadEngine;
-	
-	/** 计算顶底分型交易系统中所需数据的计算类。*/
-	@Resource 
-	private FractalDataCalculator fractalDataCalculator;
-	/** 顶底分型交易系统进出场规则。*/
-	@Resource 
-	private FractalDealRuleForDay fractalDealRuleForDay;
-	
+
 	/** 顶底分型交易系统仓位控制规则。*/
 	@Resource 
 	private TestFractalPositionInfoRule testFractalPositionInfoRule;
@@ -183,7 +176,7 @@ public class TestFractalForDayEngine {
 		
 		List<TestResultBean> resultBeanList = new ArrayList<TestResultBean>();
 		ExecutorService moniterExec = ThreadHelper.getMonitorThreadPool();                     // 得到监控测试顶底分型交易系统的线程池。
-		ExecutorService workerExec = ThreadHelper.getExecThreadPool(50);                        // 得到测试顶底分型交易系统的线程池。
+		ExecutorService workerExec = ThreadHelper.getExecThreadPool(60);                       // 得到测试顶底分型交易系统的线程池。
 		
 		try {
 			// 1、启用一根线程对测试进度进行监控。
@@ -281,10 +274,13 @@ public class TestFractalForDayEngine {
 			List<StockDataBean> stockDataBeanList = entry.getValue();                       // 股票行情数据。
 			
 			
-			TestFractalForDayWorker worker = new TestFractalForDayWorker(code, initMoney,   // 构造测试线程。
+			TestFractalForDayWorker worker = new TestFractalForDayWorker(
+					code, 
+					initMoney,
 					stockDataBeanList, 
-					fractalDataCalculator, 
-					fractalDealRuleForDay, 
+					
+					new FractalDataCalculator(), 
+					new FractalDealRuleForDay(), 
 					testFractalPositionInfoRule, 
 					completeTaskNums);
 			workerList.add(worker);

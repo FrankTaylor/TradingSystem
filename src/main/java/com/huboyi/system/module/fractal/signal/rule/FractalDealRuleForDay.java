@@ -26,7 +26,6 @@ import com.huboyi.system.module.fractal.signal.bean.FractalDealSignalBean;
 import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
 import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
 import com.huboyi.system.module.fractal.signal.constant.SingleMaPatternEnum;
-import com.huboyi.system.po.EverySumPositionInfoPO;
 
 /**
  * 日线级别的顶底分型交易系统进出场规则。

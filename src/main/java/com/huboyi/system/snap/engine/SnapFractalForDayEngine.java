@@ -43,13 +43,6 @@ public class SnapFractalForDayEngine {
 	@Resource(name="winLoadEngine")
 	private LoadEngine loadEngine;
 	
-	/** 计算顶底分型交易系统中所需数据的计算类。*/
-	@Resource 
-	private FractalDataCalculator fractalDataCalculator;
-	/** 顶底分型交易系统进出场规则。*/
-	@Resource 
-	private FractalDealRuleForDay fractalDealRuleForDay;
-	
 	/** 每一笔持仓信息Service。*/
 	@Resource
 	private SpanEverySumPositionInfoService spanEverySumPositionInfoService;
@@ -230,12 +223,11 @@ public class SnapFractalForDayEngine {
 			String code = entry.getKey();                                                   // 证券代码。
 			List<StockDataBean> stockDataBeanList = entry.getValue();                       // 股票行情数据。
 			
-			
 			SnapFractalForDayWorker worker = new SnapFractalForDayWorker(                   // 构造捕捉交易信号线程。
 					code,
 					stockDataBeanList, 
-					fractalDataCalculator, 
-					fractalDealRuleForDay, 
+					new FractalDataCalculator(), 
+					new FractalDealRuleForDay(), 
 					spanEverySumPositionInfoService,
 					completeTaskNums);
 			workerList.add(worker);
