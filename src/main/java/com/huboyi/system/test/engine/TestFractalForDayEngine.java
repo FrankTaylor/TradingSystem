@@ -278,7 +278,6 @@ public class TestFractalForDayEngine {
 					code, 
 					initMoney,
 					stockDataBeanList, 
-					
 					new FractalDataCalculator(), 
 					new FractalDealRuleForDay(), 
 					testFractalPositionInfoRule, 

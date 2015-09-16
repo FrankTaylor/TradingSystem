@@ -263,14 +263,14 @@ public class PatternAlogrithm {
 	 * 得到行情波段集合。
 	 * 
 	 * @param validFractalBeanList 装载有效的顶底分型集合
-	 * @param sdBeanList 未经处理的K线集合
+	 * @param stockDataList 未经处理的K线集合
 	 * 
 	 * @return List<BandBean> 
 	 */
 	
 	public static List<BandBean> 
-	getBandBeanList (List<FractalBean> validFractalBeanList, List<StockDataBean> sdBeanList) {
-		
+	getBandBeanList (List<FractalBean> validFractalBeanList, List<StockDataBean> stockDataList) {
+
 		List<BandBean> bandBeanList = new ArrayList<BandBean>();
 		
 		if (null == validFractalBeanList || validFractalBeanList.isEmpty()) {
@@ -365,44 +365,44 @@ public class PatternAlogrithm {
 		}
         // --- 从分型中找出波段 ---
 		
-		/*
-		 * 根据最后一根K线的
-		 */
-		if (bandBeanList != null && !bandBeanList.isEmpty()) {
-			BandBean lastBandBean = bandBeanList.get(bandBeanList.size() - 1);                            // 得到最后一个波段。
-			Integer lastFractalData = (lastBandBean.getBandType() == BandType.UP)                         // 得到最后一个波段中最后一个分型的右侧K线的日期。
-			? lastBandBean.getTop().getRight().getDate() : lastBandBean.getBottom().getRight().getDate();
-			
-			int cycleIndex = -1;                                                                          // 计算用于循环判断的索引。
-			for (int i = (sdBeanList.size() - 1); i > 0; i--) {
-				if (sdBeanList.get(i).getDate().equals(lastFractalData)) {
-					cycleIndex = i;
-					break;
-				}
-			}
-			
-			if (cycleIndex == -1 || (cycleIndex == (sdBeanList.size() - 1))) {
-				return bandBeanList;
-			}
-			
-			for (int i = (cycleIndex + 1); i < sdBeanList.size(); i++) {
-				StockDataBean sdBean = sdBeanList.get(i);
-				
-				if (lastBandBean.getBandType() == BandType.UP) {
-					if (sdBean.getHigh().compareTo(lastBandBean.getTop().getCenter().getHigh()) == 1) {
-						bandBeanList.remove(bandBeanList.size() - 1);
-						break;
-					}
-				}
-				
-				if (lastBandBean.getBandType() == BandType.DOWN) {
-					if (sdBean.getLow().compareTo(lastBandBean.getBottom().getCenter().getLow()) == -1) {
-						bandBeanList.remove(bandBeanList.size() - 1);
-						break;
-					}
-				}
-			}
-		}
+//		/*
+//		 * 根据最后一根K线的
+//		 */
+//		if (bandBeanList != null && !bandBeanList.isEmpty()) {
+//			BandBean lastBandBean = bandBeanList.get(bandBeanList.size() - 1);                            // 得到最后一个波段。
+//			Integer lastFractalData = (lastBandBean.getBandType() == BandType.UP)                         // 得到最后一个波段中最后一个分型的右侧K线的日期。
+//			? lastBandBean.getTop().getRight().getDate() : lastBandBean.getBottom().getRight().getDate();
+//			
+//			int cycleIndex = -1;                                                                          // 计算用于循环判断的索引。
+//			for (int i = (stockDataList.size() - 1); i > 0; i--) {
+//				if (stockDataList.get(i).getDate().equals(lastFractalData)) {
+//					cycleIndex = i;
+//					break;
+//				}
+//			}
+//			
+//			if (cycleIndex == -1 || (cycleIndex == (stockDataList.size() - 1))) {
+//				return bandBeanList;
+//			}
+//			
+//			for (int i = (cycleIndex + 1); i < stockDataList.size(); i++) {
+//				StockDataBean sdBean = stockDataList.get(i);
+//				
+//				if (lastBandBean.getBandType() == BandType.UP) {
+//					if (sdBean.getHigh().compareTo(lastBandBean.getTop().getCenter().getHigh()) == 1) {
+//						bandBeanList.remove(bandBeanList.size() - 1);
+//						break;
+//					}
+//				}
+//				
+//				if (lastBandBean.getBandType() == BandType.DOWN) {
+//					if (sdBean.getLow().compareTo(lastBandBean.getBottom().getCenter().getLow()) == -1) {
+//						bandBeanList.remove(bandBeanList.size() - 1);
+//						break;
+//					}
+//				}
+//			}
+//		}
 		
 		return bandBeanList;
 	}

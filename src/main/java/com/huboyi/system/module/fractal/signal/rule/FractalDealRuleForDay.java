@@ -223,12 +223,10 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 			 */
 			BandBean lastBand = BandFunction.getLastBand(fractalIndicatorsInfo.getBandBeanList());                                // 最后一个波段。
 			PowerBean lastPower = oneByOneDownPowerList.get(0);                                                                   // 最后一个中枢。
-
 			BandBean lastBandOfLastPower = lastPower.getBandList().get(lastPower.getBandList().size() - 1);                       // 得到最后一个中枢的最后一根波段。
 			BandBean mergeFirstBandOfLastPower = (lastBandOfLastPower.getBandType() == BandType.DOWN)                             // 得到最后一个中枢的第一根参与组合的波段。
 			? lastBandOfLastPower : lastBandOfLastPower.getNext();
 			BandBean mergeBandOfLastPower = BandFunction.mergeBand(BandType.DOWN, mergeFirstBandOfLastPower, lastBand);           // 得到最后一个中枢的用于力度比较的组合波段。
-			
 			StockDataBean lastStockData = StockDataFunction.getLastStockData(stockDataList);                                      // 得到最后一根行情数据。
 			for (BandBean mergeBandOfPrvePower : mergeBandOfPrvePowerList) {
 				if (BPAndSPFunction.isProduceOneBuyPoint(stockDataList, mergeBandOfLastPower, mergeBandOfPrvePower)) {
