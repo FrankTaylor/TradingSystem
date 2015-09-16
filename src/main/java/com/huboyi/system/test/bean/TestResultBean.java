@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.system.module.fractal.signal.bean.FractalDealSignalBean;
+import com.huboyi.system.bean.DealSignalBean;
 
 /**
  * 测试结果信息。
@@ -90,7 +90,7 @@ public class TestResultBean implements Serializable, Comparable<TestResultBean> 
 	private BigDecimal minLoss;
 	
 	// --- 最后一个交易信号 ---
-	private FractalDealSignalBean lastDealSignal;
+	private DealSignalBean lastDealSignal;
 
 	@Override
 	public int compareTo(TestResultBean o) {
@@ -405,11 +405,11 @@ public class TestResultBean implements Serializable, Comparable<TestResultBean> 
 		this.minLoss = minLoss;
 	}
 
-	public FractalDealSignalBean getLastDealSignal() {
+	public DealSignalBean getLastDealSignal() {
 		return lastDealSignal;
 	}
 
-	public void setLastDealSignal(FractalDealSignalBean lastDealSignal) {
+	public void setLastDealSignal(DealSignalBean lastDealSignal) {
 		this.lastDealSignal = lastDealSignal;
 	}
 }

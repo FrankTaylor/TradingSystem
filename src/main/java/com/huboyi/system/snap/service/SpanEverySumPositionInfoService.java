@@ -3,7 +3,7 @@ package com.huboyi.system.snap.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
+import com.huboyi.system.bean.PositionInfoBean;
 
 /**
  * 每一笔持仓信息Service。
@@ -40,9 +40,9 @@ public interface SpanEverySumPositionInfoService {
 	 * 根据证券代码查询出每一笔持仓信息（按照open_date + open_time 升序）。
 	 * 
 	 * @param stockCode 证券代码
-	 * @return List<FractalPositionInfoBean>
+	 * @return List<PositionInfoBean>
 	 */
-	public List<FractalPositionInfoBean> findAllPositionInfoByStockCode (String stockCode);
+	public List<PositionInfoBean> findAllPositionInfoByStockCode (String stockCode);
 	
 	/**
 	 * 每天收盘时刷新每笔仓位信息。

@@ -3,14 +3,14 @@ package com.huboyi.engine.indicators.technology.pattern.bean;
 import java.io.IOException;
 import java.io.Serializable;
 
-import com.huboyi.engine.load.bean.StockDataBean;
-import com.huboyi.util.JAXBHelper;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.huboyi.engine.indicators.technology.constant.FractalTypeEnum;
+import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.util.JAXBHelper;
 
 /**
  * 顶/底分型。
@@ -23,24 +23,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class FractalBean implements Serializable {
 
 	private static final long serialVersionUID = 1391851193561639169L;
-
-	/**
-	 * 用于标示分型类别的枚举类。
-	 * 
-	 * @author FrankTaylor <mailto:hubin@300.cn>
-	 * @since 2014/10/24
-	 * @version 1.0
-	 */
-	public static enum FractalType {
-		/** 顶分型。*/
-		TOP,
-		/** 底分型。*/
-		BUTTOM;
-	}
 	
 	/** 分型类别。*/
 	@JsonProperty(value = "fractal_type", required = true)
-	private FractalType fractalType;
+	private FractalTypeEnum fractalType;
 	
 	/** 分型左边的行情数据。*/
 	@JsonProperty(value = "left", required = true)
@@ -111,11 +97,11 @@ public class FractalBean implements Serializable {
 
 	// --- get method and set method ---
 	
-	public FractalType getFractalType() {
+	public FractalTypeEnum getFractalType() {
 		return fractalType;
 	}
 
-	public void setFractalType(FractalType fractalType) {
+	public void setFractalType(FractalTypeEnum fractalType) {
 		this.fractalType = fractalType;
 	}
 

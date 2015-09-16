@@ -10,7 +10,7 @@ import com.huboyi.system.constant.DealSignalEnum;
  * @since 2015/9/12
  * @version 1.0
  */
-public abstract class DealSignalBean {
+public class DealSignalBean {
 	
 	/** 发出交易信号的行情信息。*/
 	private StockDataBean stockDataBean;

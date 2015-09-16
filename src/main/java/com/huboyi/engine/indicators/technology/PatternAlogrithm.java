@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.huboyi.engine.indicators.technology.constant.FractalTypeEnum;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean.FractalType;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean.PowerType;
 import com.huboyi.engine.load.bean.StockDataBean;
@@ -288,7 +288,7 @@ public class PatternAlogrithm {
 			FractalBean one = validFractalBeanList.get(i);
 			
 			BandBean bandBean = new BandBean();
-			if (one.getFractalType() == FractalType.TOP) {
+			if (one.getFractalType() == FractalTypeEnum.TOP) {
 				// 波段方向。
 				bandBean.setBandType(BandType.DOWN);
 				// 指定波段顶部。
@@ -447,7 +447,7 @@ public class PatternAlogrithm {
 			 */
 			if (one.getFractalType() == two.getFractalType()) {                                 // 当one与two的分型类型一时。
 				
-				if (one.getFractalType() == FractalType.TOP) {                                  // 当one和two都是顶分型时
+				if (one.getFractalType() == FractalTypeEnum.TOP) {                                  // 当one和two都是顶分型时
 					if (two.getCenter().getHigh().compareTo(
 							one.getCenter().getHigh()) != -1) {
 						if (i > 0) {
@@ -497,7 +497,7 @@ public class PatternAlogrithm {
 						(one.getRight().getDate().equals(two.getLeft().getDate())) ||
 						one.getRight().getNext().getDate().equals(two.getLeft().getDate())) {
 					
-					if (one.getFractalType() == FractalType.TOP) {
+					if (one.getFractalType() == FractalTypeEnum.TOP) {
 						/*
 						 * 之前的顶分型高于 one ，且之前的底分型高于two，就删除one保留two，这两个相邻的底分型，就交给下一次循环来处理。
 						 * 
@@ -614,9 +614,9 @@ public class PatternAlogrithm {
 				
 				// 分型类别。
 				if (fractalType.equalsIgnoreCase("TOP")) {					
-					fractalBean.setFractalType(FractalType.TOP);
+					fractalBean.setFractalType(FractalTypeEnum.TOP);
 				} else {
-					fractalBean.setFractalType(FractalType.BUTTOM);
+					fractalBean.setFractalType(FractalTypeEnum.BUTTOM);
 				}
 				
 				// 分型左边的行情数据。

@@ -12,14 +12,12 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
-import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
+import com.huboyi.system.constant.DealSignalEnum;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.test.db.TestEverySumPositionInfoRepository;
 /**
@@ -78,7 +76,7 @@ public class TestTestEverySumPositionInfoRepository {
 			/* 建仓合同编号。 */
 			po.setOpenContractCode(UUID.randomUUID().toString());
 			/* 系统建仓点。*/
-			po.setSystemOpenPoint(FractalDealSignalEnum.FIBO_B.getType());			
+			po.setSystemOpenPoint(DealSignalEnum.FIBO_B.getType());			
 			/* 成交日期（格式：%Y%m%d）。 */
 			String openDateYear = "" + (2010 + random.nextInt(10));
 			String openDateMonth = "" + (random.nextInt(12));
@@ -112,7 +110,7 @@ public class TestTestEverySumPositionInfoRepository {
 				/* 平仓合同编号。*/
 				po.setCloseContractCode(UUID.randomUUID().toString());
 				/* 系统平仓点。*/
-				po.setSystemClosePoint(FractalDealSignalEnum.SELL_ALL.getType());
+				po.setSystemClosePoint(DealSignalEnum.SELL_ALL.getType());
 				/* 平仓日期（格式：%Y%m%d）。 */
 				String closeDateYear = "" + (2010 + random.nextInt(10));
 				String closeDateMonth = "" + (random.nextInt(12));
@@ -251,7 +249,7 @@ public class TestTestEverySumPositionInfoRepository {
 		List<EverySumPositionInfoPO> tempPositionInfoList = new ArrayList<EverySumPositionInfoPO>();
 		if (null != poList && !poList.isEmpty()) {
 			for (EverySumPositionInfoPO positionInfo : poList) {
-				if (positionInfo.getSystemOpenPoint().equalsIgnoreCase(FractalDealSignalEnum.FIBO_B.getType())) {
+				if (positionInfo.getSystemOpenPoint().equalsIgnoreCase(DealSignalEnum.FIBO_B.getType())) {
 					tempPositionInfoList.add(positionInfo);
 				}
 			}

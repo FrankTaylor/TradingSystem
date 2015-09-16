@@ -5,7 +5,6 @@ import java.util.List;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 
 /**
@@ -28,69 +27,6 @@ public class FractalIndicatorsInfoBean extends IndicatorsInfoBean {
 	
 	/** 无包含关系的中枢集合。*/
 	private List<PowerBean> noContainPowerBeanList;
-	
-	/**
-	 * 得到最后一个分型数据。
-	 * 
-	 * @return FractalBean
-	 */
-	public FractalBean getLastValidFractal () {
-		if (validFractalBeanList != null && !validFractalBeanList.isEmpty()) {
-			return validFractalBeanList.get(validFractalBeanList.size() - 1);
-		}
-		return null;
-	}
-	
-	/**
-	 * 得到最后一个波段数据。
-	 * 
-	 * @return FractalBean
-	 */
-	public BandBean getLastBand () {
-		if (bandBeanList != null && !bandBeanList.isEmpty()) {
-			return bandBeanList.get(bandBeanList.size() - 1);
-		}
-		return null;
-	}
-	
-	/**
-	 * 得到最后一个无包含关系的中枢。
-	 * 
-	 * @return PowerBean
-	 */
-	public PowerBean getLastNoContainPower () {
-		if (noContainPowerBeanList != null && !noContainPowerBeanList.isEmpty()) {
-			return noContainPowerBeanList.get(noContainPowerBeanList.size() - 1);
-		}
-		return null;
-	}
-	
-	/**
-	 * 得到分型中未经包含处理的实际K线。
-	 * 
-	 * @param stockDataList 股票行情数据集合
-	 * @param type left:分型左边的K线；center:分型中间的K线；right:分型右边的K线
-	 * @return StockDataBean
-	 */
-	public StockDataBean getNoContainKLineInFractalBean (List<StockDataBean> stockDataList, FractalBean fractalBean, String type) {
-		if (fractalBean == null || type == null || type.isEmpty()) {
-			throw new RuntimeException("得到分型中未经包含处理的实际K线时，分型和K线类型均不能为null！");
-		} 
-		
-		Integer date = type.equalsIgnoreCase("left") ? fractalBean.getLeft().getDate() : 
-			           type.equalsIgnoreCase("center") ? fractalBean.getCenter().getDate() : 
-			           type.equalsIgnoreCase("right") ? fractalBean.getRight().getDate() : 
-			           fractalBean.getCenter().getDate();
-		
-	    for (StockDataBean stockData : stockDataList) {
-	    	if (stockData.getDate().equals(date)) {
-	    		return stockData;
-	    	}
-		}
-	    
-	    return null;
-	    
-	}
 	
 	// --- get method and set method ---
 	

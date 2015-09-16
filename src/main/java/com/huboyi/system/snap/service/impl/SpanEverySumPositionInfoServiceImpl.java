@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.huboyi.engine.DealFeeCalculator;
-import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
+import com.huboyi.system.bean.PositionInfoBean;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.snap.db.SpanEverySumPositionInfoRepository;
 import com.huboyi.system.snap.db.mysql.repository.impl.SpanEverySumPositionInfoRepositoryImpl;
@@ -168,14 +168,14 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, readOnly = true, rollbackFor = {RuntimeException.class})
-	public List<FractalPositionInfoBean> findAllPositionInfoByStockCode (String stockCode) {
-		List<FractalPositionInfoBean> positionInfoList = new ArrayList<FractalPositionInfoBean>();   // 装载每一笔仓位信息的集合。
+	public List<PositionInfoBean> findAllPositionInfoByStockCode (String stockCode) {
+		List<PositionInfoBean> positionInfoList = new ArrayList<PositionInfoBean>();                 // 装载每一笔仓位信息的集合。
 		
 		List<EverySumPositionInfoPO> everySumPositionInfoList =                                      // 查询出每一笔未平仓的仓位信息。   
 			spanEverySumPositionInfoRepository.findByStockCode(stockCode);
 		
 		for (EverySumPositionInfoPO source : everySumPositionInfoList) {
-			FractalPositionInfoBean target = new FractalPositionInfoBean();
+			PositionInfoBean target = new PositionInfoBean();
 			BeanUtils.copyProperties(source, target);
 			positionInfoList.add(target);
 		}

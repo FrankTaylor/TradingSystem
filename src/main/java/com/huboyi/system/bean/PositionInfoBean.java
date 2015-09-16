@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * @since 2015/9/12
  * @version 1.0
  */
-public abstract class PositionInfoBean {
+public class PositionInfoBean {
 	
 	// --- 
 	/** 系统名称。*/

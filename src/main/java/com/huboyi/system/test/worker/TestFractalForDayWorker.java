@@ -7,7 +7,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,13 +16,15 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.system.SnapDealSignal;
+import com.huboyi.system.bean.DealSignalBean;
+import com.huboyi.system.bean.PositionInfoBean;
+import com.huboyi.system.constant.DealSignalEnum;
 import com.huboyi.system.constant.FundsFlowBusinessEnum;
 import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
-import com.huboyi.system.module.fractal.signal.bean.FractalDataCalcResultBean;
-import com.huboyi.system.module.fractal.signal.bean.FractalDealSignalBean;
+import com.huboyi.system.function.BandFunction;
+import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
-import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
-import com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.po.FundsFlowPO;
 import com.huboyi.system.po.OrderInfoPO;
@@ -56,8 +57,8 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 	
 	/** 计算顶底分型交易系统中所需数据的计算类。*/
 	private final FractalDataCalculator calculator;
-	/** 顶底分型交易系统进出场规则。*/
-	private final FractalDealRuleForDay dealRule;
+	/** 捕捉交易信号接口类。*/
+	private final SnapDealSignal snapDealSignal;
 	
 	/** 顶底分型交易系统仓位控制规则。*/
 	private final TestFractalPositionInfoRule positionInfoRule;
@@ -72,19 +73,19 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 	 * @param initMoney 初始资金
 	 * @param stockDataBeanList 原始股票行情数据
 	 * @param calculator 计算交易系统所需数据的计算类
-	 * @param dealRule 交易规则
+	 * @param snapDealSignal 交易规则
 	 * @param positionInfoRule 仓位控制规则
 	 * @param completeTaskNums 当前完成的任务数量
 	 */
 	public TestFractalForDayWorker (
 			String stockCode, BigDecimal initMoney, List<StockDataBean> stockDataBeanList, 
-			FractalDataCalculator calculator, FractalDealRuleForDay dealRule, 
+			FractalDataCalculator calculator, SnapDealSignal snapDealSignal, 
 			TestFractalPositionInfoRule positionInfoRule, AtomicInteger completeTaskNums) {
 		this.stockCode = stockCode;
 		this.initMoney = initMoney;
 		this.stockDataBeanList = stockDataBeanList;
 		this.calculator = calculator;
-		this.dealRule = dealRule;
+		this.snapDealSignal = snapDealSignal;
 		this.positionInfoRule = positionInfoRule;
 		this.completeTaskNums = completeTaskNums;
 	}
@@ -101,7 +102,7 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 		TestResultBean resultBean = null;
 		
 		// 用于保存最后一个交易信号。
-		FractalDealSignalBean lastDealSignal = null;
+		DealSignalBean lastDealSignal = null;
 		
 		try {
 			
@@ -142,53 +143,29 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 				 * # 2、根据交易规则来判断买卖点。                                                                                  #
 				 * ##################################################
 				 */
-				FractalDataCalcResultBean fdcResultBean = calculator.calc(testSdBeanList);                                // 顶底分型交易系统所需数据的计算结果。
-				fdcResultBean.setFractalPositionInfoBeanList(positionInfoRule.findAllPositionInfoList(stockCode));        // 查询每一笔仓位记录（按照open_date + open_time 升序）。
-				FractalDealSignalBean[] dealSignalArray = dealRule.snapDealSignal(stockCode, fdcResultBean);              // 捕捉买卖信号。
+				FractalIndicatorsInfoBean fractalIndicatorsInfo = calculator.calc(testSdBeanList);                        // 顶底分型交易系统所需数据的计算结果。
+				List<PositionInfoBean> positionInfoList =  positionInfoRule.findAllPositionInfoList(stockCode);           // 查询每一笔仓位记录（按照open_date + open_time 升序）。
+				
+				DealSignalBean buyToOpenSignal = snapDealSignal.snapBuyToOpenSignal(
+						stockCode, testSdBeanList, fractalIndicatorsInfo, positionInfoList);                              // 捕捉买卖信号。
+				DealSignalBean sellToCloseSignal = snapDealSignal.snapSellToCloseSignal(
+						stockCode, testSdBeanList, fractalIndicatorsInfo, positionInfoList);                              // 捕捉卖出信号。
 				
 				/*
 				 * ##################################################
 				 * # 3、过滤掉空信号，把卖出信号排在买入信号的前面。                                              #
 				 * ##################################################
 				 */
-				List<FractalDealSignalBean> dealSignalList = new ArrayList<FractalDealSignalBean>();
-				for (FractalDealSignalBean dealSignal : dealSignalArray) {
-					if (dealSignal != null) {
-						dealSignalList.add(dealSignal);
-					}
-				}
-				
-				if (!dealSignalList.isEmpty()) {
-					Collections.sort(dealSignalList, new Comparator<FractalDealSignalBean>() {
-						@Override
-						public int compare(FractalDealSignalBean o1, FractalDealSignalBean o2) {
-							if (
-									(
-											o1.getType() == FractalDealSignalEnum.ONE_B || 
-											o1.getType() == FractalDealSignalEnum.FIBO_B
-									) 
-									
-									&&
-									
-									(
-											o2.getType() != FractalDealSignalEnum.ONE_B && 
-											o2.getType() != FractalDealSignalEnum.FIBO_B
-									)
-							) {
-								return 1;
-							}
-							
-							return -1;
-						}
-					});
-				}
+				List<DealSignalBean> dealSignalList = new ArrayList<DealSignalBean>();
+				if (sellToCloseSignal != null) { dealSignalList.add(sellToCloseSignal); }
+				if (buyToOpenSignal != null) { dealSignalList.add(buyToOpenSignal); }
 				
 				/*
 				 * ##################################################
 				 * # 4、插入资金流水、仓位信息、每一笔仓位等信息。                                                  #
 				 * ##################################################
 				 */
-				for (FractalDealSignalBean dealSignal : dealSignalList) {
+				for (DealSignalBean dealSignal : dealSignalList) {
 
 					StockDataBean dealPoint =  (dealSignal != null) ? dealSignal.getStockDataBean() : null;               // 计算信号发出点。
 					StockDataBean point = (dealPoint != null) ? dealPoint.getNext() : null;                               // 计算实际的买卖点。
@@ -202,8 +179,8 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 					
 					if (point != null) {
 						if (
-								dealSignal.getType() == FractalDealSignalEnum.ONE_B ||
-								dealSignal.getType() == FractalDealSignalEnum.FIBO_B) {
+								dealSignal.getType() == DealSignalEnum.ONE_B ||
+								dealSignal.getType() == DealSignalEnum.FIBO_B) {
 							/*
 							 * +-----------------------------------------------------------+
 							 * + 注意：1、建仓价为：产生交易信号隔天的开盘价；                                                                                   +
@@ -211,7 +188,9 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 							 * +-----------------------------------------------------------+
 							 */
 							
-							BigDecimal stopPrice = fdcResultBean.getLastBand().getBottom().getCenter().getLow();
+							BigDecimal stopPrice = BandFunction
+							.getLastBand(fractalIndicatorsInfo.getBandBeanList())
+							.getBottom().getCenter().getLow();
 							
 							positionInfoRule.insertBuyInfo(
 									dealSignal.getType(), 

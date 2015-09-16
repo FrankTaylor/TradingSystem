@@ -10,6 +10,7 @@ package com.huboyi.system.constant;
  */
 public enum DealSignalEnum {
 	ONE_B("1B", "第一买点"),
+	
 	FIBO_B("fiboB", "斐波那契买点"),
 	
 	SELL_ONE_TENTH("sell one tenth", "卖出十分之一"),

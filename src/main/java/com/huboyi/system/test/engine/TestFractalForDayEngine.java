@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 
 import com.huboyi.engine.load.LoadEngine;
 import com.huboyi.engine.load.bean.StockDataBean;
-import com.huboyi.system.module.fractal.signal.bean.FractalDealSignalBean;
+import com.huboyi.system.bean.DealSignalBean;
+import com.huboyi.system.constant.DealSignalEnum;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
-import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
 import com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay;
 import com.huboyi.system.test.bean.TestResultBean;
 import com.huboyi.system.test.output.TestResultOutputExcel;
@@ -76,15 +76,15 @@ public class TestFractalForDayEngine {
 	 */
 	public void executeSnapDealSignal (String dealSignalOutputPath) {
 		try {
-			List<TestResultBean> resultBeanList = execTradingSystem();                                                // 用于保存执行结果。
-			Map<String, FractalDealSignalBean> lastOpenDealSignalMap = new HashMap<String, FractalDealSignalBean>();       // 用于保存最后一个交易信号是建仓信号。
-			Map<String, FractalDealSignalBean> lastCloseDealSignalMap = new HashMap<String, FractalDealSignalBean>();      // 用于保存最后一个交易信号是平仓信号。
+			List<TestResultBean> resultBeanList = execTradingSystem();                                       // 用于保存执行结果。
+			Map<String, DealSignalBean> lastOpenDealSignalMap = new HashMap<String, DealSignalBean>();       // 用于保存最后一个交易信号是建仓信号。
+			Map<String, DealSignalBean> lastCloseDealSignalMap = new HashMap<String, DealSignalBean>();      // 用于保存最后一个交易信号是平仓信号。
 			
-			for (TestResultBean result : resultBeanList) {                                                                 // 把建仓和平仓交易信号保存到相应的集合中。
+			for (TestResultBean result : resultBeanList) {                                                   // 把建仓和平仓交易信号保存到相应的集合中。
 				if (result != null) {					
-					FractalDealSignalBean lastDealSignal = result.getLastDealSignal();
+					DealSignalBean lastDealSignal = result.getLastDealSignal();
 					if (lastDealSignal != null) {
-						if (lastDealSignal.getType() == FractalDealSignalEnum.ONE_B || lastDealSignal.getType() == FractalDealSignalEnum.FIBO_B) {
+						if (lastDealSignal.getType() == DealSignalEnum.ONE_B || lastDealSignal.getType() == DealSignalEnum.FIBO_B) {
 							lastOpenDealSignalMap.put(result.getStockCode(), lastDealSignal);
 						} else {
 							lastCloseDealSignalMap.put(result.getStockCode(), lastDealSignal);
@@ -96,10 +96,10 @@ public class TestFractalForDayEngine {
 			// --- 把建仓交易信号放入集合中。 
 			List<String> lastOpenInfoList = new ArrayList<String>();
 			lastOpenInfoList.add("####################### 建仓信号 #######################");
-			for (Map.Entry<String, FractalDealSignalBean> entry : lastOpenDealSignalMap.entrySet()) {
+			for (Map.Entry<String, DealSignalBean> entry : lastOpenDealSignalMap.entrySet()) {
 				String stockCode = entry.getKey();                                   // 证券代码。
 				StockDataBean stockDataBean = entry.getValue().getStockDataBean();   // 发出交易信号的行情信息。
-				FractalDealSignalEnum type = entry.getValue().getType();             // 信号类别。
+				DealSignalEnum type = entry.getValue().getType();                    // 信号类别。
 				
 				BigDecimal totalFundsBalance = new BigDecimal(100000);               // 假设总资金。
 				BigDecimal buyMoneyRate = new BigDecimal(0.02);                      // 2%原则。
@@ -129,10 +129,10 @@ public class TestFractalForDayEngine {
 			// --- 把平仓交易信号放入集合中。
 			List<String> lastCloseInfoList = new ArrayList<String>();
 			lastCloseInfoList.add("\n####################### 平仓信号 #######################\n");
-			for (Map.Entry<String, FractalDealSignalBean> entry : lastCloseDealSignalMap.entrySet()) {
+			for (Map.Entry<String, DealSignalBean> entry : lastCloseDealSignalMap.entrySet()) {
 				String stockCode = entry.getKey();                                   // 证券代码。
 				StockDataBean stockDataBean = entry.getValue().getStockDataBean();   // 发出交易信号的行情信息。
-				FractalDealSignalEnum type = entry.getValue().getType();             // 信号类别。
+				DealSignalEnum type = entry.getValue().getType();                    // 信号类别。
 				
 				
 				StringBuilder builder = new StringBuilder();

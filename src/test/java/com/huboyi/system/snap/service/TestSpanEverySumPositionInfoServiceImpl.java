@@ -11,8 +11,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
-import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
+import com.huboyi.system.bean.PositionInfoBean;
+import com.huboyi.system.constant.DealSignalEnum;
 import com.huboyi.system.snap.service.impl.SpanEverySumPositionInfoServiceImpl;
 /**
  * 对{@link EverySumPositionInfoRepository}的测试。
@@ -44,7 +44,7 @@ public class TestSpanEverySumPositionInfoServiceImpl {
 
 		spanEverySumPositionInfoService.insert(
 				"顶底分型交易系统", "SZ300144", "宋城演艺", 
-				FractalDealSignalEnum.FIBO_B.getType(), FractalDealSignalEnum.FIBO_B.getName(), 20150420L, 
+				DealSignalEnum.FIBO_B.getType(), DealSignalEnum.FIBO_B.getName(), 20150420L, 
 				20150421, 20150421093000L, new BigDecimal(55.00), 
 				100L, new BigDecimal(120), "672288");
 		
@@ -64,7 +64,7 @@ public class TestSpanEverySumPositionInfoServiceImpl {
 		// 开始时间。
 		long startTime = System.nanoTime();
 
-		List<FractalPositionInfoBean> positionInfoList = spanEverySumPositionInfoService.findAllPositionInfoByStockCode("SZ000158");
+		List<PositionInfoBean> positionInfoList = spanEverySumPositionInfoService.findAllPositionInfoByStockCode("SZ000158");
 		System.out.println(positionInfoList);
 		
 		// 结束时间。

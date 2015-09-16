@@ -18,10 +18,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.huboyi.engine.DealFeeCalculator;
+import com.huboyi.system.bean.PositionInfoBean;
+import com.huboyi.system.constant.DealSignalEnum;
 import com.huboyi.system.constant.FundsFlowBusinessEnum;
 import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
-import com.huboyi.system.module.fractal.signal.bean.FractalPositionInfoBean;
-import com.huboyi.system.module.fractal.signal.constant.FractalDealSignalEnum;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.po.FundsFlowPO;
 import com.huboyi.system.po.OrderInfoPO;
@@ -68,17 +68,17 @@ public class TestFractalPositionInfoRule {
 	 * 查询每一笔仓位记录（按照open_date + open_time 升序）。
 	 * 
 	 * @param stockCode 证券代码
-	 * @return List<FractalPositionInfoBean>
+	 * @return List<PositionInfoBean>
 	 */
-	public List<FractalPositionInfoBean> findAllPositionInfoList (String stockCode) {
-		List<FractalPositionInfoBean> positionInfoList = new ArrayList<FractalPositionInfoBean>();                      // 装载每一笔仓位信息的集合。
+	public List<PositionInfoBean> findAllPositionInfoList (String stockCode) {
+		List<PositionInfoBean> positionInfoList = new ArrayList<PositionInfoBean>();                      // 装载每一笔仓位信息的集合。
 		
-		List<EverySumPositionInfoPO> everySumPositionInfoList =                                                         // 查询出每一笔未平仓的仓位信息。
+		List<EverySumPositionInfoPO> everySumPositionInfoList =                                           // 查询出每一笔未平仓的仓位信息。
 			testEverySumPositionInfoRepository
 			.findEverySumPositionInfoList(stockCode, null, null, null, null, null, null);
 		
 		for (EverySumPositionInfoPO source : everySumPositionInfoList) {
-			FractalPositionInfoBean target = new FractalPositionInfoBean();
+			PositionInfoBean target = new PositionInfoBean();
 			BeanUtils.copyProperties(source, target);
 			positionInfoList.add(target);
 		}
@@ -242,7 +242,7 @@ public class TestFractalPositionInfoRule {
 	 */
 	public void 
 	insertBuyInfo (
-			FractalDealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
+			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
 			Integer tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
@@ -572,7 +572,7 @@ public class TestFractalPositionInfoRule {
 	 */
 	public void 
 	insertSellInfo (
-			FractalDealSignalEnum systemClosePoint, String stockCode, String openContractCode, 
+			DealSignalEnum systemClosePoint, String stockCode, String openContractCode, 
 			Long closeSignalTime, Integer tradeDate, Long tradeTime, BigDecimal tradePrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
@@ -591,16 +591,16 @@ public class TestFractalPositionInfoRule {
 		
 	    // --- 业务逻辑正确性验证 ---
 		if (
-				systemClosePoint != FractalDealSignalEnum.SELL_ONE_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_TWO_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_THREE_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_FOUR_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_FIVE_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_SIX_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_SEVEN_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_EIGHT_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_NINE_TENTH &&
-				systemClosePoint != FractalDealSignalEnum.SELL_ALL
+				systemClosePoint != DealSignalEnum.SELL_ONE_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_TWO_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_THREE_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_FOUR_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_FIVE_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_SIX_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_SEVEN_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_EIGHT_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_NINE_TENTH &&
+				systemClosePoint != DealSignalEnum.SELL_ALL
 			) {
 			log.error("传入的平仓点不合法！[systemClosePoint = " + systemClosePoint + "]");
 			return;
@@ -712,25 +712,25 @@ public class TestFractalPositionInfoRule {
 		}
 		
 		BigDecimal sellPercent = new BigDecimal(0);                                                                   // 计算需要卖掉仓位的百分比。
-		if (systemClosePoint == FractalDealSignalEnum.SELL_ONE_TENTH) {
+		if (systemClosePoint == DealSignalEnum.SELL_ONE_TENTH) {
 			sellPercent = new BigDecimal(0.1);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_TWO_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_TWO_TENTH) {
 			sellPercent = new BigDecimal(0.2);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_THREE_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_THREE_TENTH) {
 			sellPercent = new BigDecimal(0.3);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_FOUR_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_FOUR_TENTH) {
 			sellPercent = new BigDecimal(0.4);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_FIVE_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_FIVE_TENTH) {
 			sellPercent = new BigDecimal(0.5);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_SIX_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_SIX_TENTH) {
 			sellPercent = new BigDecimal(0.6);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_SEVEN_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_SEVEN_TENTH) {
 			sellPercent = new BigDecimal(0.7);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_EIGHT_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_EIGHT_TENTH) {
 			sellPercent = new BigDecimal(0.8);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_NINE_TENTH) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_NINE_TENTH) {
 			sellPercent = new BigDecimal(0.9);
-		} else if (systemClosePoint == FractalDealSignalEnum.SELL_ALL) {
+		} else if (systemClosePoint == DealSignalEnum.SELL_ALL) {
 			sellPercent = new BigDecimal(1);
 		}
 		
@@ -1073,7 +1073,7 @@ public class TestFractalPositionInfoRule {
 	 */
 	private boolean 
 	positionControlForBuy (
-			FractalDealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
+			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
 			Integer tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		
@@ -1097,12 +1097,12 @@ public class TestFractalPositionInfoRule {
 			
 			if (po.getSystemOpenPoint().equalsIgnoreCase(systemOpenPoint.getType())) {
 				// 记录尝试性仓位信息。
-				if (systemOpenPoint == FractalDealSignalEnum.ONE_B) {
+				if (systemOpenPoint == DealSignalEnum.ONE_B) {
 					if (oneBuyNums == 0) { firstOneBuy = po; }
 					oneBuyNums++;
 				}
 				// 记录斐波那契仓位信息
-				if (systemOpenPoint == FractalDealSignalEnum.FIBO_B) {
+				if (systemOpenPoint == DealSignalEnum.FIBO_B) {
 					if (oneFiboNums == 0) { firstFiboBuy = po; }
 					oneFiboNums++;
 				}		
@@ -1117,10 +1117,10 @@ public class TestFractalPositionInfoRule {
 		 * 
 		 * 目的：截短尝试性建仓的亏损，提高资金利用率，让系统有一定的容错性；
 		 */
-		if (systemOpenPoint == FractalDealSignalEnum.ONE_B && oneBuyNums > 3) {
+		if (systemOpenPoint == DealSignalEnum.ONE_B && oneBuyNums > 3) {
 			tradeTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(tradeDate + "093100").getTime();
 			insertSellInfo (
-					FractalDealSignalEnum.ONE_STOP,
+					DealSignalEnum.SELL_FIVE_TENTH,
 					stockCode,
 					firstOneBuy.getOpenContractCode(), 
 					openSignalTime,
@@ -1144,7 +1144,7 @@ public class TestFractalPositionInfoRule {
 			return true;
 		}
 		*/
-		if (systemOpenPoint == FractalDealSignalEnum.FIBO_B) {
+		if (systemOpenPoint == DealSignalEnum.FIBO_B) {
 			return true;
 		}
 		

@@ -1,4 +1,4 @@
-package com.huboyi.system.module.fractal.signal.constant;
+package com.huboyi.engine.indicators.technology.constant;
 
 
 /**
