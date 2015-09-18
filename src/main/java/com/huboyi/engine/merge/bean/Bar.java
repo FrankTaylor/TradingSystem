@@ -1,4 +1,4 @@
-package com.huboyi.engine.load.bean;
+package com.huboyi.engine.merge.bean;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -16,23 +16,20 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * 装载股票数据的Bean。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/10/16
+ * @since 2015/9/18
  * @version 1.0
  */
-@JsonPropertyOrder(value = {"date", "time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
-public class StockDataBean implements Serializable, Cloneable {
+@JsonPropertyOrder(value = {"time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
+public class Bar implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 8359291706658391235L;
+	private static final long serialVersionUID = -124165835666555529L;
 
 	/*---------- 时间信息 ---------*/
-	
-	/** 日期。*/
-	@JsonProperty(value = "date", required = true)
-	private Integer date;
 	
 	/** 时间。*/
 	@JsonProperty(value = "time", required = true)
 	private Long time;
+	
 	/*---------- 价格信息 ---------*/
 	
 	/** 开盘价。*/
@@ -60,15 +57,14 @@ public class StockDataBean implements Serializable, Cloneable {
 	/*---------- 其他信息 ---------*/
 	
 	/** 上一个行情数据信息。*/
-	private StockDataBean prev;
+	private Bar prev;
 	/** 下一个行情数据信息。*/
-	private StockDataBean next;
+	private Bar next;
 	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append("[\n")
-		.append("\t").append("date = ").append(date).append("\n")
 		.append("\t").append("time = ").append(time).append("\n")
 		.append("\t").append("open = ").append(open).append("\n")
 		.append("\t").append("high = ").append(high).append("\n")
@@ -76,8 +72,8 @@ public class StockDataBean implements Serializable, Cloneable {
 		.append("\t").append("close = ").append(close).append("\n")
 		.append("\t").append("volume = ").append(volume).append("\n")
 		.append("\t").append("amount = ").append(amount).append("\n")
-		.append("\t").append("prev_date = ").append((null != prev) ? prev.getDate() : null).append("\n")
-		.append("\t").append("next_date = ").append((null != next) ? next.getDate() : null).append("\n")
+		.append("\t").append("prev_time = ").append((null != prev) ? prev.getTime() : null).append("\n")
+		.append("\t").append("next_time = ").append((null != next) ? next.getTime() : null).append("\n")
 		.append("]\n");
 		return builder.toString();
 	}
@@ -120,20 +116,12 @@ public class StockDataBean implements Serializable, Cloneable {
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	public static StockDataBean 
+	public static Bar 
 	jsonToJava (String json) throws JsonParseException, JsonMappingException, IOException {
-		return JAXBHelper.jsonToJava(json, StockDataBean.class);
+		return JAXBHelper.jsonToJava(json, Bar.class);
 	}
 	
 	// --- get method and set method ---
-	
-	public Integer getDate() {
-		return date;
-	}
-
-	public void setDate(Integer date) {
-		this.date = date;
-	}
 	
 	public Long getTime() {
 		return time;
@@ -142,7 +130,7 @@ public class StockDataBean implements Serializable, Cloneable {
 	public void setTime(Long time) {
 		this.time = time;
 	}
-	
+
 	public BigDecimal getOpen() {
 		return open;
 	}
@@ -191,19 +179,19 @@ public class StockDataBean implements Serializable, Cloneable {
 		this.volume = volume;
 	}
 
-	public StockDataBean getPrev() {
+	public Bar getPrev() {
 		return prev;
 	}
 
-	public void setPrev(StockDataBean prev) {
+	public void setPrev(Bar prev) {
 		this.prev = prev;
 	}
 
-	public StockDataBean getNext() {
+	public Bar getNext() {
 		return next;
 	}
 
-	public void setNext(StockDataBean next) {
+	public void setNext(Bar next) {
 		this.next = next;
 	}
 }
