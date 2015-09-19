@@ -46,14 +46,14 @@ public class BPAndSPFunction {
 			 * + 计算比较波段和被比较波段内MACD的值。                                                                                                  +
 			 * +-----------------------------------------------------------+
 			 */
-			Integer topDataOfComparand = comparand.getTop().getCenter().getDate();                       // 被比价波段起始时间。
-			Integer bottomDataOfComparand = comparand.getBottom().getCenter().getDate();                 // 被比较波段结束时间。
+			Long topDataOfComparand = comparand.getTop().getCenter().getDate();                          // 被比价波段起始时间。
+			Long bottomDataOfComparand = comparand.getBottom().getCenter().getDate();                    // 被比较波段结束时间。
 			
-			Integer topDataOfCompare = compare.getTop().getCenter().getDate();                           // 比较波段起始时间。
-			Integer bottomDataOfCompare = compare.getBottom().getCenter().getDate();                     // 比较波段结束时间。
+			Long topDataOfCompare = compare.getTop().getCenter().getDate();                              // 比较波段起始时间。
+			Long bottomDataOfCompare = compare.getBottom().getCenter().getDate();                        // 比较波段结束时间。
 
 			StockDataBean topSdBeanOfComparand = comparand.getTop().getCenter();                         // 被比较波段顶分型的中间K线。
-			Integer usefulSdBeanStartDate = topDataOfComparand;                                          // 有用的行情数据的起始日期。
+			Long usefulSdBeanStartDate = topDataOfComparand;                                             // 有用的行情数据的起始日期。
 			for (int i = 0; i < 26; i++) {
 				topSdBeanOfComparand = topSdBeanOfComparand.getPrev();
 				if (topSdBeanOfComparand != null && topSdBeanOfComparand.getDate() != null) {					
@@ -193,14 +193,14 @@ public class BPAndSPFunction {
 		 * + 计算比较波段和被比较波段内MACD的值。                                                                                                  +
 		 * +-----------------------------------------------------------+
 		 */
-		Integer bottomDataOfComparand = comparand.getBottom().getCenter().getDate();                 // 被比价波段起始时间。
-		Integer topDataOfComparand = comparand.getTop().getCenter().getDate();                       // 被比较波段结束时间。
+		Long bottomDataOfComparand = comparand.getBottom().getCenter().getDate();                    // 被比价波段起始时间。
+		Long topDataOfComparand = comparand.getTop().getCenter().getDate();                          // 被比较波段结束时间。
 		
-		Integer bottomDataOfCompare = compare.getBottom().getCenter().getDate();                     // 比较波段起始时间。
-		Integer topDataOfCompare = compare.getTop().getCenter().getDate();                           // 比较波段结束时间。
+		Long bottomDataOfCompare = compare.getBottom().getCenter().getDate();                        // 比较波段起始时间。
+		Long topDataOfCompare = compare.getTop().getCenter().getDate();                              // 比较波段结束时间。
 		
 		StockDataBean bottomSdBeanOfComparand = comparand.getBottom().getCenter();                   // 被比较波段底分型的中间K线。
-		Integer usefulSdBeanStartDate = bottomDataOfComparand;                                       // 有用的行情数据的起始日期。
+		Long usefulSdBeanStartDate = bottomDataOfComparand;                                          // 有用的行情数据的起始日期。
 		for (int i = 0; i < 26; i++) {
 			bottomSdBeanOfComparand = bottomSdBeanOfComparand.getPrev();
 			if (bottomSdBeanOfComparand != null && bottomSdBeanOfComparand.getDate() != null) {					

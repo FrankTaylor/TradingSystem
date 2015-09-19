@@ -8,9 +8,9 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.huboyi.engine.indicators.technology.TechAlgorithm;
-import com.huboyi.engine.indicators.technology.constant.SingleMaPatternEnum;
+import com.huboyi.engine.indicators.technology.constant.BandType;
+import com.huboyi.engine.indicators.technology.constant.SingleMaPattern;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageBean;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageSpeedChangeBean;
@@ -121,7 +121,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 				// 1.1.1
 				(
 						bef120MAS == null || 
-						bef120MAS.getPattern() != SingleMaPatternEnum.UP ||
+						bef120MAS.getPattern() != SingleMaPattern.UP ||
 						bef120MAS.getSpeed() < 0
 				) 
 				
@@ -130,7 +130,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 				// 1.1.2
 				(
 						cur120MAS == null ||
-						cur120MAS.getPattern() != SingleMaPatternEnum.UP ||
+						cur120MAS.getPattern() != SingleMaPattern.UP ||
 						cur120MAS.getSpeed() < 0.003
 				)
 				

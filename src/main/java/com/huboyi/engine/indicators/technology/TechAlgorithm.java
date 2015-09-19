@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.constant.SingleMaPatternEnum;
+import com.huboyi.engine.indicators.technology.constant.SingleMaPattern;
 import com.huboyi.engine.indicators.technology.energy.bean.MACDBean;
 import com.huboyi.engine.indicators.technology.energy.bean.RSIBean;
 import com.huboyi.engine.indicators.technology.trend.bean.BollBean;
@@ -447,7 +447,7 @@ public class TechAlgorithm {
 
 		// 如果没有均线数据，就直接返回“未知形态”。
 		if (sourceMaList == null || sourceMaList.isEmpty()) {
-			return new MoveAverageStatisticsBean().setMaList(sourceMaList).setPattern(SingleMaPatternEnum.UNKNOWN);
+			return new MoveAverageStatisticsBean().setMaList(sourceMaList).setPattern(SingleMaPattern.UNKNOWN);
 		}
 		
 		List<MoveAverageBean> targetMaList =                                                                                                               // 得到一定数量的，本次比较所需要用到的均线数据。
@@ -479,15 +479,15 @@ public class TechAlgorithm {
 		
 		// 当最后一个均线高于第一个均线，且上升占比大于下降占比时，返回“上升形态”。
 		if ((last.getAvg().compareTo(first.getAvg()) == 1) && upRate > downRate) {
-			return mas.setPattern(SingleMaPatternEnum.UP);
+			return mas.setPattern(SingleMaPattern.UP);
 		}
 		
 		// 当最后一个均线低于第一个均线，且下降占比大于上升占比时，返回“下降形态”。
 		if ((last.getAvg().compareTo(first.getAvg()) == -1) && downRate > upRate) {
-			return mas.setPattern(SingleMaPatternEnum.DOWN);
+			return mas.setPattern(SingleMaPattern.DOWN);
 		}
 		
-		return mas.setPattern(SingleMaPatternEnum.SHOCK);
+		return mas.setPattern(SingleMaPattern.SHOCK);
 	}
 	
 	/**

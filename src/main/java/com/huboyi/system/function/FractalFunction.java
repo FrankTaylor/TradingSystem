@@ -2,8 +2,8 @@ package com.huboyi.system.function;
 
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.constant.FractalTypeEnum;
-import com.huboyi.engine.indicators.technology.constant.KTypeInFractalEnum;
+import com.huboyi.engine.indicators.technology.constant.FractalType;
+import com.huboyi.engine.indicators.technology.constant.KTypeInFractal;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.load.bean.StockDataBean;
@@ -38,15 +38,15 @@ public class FractalFunction {
 	 * @return StockDataBean
 	 */
 	public static StockDataBean 
-	getNoContainKLineInFractalBean (final List<StockDataBean> stockDataList, final FractalBean fractal, final KTypeInFractalEnum type) {
+	getNoContainKLineInFractalBean (final List<StockDataBean> stockDataList, final FractalBean fractal, final KTypeInFractal type) {
 		if (fractal == null || type == null ) {
 			throw new RuntimeException("得到分型中未经包含处理的实际K线时，分型和K线类型均不能为null！");
 		} 
 		
-		Integer date = type == KTypeInFractalEnum.LEFT ? fractal.getLeft().getDate() : 
-			           type == KTypeInFractalEnum.CENTER ? fractal.getCenter().getDate() : 
-			           type == KTypeInFractalEnum.RIGHT ? fractal.getRight().getDate() : 
-			        	   fractal.getCenter().getDate();
+		Long date = type == KTypeInFractal.LEFT ? fractal.getLeft().getDate() : 
+			        type == KTypeInFractal.CENTER ? fractal.getCenter().getDate() : 
+			        type == KTypeInFractal.RIGHT ? fractal.getRight().getDate() : 
+			        fractal.getCenter().getDate();
 		
 	    for (StockDataBean stockData : stockDataList) {
 	    	if (stockData.getDate().equals(date)) {
@@ -68,7 +68,7 @@ public class FractalFunction {
 	public static boolean 
 	isRelativelyEffectiveBottom (final StockDataBean lastStockData, final FractalBean bottom) {
 		
-		if (lastStockData == null || bottom == null || bottom.getFractalType() == FractalTypeEnum.TOP) { return false; }
+		if (lastStockData == null || bottom == null || bottom.getFractalType() == FractalType.TOP) { return false; }
 		
 		StockDataBean leftOfBottom = bottom.getLeft();                                          // 得到该底分型的左侧K线。
 		StockDataBean rightOfBottom = bottom.getRight();                                        // 得到该底分型的右侧K线。
@@ -100,7 +100,7 @@ public class FractalFunction {
 	public static boolean 
 	isRelativelyEffectiveTop (final StockDataBean lastStockData, final FractalBean top) {
 		
-		if (top == null || top.getFractalType() == FractalTypeEnum.BUTTOM) { return false; }
+		if (top == null || top.getFractalType() == FractalType.BUTTOM) { return false; }
 		
 		StockDataBean rightOfTop = top.getRight();                                              // 得到该底分型的右侧K线。
 		
@@ -130,7 +130,7 @@ public class FractalFunction {
 		
 		// 最后一个分型必须是底分型。
 		FractalBean lastFractal = getLastValidFractal(validFractalList);                                                            // 最后一个有效的分型信息。
-		if (lastFractal.getFractalType() != FractalTypeEnum.BUTTOM) {
+		if (lastFractal.getFractalType() != FractalType.BUTTOM) {
 			return false;
 		}
 		
@@ -159,7 +159,7 @@ public class FractalFunction {
 
 		// 最后一根K线是最后一个底分型中的右侧K线。
 		StockDataBean lastStockData = StockDataFunction.getLastStockData(stockDataList);                                            // 最后一根K线。
-		StockDataBean rightStockData = getNoContainKLineInFractalBean(stockDataList, bottomOfLastBand, KTypeInFractalEnum.RIGHT);   // 得到最后一个分型中真实的右侧K线。
+		StockDataBean rightStockData = getNoContainKLineInFractalBean(stockDataList, bottomOfLastBand, KTypeInFractal.RIGHT);       // 得到最后一个分型中真实的右侧K线。
 
 		if (rightStockData == null || (lastStockData.getDate().intValue() != rightStockData.getDate().intValue())) {
 			return false;

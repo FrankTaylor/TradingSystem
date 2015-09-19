@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.huboyi.engine.load.LoadEngine;
 import com.huboyi.engine.load.bean.StockDataBean;
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
 import com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay;
 import com.huboyi.system.snap.bean.SnapResultBean;
@@ -59,7 +59,7 @@ public class SnapFractalForDayEngine {
 			List<SnapResultBean> closeSignalList = new ArrayList<SnapResultBean>();                                        // 用于保存平仓信号。
 			
 			for (SnapResultBean result : resultBeanList) {                                                                 // 把建仓和平仓交易信号保存到相应的集合中。
-				if (result.getOrderInfoTradeFlagEnum() == OrderInfoTradeFlagEnum.STOCK_BUY) {
+				if (result.getOrderInfoTradeFlag() == OrderInfoTradeFlag.STOCK_BUY) {
 					openSignalList.add(result);
 				} else {
 					closeSignalList.add(result);

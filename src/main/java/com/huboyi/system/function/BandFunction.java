@@ -3,8 +3,8 @@ package com.huboyi.system.function;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.huboyi.engine.indicators.technology.constant.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean.BandType;
 
 /**
  * 交易模块中使用的波段函数。
@@ -42,7 +42,7 @@ public class BandFunction {
 		
 		for (BandBean band : bandList) {
 			// --- 计算波段的时间范围 ---
-			Integer startDate, endDate;
+			Long startDate, endDate;
 			if (band.getBandType() == BandType.UP) {
 				startDate = band.getBottom().getCenter().getDate();
 				endDate = band.getTop().getCenter().getDate();

@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import com.huboyi.engine.load.LoadEngine;
 import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.bean.DealSignalBean;
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
 import com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay;
 import com.huboyi.system.test.bean.TestResultBean;
@@ -84,7 +84,7 @@ public class TestFractalForDayEngine {
 				if (result != null) {					
 					DealSignalBean lastDealSignal = result.getLastDealSignal();
 					if (lastDealSignal != null) {
-						if (lastDealSignal.getType() == DealSignalEnum.ONE_B || lastDealSignal.getType() == DealSignalEnum.FIBO_B) {
+						if (lastDealSignal.getType() == DealSignal.ONE_B || lastDealSignal.getType() == DealSignal.FIBO_B) {
 							lastOpenDealSignalMap.put(result.getStockCode(), lastDealSignal);
 						} else {
 							lastCloseDealSignalMap.put(result.getStockCode(), lastDealSignal);
@@ -99,7 +99,7 @@ public class TestFractalForDayEngine {
 			for (Map.Entry<String, DealSignalBean> entry : lastOpenDealSignalMap.entrySet()) {
 				String stockCode = entry.getKey();                                   // 证券代码。
 				StockDataBean stockDataBean = entry.getValue().getStockDataBean();   // 发出交易信号的行情信息。
-				DealSignalEnum type = entry.getValue().getType();                    // 信号类别。
+				DealSignal type = entry.getValue().getType();                        // 信号类别。
 				
 				BigDecimal totalFundsBalance = new BigDecimal(100000);               // 假设总资金。
 				BigDecimal buyMoneyRate = new BigDecimal(0.02);                      // 2%原则。
@@ -132,7 +132,7 @@ public class TestFractalForDayEngine {
 			for (Map.Entry<String, DealSignalBean> entry : lastCloseDealSignalMap.entrySet()) {
 				String stockCode = entry.getKey();                                   // 证券代码。
 				StockDataBean stockDataBean = entry.getValue().getStockDataBean();   // 发出交易信号的行情信息。
-				DealSignalEnum type = entry.getValue().getType();                    // 信号类别。
+				DealSignal type = entry.getValue().getType();                        // 信号类别。
 				
 				
 				StringBuilder builder = new StringBuilder();

@@ -14,8 +14,8 @@ import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.DealSignal;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
 import com.huboyi.system.snap.bean.SnapResultBean;
@@ -191,10 +191,10 @@ public class SnapFractalForDayWorker implements Callable<SnapResultBean[]> {
 		SnapResultBean result = new SnapResultBean();
 		
 		/* 订单信息中的买卖标志枚举类。*/
-		if (dealSignal.getType() == DealSignalEnum.ONE_B || dealSignal.getType() == DealSignalEnum.FIBO_B) {
-			result.setOrderInfoTradeFlagEnum(OrderInfoTradeFlagEnum.STOCK_BUY);
+		if (dealSignal.getType() == DealSignal.ONE_B || dealSignal.getType() == DealSignal.FIBO_B) {
+			result.setOrderInfoTradeFlag(OrderInfoTradeFlag.STOCK_BUY);
 		} else {
-			result.setOrderInfoTradeFlagEnum(OrderInfoTradeFlagEnum.STOCK_SELL);
+			result.setOrderInfoTradeFlag(OrderInfoTradeFlag.STOCK_SELL);
 		}
 		
 		/* 证券代码。*/
@@ -207,7 +207,7 @@ public class SnapFractalForDayWorker implements Callable<SnapResultBean[]> {
 		result.setSignalName(dealSignal.getType().getName());
 		
 		/* 交易数量。*/
-		if (dealSignal.getType() == DealSignalEnum.ONE_B || dealSignal.getType() == DealSignalEnum.FIBO_B) {
+		if (dealSignal.getType() == DealSignal.ONE_B || dealSignal.getType() == DealSignal.FIBO_B) {
 			
 			BigDecimal totalFundsBalance = new BigDecimal(100000);                                                            // 假设总资金。
 			BigDecimal buyMoneyRate = new BigDecimal(0.02);                                                                   // 2%原则。

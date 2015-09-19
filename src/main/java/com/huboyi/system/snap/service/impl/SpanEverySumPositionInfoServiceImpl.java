@@ -45,9 +45,9 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.REPEATABLE_READ, readOnly = false, rollbackFor = {RuntimeException.class})
-	public void insert (String systemName, String stockCode, String stockName,
-			String systemOpenPoint, String systemOpenName, Long openSignalTime,
-			Integer openDate, Long openTime, BigDecimal openPrice,
+	public void insert (
+			String systemName, String stockCode, String stockName, String systemOpenPoint,
+			String systemOpenName, Long openSignalDate, Long openDate, BigDecimal openPrice, 
 			Long openNumber, BigDecimal stopPrice, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke insert method").append("\n");
@@ -56,9 +56,8 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 		logMsg.append("@param [stockName = " + stockName + "]");
 		logMsg.append("@param [systemOpenPoint = " + systemOpenPoint + "]");
 		logMsg.append("@param [systemOpenName = " + systemOpenName + "]");
-		logMsg.append("@param [openSignalTime = " + openSignalTime + "]");
+		logMsg.append("@param [openSignalDate = " + openSignalDate + "]");
 		logMsg.append("@param [openDate = " + openDate + "]");
-		logMsg.append("@param [openTime = " + openTime + "]");
 		logMsg.append("@param [openPrice = " + openPrice + "]");
 		logMsg.append("@param [openNumber = " + openNumber + "]");
 		logMsg.append("@param [stopPrice = " + stopPrice + "]");
@@ -68,10 +67,7 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 		try {
 			
 			EverySumPositionInfoPO po = new EverySumPositionInfoPO();
-			
-			/* id。*/
-			po.setId(UUID.randomUUID().toString());
-			
+
 			// --- 
 			
 			/* 系统名称。*/
@@ -88,12 +84,10 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 			po.setSystemOpenPoint(systemOpenPoint);
 			/* 系统建仓点名称。*/
 			po.setSystemOpenName(systemOpenName);
-			/* 建仓信号发出时间。*/
-			po.setOpenSignalTime(openSignalTime);
-			/* 成交日期（格式：%Y%m%d）。 */
+			/* 建仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+			po.setOpenSignalDate(openSignalDate);
+			/* 成交日期（格式：yyyyMMddhhmmssSSS）。 */
 			po.setOpenDate(openDate);
-			/* 成交时间（格式：HH:mm:ss）。 */
-			po.setOpenTime(openTime);
 			/* 建仓价格。 */
 			po.setOpenPrice(openPrice.setScale(3, RoundingMode.HALF_UP));
 			/* 建仓数量。 */
@@ -125,12 +119,10 @@ public class SpanEverySumPositionInfoServiceImpl implements SpanEverySumPosition
 			po.setSystemClosePoint(null);
 			/* 系统平仓点名称（卖出信号名称）。*/
 			po.setSystemCloseName(null);
-			/* 平仓信号发出时间。*/
-			po.setCloseSignalTime(null);
-			/* 平仓日期（格式：%Y%m%d）。*/
+			/* 平仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+			po.setCloseSignalDate(null);
+			/* 平仓日期（格式：yyyyMMddhhmmssSSS）。*/
 			po.setCloseDate(null);
-			/* 平仓时间（详细时间）。*/
-			po.setCloseTime(null);
 			/* 平仓价格。*/
 			po.setClosePrice(null);
 			/* 平仓数量。*/

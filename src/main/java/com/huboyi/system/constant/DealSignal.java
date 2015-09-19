@@ -8,7 +8,7 @@ package com.huboyi.system.constant;
  * @since 2015/9/12
  * @version 1.0
  */
-public enum DealSignalEnum {
+public enum DealSignal {
 	ONE_B("1B", "第一买点"),
 	
 	FIBO_B("fiboB", "斐波那契买点"),
@@ -26,7 +26,7 @@ public enum DealSignalEnum {
 
 	private final String type;
 	private final String name;
-	private DealSignalEnum (String type, String name) {
+	private DealSignal (String type, String name) {
 		this.type = type;
 		this.name = name;
 	}

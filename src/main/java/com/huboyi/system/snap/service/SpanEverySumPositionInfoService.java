@@ -22,22 +22,20 @@ public interface SpanEverySumPositionInfoService {
 	 * @param stockName 证券名称
 	 * @param systemOpenPoint 系统建仓点类型（买入信号类型）
 	 * @param systemOpenName 系统建仓点名称（买入信号名称）
-	 * @param openSignalTime 建仓信号发出时间
-	 * @param openDate 建仓日期（格式：%Y%m%d）
-	 * @param openTime 建仓时间（详细时间）
+	 * @param openSignalDate 建仓信号发出时间（格式：yyyyMMddhhmmssSSS）
+	 * @param openDate 建仓日期（格式：yyyyMMddhhmmssSSS）
 	 * @param openPrice 建仓价格
 	 * @param openNumber 建仓数量
 	 * @param stopPrice 止损价格
 	 * @param stockholder 股东代码
 	 */
 	public void insert (
-			String systemName, String stockCode, String stockName, 
-			String systemOpenPoint, String systemOpenName, Long openSignalTime, 
-			Integer openDate, Long openTime, BigDecimal openPrice, 
+			String systemName, String stockCode, String stockName, String systemOpenPoint,
+			String systemOpenName, Long openSignalDate, Long openDate, BigDecimal openPrice, 
 			Long openNumber, BigDecimal stopPrice, String stockholder);
 	
 	/**
-	 * 根据证券代码查询出每一笔持仓信息（按照open_date + open_time 升序）。
+	 * 根据证券代码查询出每一笔持仓信息（按照open_date升序）。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return List<PositionInfoBean>

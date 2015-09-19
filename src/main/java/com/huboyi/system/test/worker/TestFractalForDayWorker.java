@@ -19,9 +19,9 @@ import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
-import com.huboyi.system.constant.FundsFlowBusinessEnum;
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.DealSignal;
+import com.huboyi.system.constant.FundsFlowBusiness;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.function.BandFunction;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
@@ -114,7 +114,7 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 			positionInfoRule.deleteTestResult(stockCode);
 			positionInfoRule.ensureIndexForTestResult(stockCode);
 			positionInfoRule.insertBankTransfer(
-					FundsFlowBusinessEnum.ROLL_IN, 
+					FundsFlowBusiness.ROLL_IN, 
 					stockCode, 
 					19800101, 
 					DATE_TIME_FORMAT.parse("19900101093000").getTime(), 
@@ -179,8 +179,8 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 					
 					if (point != null) {
 						if (
-								dealSignal.getType() == DealSignalEnum.ONE_B ||
-								dealSignal.getType() == DealSignalEnum.FIBO_B) {
+								dealSignal.getType() == DealSignal.ONE_B ||
+								dealSignal.getType() == DealSignal.FIBO_B) {
 							/*
 							 * +-----------------------------------------------------------+
 							 * + 注意：1、建仓价为：产生交易信号隔天的开盘价；                                                                                   +
@@ -344,7 +344,7 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 		for (int i = 0; i < orderInfoList.size(); i++) {
 			dealNumber++;
 			OrderInfoPO current = orderInfoList.get(i);
-			if (current.getTradeFlag().equals(OrderInfoTradeFlagEnum.STOCK_BUY.getType())) {
+			if (current.getTradeFlag().equals(OrderInfoTradeFlag.STOCK_BUY.getType())) {
 				dealDetailList.add("买");
 				buyNumber++;
 			} else {

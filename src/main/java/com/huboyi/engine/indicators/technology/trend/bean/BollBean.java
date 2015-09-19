@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @JsonPropertyOrder(value = {"date", "mdValue", "upValue", "middleValue", "downValue"}, alphabetic = false)
 public class BollBean implements Serializable {
 
-	private static final long serialVersionUID = -6574018730644894601L;
+	private static final long serialVersionUID = 5717556981398863110L;
 
 	/** 日期。*/
 	@JsonProperty(value = "date", required = true)
-	private Integer date = 19700101;
+	private Long date = 19700101000000000L;
 	
 	/** 波动率。*/
 	@JsonProperty(value = "md_value", required = true)
@@ -98,11 +98,11 @@ public class BollBean implements Serializable {
 	
 	// --- get method and set method ---
 	
-	public Integer getDate() {
+	public Long getDate() {
 		return date;
 	}
 
-	public void setDate(Integer date) {
+	public void setDate(Long date) {
 		this.date = date;
 	}
 

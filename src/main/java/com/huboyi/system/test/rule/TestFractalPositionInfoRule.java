@@ -119,7 +119,7 @@ public class TestFractalPositionInfoRule {
 	public boolean 
 	insertBankTransfer (
 			FundsFlowBusinessEnum businessType, String stockCode, 
-			Integer tradeDate, Long tradeTime, BigDecimal transferMoney) {
+			Long tradeDate, Long tradeTime, BigDecimal transferMoney) {
 		
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存银行转存记录] 方法").append("\n");
@@ -150,7 +150,7 @@ public class TestFractalPositionInfoRule {
 	    }
 		
 	    if (oldFundsFlowPo != null) {
-	    	Integer oldTradeDate = oldFundsFlowPo.getTradeDate();
+	    	Long oldTradeDate = oldFundsFlowPo.getTradeDate();
 	    	Long oldTradeTime = oldFundsFlowPo.getTradeTime();
 	    	if (oldTradeDate == null || oldTradeTime == null) {
 	    		log.error("在保存银行转存记录时出现错误，数据库记录中的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
@@ -243,7 +243,7 @@ public class TestFractalPositionInfoRule {
 	public void 
 	insertBuyInfo (
 			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
-			Integer tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
+			Long tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存买入证券时的资金流水记录和仓位信息] 方法").append("\n");
@@ -573,7 +573,7 @@ public class TestFractalPositionInfoRule {
 	public void 
 	insertSellInfo (
 			DealSignalEnum systemClosePoint, String stockCode, String openContractCode, 
-			Long closeSignalTime, Integer tradeDate, Long tradeTime, BigDecimal tradePrice) 
+			Long closeSignalTime, Long tradeDate, Long tradeTime, BigDecimal tradePrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存买入证券时的资金流水记录和仓位信息] 方法").append("\n");
@@ -619,14 +619,14 @@ public class TestFractalPositionInfoRule {
 	    	return;
 	    }
 		
-		Integer oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                               // 得到已存在的成交日期（格式：%Y%m%d）。
+		Long oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                                  // 得到已存在的成交日期（格式：%Y%m%d）。
     	Long oldTradeTimeOfFundsFlow = oldFundsFlowPo.getTradeTime();                                                  // 得到已存在的成交时间（详细时间）。
     	if (oldTradeDateOfFundsFlow == null || oldTradeTimeOfFundsFlow == null) {
     		log.error("数据库记录中资金流水的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
     		return;
     	}
     	
-    	Integer newTradeDateOfFundsFlow = tradeDate;                                                                   // 得到最新的资金流水的成交日期（格式：%Y%m%d）。
+    	Long newTradeDateOfFundsFlow = tradeDate;                                                                      // 得到最新的资金流水的成交日期（格式：%Y%m%d）。
     	if (newTradeDateOfFundsFlow < oldTradeDateOfFundsFlow) {
     		log.error(
     				"新插入资金流水记录中的交易日期不能小于已存在资金流水记录中的交易日期！" +
@@ -649,7 +649,7 @@ public class TestFractalPositionInfoRule {
 	    	return;
 		}
     	
-    	Integer newTradeDateOfOrderInfo = tradeDate;                                                                   // 得到最新的订单记录的成交日期（格式：%Y%m%d）。
+    	Long newTradeDateOfOrderInfo = tradeDate;                                                                      // 得到最新的订单记录的成交日期（格式：%Y%m%d）。
     	Long newTradeTimeOfOrderInfo = tradeTime;                                                                      // 得到最新的订单记录的成交时间（详细时间）。
     	
     	Integer oldTradeDateOfOrderInfo = oldOrderInfoPO.getTradeDate();                                               // 得到已存在的成交日期（格式：%Y%m%d）。
@@ -1074,7 +1074,7 @@ public class TestFractalPositionInfoRule {
 	private boolean 
 	positionControlForBuy (
 			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
-			Integer tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
+			Long tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		
 		List<EverySumPositionInfoPO> everySumPositionInfoList =                                 // 查询出每一笔未平仓的仓位信息。

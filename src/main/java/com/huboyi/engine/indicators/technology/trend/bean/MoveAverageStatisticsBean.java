@@ -2,7 +2,7 @@ package com.huboyi.engine.indicators.technology.trend.bean;
 
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.constant.SingleMaPatternEnum;
+import com.huboyi.engine.indicators.technology.constant.SingleMaPattern;
 
 /**
  * 普通平均线分析结果指标。
@@ -22,7 +22,7 @@ public class MoveAverageStatisticsBean {
 	/** 速度。*/
 	private Double speed;
 	/** 均线形态枚举。*/
-	private SingleMaPatternEnum pattern;
+	private SingleMaPattern pattern;
 	
 	@Override
 	public String toString() {
@@ -66,11 +66,11 @@ public class MoveAverageStatisticsBean {
 		return this;
 	}
 	
-	public SingleMaPatternEnum getPattern() {
+	public SingleMaPattern getPattern() {
 		return pattern;
 	}
 	
-	public MoveAverageStatisticsBean setPattern(SingleMaPatternEnum pattern) {
+	public MoveAverageStatisticsBean setPattern(SingleMaPattern pattern) {
 		this.pattern = pattern;
 		return this;
 	}

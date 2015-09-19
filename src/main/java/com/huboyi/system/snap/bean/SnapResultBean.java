@@ -1,6 +1,6 @@
 package com.huboyi.system.snap.bean;
 
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 
 /**
  * 信号捕捉结果信息。
@@ -12,7 +12,7 @@ import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
 public class SnapResultBean {
 	
 	/** 订单信息中的买卖标志枚举类。*/
-	private OrderInfoTradeFlagEnum orderInfoTradeFlagEnum;
+	private OrderInfoTradeFlag orderInfoTradeFlag;
 	/** 证券代码。*/
 	private String stockCode;
 	/** 信号日期。*/
@@ -26,12 +26,12 @@ public class SnapResultBean {
 	
 	// --- get and set method ---
 	
-	public OrderInfoTradeFlagEnum getOrderInfoTradeFlagEnum() {
-		return orderInfoTradeFlagEnum;
+	public OrderInfoTradeFlag getOrderInfoTradeFlag() {
+		return orderInfoTradeFlag;
 	}
 	
-	public void setOrderInfoTradeFlagEnum(OrderInfoTradeFlagEnum orderInfoTradeFlagEnum) {
-		this.orderInfoTradeFlagEnum = orderInfoTradeFlagEnum;
+	public void setOrderInfoTradeFlag(OrderInfoTradeFlag orderInfoTradeFlag) {
+		this.orderInfoTradeFlag = orderInfoTradeFlag;
 	}
 	
 	public String getStockCode() {

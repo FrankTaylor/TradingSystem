@@ -41,7 +41,7 @@ public interface SpanEverySumPositionInfoRepository {
 	 * @param endLimit 结束页
 	 * @return List<EverySumPositionInfoPO>
 	 */
-	public List<EverySumPositionInfoPO> findEverySumPositionInfoList (String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage);
+	public List<EverySumPositionInfoPO> findEverySumPositionInfoList (String stockCode, String openContractCode, Long beginOpenDate, Long endOpenDate, String isClose, Integer beginPage, Integer endPage);
 	
 	/**
 	 * 修改每一笔的持仓信息。

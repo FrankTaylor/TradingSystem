@@ -7,7 +7,7 @@ package com.huboyi.engine.indicators.technology.constant;
  * @since 2014/10/24
  * @version 1.0
  */
-public enum FractalTypeEnum {
+public enum FractalType {
 	/** 顶分型。*/
 	TOP,
 	/** 底分型。*/

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.huboyi.engine.indicators.technology.constant.BandType;
 import com.huboyi.util.JAXBHelper;
 
 /**
@@ -21,22 +22,8 @@ import com.huboyi.util.JAXBHelper;
 @JsonPropertyOrder(value = {"bandType", "top", "bottom", "nums", "upNum", "downNum", "totalVolume", "upTotalVolume", "downTotalVolume", "totalAmount", "upTotalAmount", "downToalAmount"}, alphabetic = false)
 public class BandBean implements Serializable {
 
-	private static final long serialVersionUID = 4896217482786137418L;
+	private static final long serialVersionUID = 5503653912210172522L;
 
-	/**
-	 * 用于标示波段方向的枚举类。
-	 * 
-	 * @author FrankTaylor <mailto:hubin@300.cn>
-	 * @since 2014/10/24
-	 * @version 1.0
-	 */
-	public static enum BandType {
-		/** 向上。*/
-		UP,
-		/** 向下。*/
-		DOWN;
-	}
-	
 	/** 波段方向。*/
 	@JsonProperty(value = "band_type", required = true)
 	private BandType bandType;

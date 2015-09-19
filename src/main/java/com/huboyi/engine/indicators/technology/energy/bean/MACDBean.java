@@ -22,11 +22,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @JsonPropertyOrder(value = {"date", "diff", "dea", "macd"}, alphabetic = false)
 public class MACDBean implements Serializable {
 
-	private static final long serialVersionUID = -5002918405781594515L;
+	private static final long serialVersionUID = -3233924019723973835L;
 
 	/** 日期。*/
 	@JsonProperty(value = "date", required = true)
-	private Integer date = 19700101;
+	private Long date = 19700101000000000L;
 	
 	/** 短期均线与长期均线的差值。*/
 	@JsonProperty(value = "diff", required = true)
@@ -92,11 +92,11 @@ public class MACDBean implements Serializable {
 
 	// --- get method and set method ---
 	
-	public Integer getDate() {
+	public Long getDate() {
 		return date;
 	}
 
-	public void setDate(Integer date) {
+	public void setDate(Long date) {
 		this.date = date;
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
  * @version 1.0
  */
 public class OrderInfoPO {
+	
 	@Id
 	/** id */
 	private String id;
@@ -25,10 +26,8 @@ public class OrderInfoPO {
 	private String stockCode;
 	/** 证券名称。*/
 	private String stockName;
-	/** 成交日期（格式：%Y%m%d）。*/
-	private Integer tradeDate;
-	/** 成交时间（详细时间）。*/
-	private Long tradeTime;
+	/** 成交日期（格式：yyyyMMddhhmmssSSS）。*/
+	private Long tradeDate;
 	/** 买卖标志。*/
 	private String tradeFlag;
 	/**
@@ -57,7 +56,6 @@ public class OrderInfoPO {
 		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
-		.append("    ").append("tradeTime").append(":").append("'").append(tradeTime).append("'").append(", \n")
 		.append("    ").append("tradeFlag").append(":").append("'").append(tradeFlag).append("'").append(", \n")
 		.append("    ").append("tradePrice").append(":").append("'").append(tradePrice).append("'").append(", \n")
 		.append("    ").append("tradeNumber").append(":").append("'").append(tradeNumber).append("'").append(", \n")
@@ -111,22 +109,14 @@ public class OrderInfoPO {
 		this.stockName = stockName;
 	}
 
-	public Integer getTradeDate() {
+	public Long getTradeDate() {
 		return tradeDate;
 	}
 
-	public void setTradeDate(Integer tradeDate) {
+	public void setTradeDate(Long tradeDate) {
 		this.tradeDate = tradeDate;
 	}
-
-	public Long getTradeTime() {
-		return tradeTime;
-	}
-
-	public void setTradeTime(Long tradeTime) {
-		this.tradeTime = tradeTime;
-	}
-
+	
 	public String getTradeFlag() {
 		return tradeFlag;
 	}

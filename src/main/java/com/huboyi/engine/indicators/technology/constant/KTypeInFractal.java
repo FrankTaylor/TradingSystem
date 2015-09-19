@@ -7,7 +7,7 @@ package com.huboyi.engine.indicators.technology.constant;
  * @since 2015/9/15
  * @version 1.0
  */
-public enum KTypeInFractalEnum {
+public enum KTypeInFractal {
 	
 	/** 分型中的左边K线。*/
 	LEFT, 
@@ -16,6 +16,6 @@ public enum KTypeInFractalEnum {
 	/** 分型中的右边K线。*/
 	RIGHT;
 	
-	private KTypeInFractalEnum() {}
+	private KTypeInFractal() {}
 }
 	

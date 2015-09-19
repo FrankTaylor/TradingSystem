@@ -8,7 +8,7 @@ package com.huboyi.engine.indicators.technology.constant;
  * @since 2015/2/6
  * @version 1.0
  */
-public enum SingleMaPatternEnum {
+public enum SingleMaPattern {
 	/** 上升形态。*/
 	UP,
 	/** 下降形态。*/
@@ -17,6 +17,6 @@ public enum SingleMaPatternEnum {
 	SHOCK,
 	/** 未知形态。*/
 	UNKNOWN;
-	private SingleMaPatternEnum () {}
+	private SingleMaPattern () {}
 }
 	

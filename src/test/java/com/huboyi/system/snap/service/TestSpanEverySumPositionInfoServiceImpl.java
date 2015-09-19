@@ -12,7 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.snap.service.impl.SpanEverySumPositionInfoServiceImpl;
 /**
  * 对{@link EverySumPositionInfoRepository}的测试。
@@ -37,15 +37,15 @@ public class TestSpanEverySumPositionInfoServiceImpl {
 	 * 
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	public void testInsert () throws Exception {
 		// 开始时间。
 		long startTime = System.nanoTime();
 
 		spanEverySumPositionInfoService.insert(
 				"顶底分型交易系统", "SZ300144", "宋城演艺", 
-				DealSignalEnum.FIBO_B.getType(), DealSignalEnum.FIBO_B.getName(), 20150420L, 
-				20150421, 20150421093000L, new BigDecimal(55.00), 
+				DealSignal.FIBO_B.getType(), DealSignal.FIBO_B.getName(), 20150420000000000L, 
+				20150421000000000L, new BigDecimal(55.00), 
 				100L, new BigDecimal(120), "672288");
 		
 		// 结束时间。
@@ -59,7 +59,7 @@ public class TestSpanEverySumPositionInfoServiceImpl {
 	 * 
 	 * @throws Exception
 	 */
-//	@Test
+	@Test
 	public void testFindAllPositionInfoByStockCode () throws Exception {
 		// 开始时间。
 		long startTime = System.nanoTime();

@@ -21,11 +21,11 @@ import com.huboyi.util.JAXBHelper;
 @JsonPropertyOrder(value = {"date", "source", "avg"}, alphabetic = false)
 public class MoveAverageBean implements Serializable {
 
-	private static final long serialVersionUID = 9108000676862372529L;
+	private static final long serialVersionUID = 3897316158075774750L;
 
 	/** 日期。*/
 	@JsonProperty(value = "date", required = true)
-	private Integer date = 19700101;
+	private Long date = 19700101000000000L;
 	
 	/** 计算前的值。*/
 	@JsonProperty(value = "source", required = true)
@@ -87,11 +87,11 @@ public class MoveAverageBean implements Serializable {
 	
 	// --- get method and set method ---
 	
-	public Integer getDate() {
+	public Long getDate() {
 		return date;
 	}
 
-	public void setDate(Integer date) {
+	public void setDate(Long date) {
 		this.date = date;
 	}
 

@@ -1,7 +1,7 @@
 package com.huboyi.system.bean;
 
 import com.huboyi.engine.load.bean.StockDataBean;
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 
 /**
  * 用于记录交易信号的Bean。
@@ -15,7 +15,7 @@ public class DealSignalBean {
 	/** 发出交易信号的行情信息。*/
 	private StockDataBean stockDataBean;
 	/** 交易信号类型枚举。*/
-	private DealSignalEnum type;
+	private DealSignal type;
 	
 	/**
 	 * 构造函数。
@@ -23,7 +23,7 @@ public class DealSignalBean {
 	 * @param stockDataBean 作为交易信号的行情数据
 	 * @param type 信号类型
 	 */
-	public DealSignalBean (StockDataBean stockDataBean, DealSignalEnum type) {
+	public DealSignalBean (StockDataBean stockDataBean, DealSignal type) {
 		this.stockDataBean = stockDataBean;
 		this.type = type;
 	}
@@ -49,11 +49,11 @@ public class DealSignalBean {
 		return this;
 	}
 
-	public DealSignalEnum getType() {
+	public DealSignal getType() {
 		return type;
 	}
 
-	public DealSignalBean setType(DealSignalEnum type) {
+	public DealSignalBean setType(DealSignal type) {
 		this.type = type;
 		return this;
 	}

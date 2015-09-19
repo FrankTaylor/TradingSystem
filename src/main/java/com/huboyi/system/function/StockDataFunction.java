@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.constant.KTypeInFractalEnum;
+import com.huboyi.engine.indicators.technology.constant.KTypeInFractal;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.load.bean.StockDataBean;
@@ -55,7 +55,7 @@ public class StockDataFunction {
 		 */
 		
 		FractalBean bottomOfLastBand = BandFunction.getLastBand(bandList).getBottom();                                                                // 最后一个向下波段的底分型。
-		StockDataBean centerStockData = FractalFunction.getNoContainKLineInFractalBean(stockDataList, bottomOfLastBand, KTypeInFractalEnum.CENTER);   // 得到底分型的中间K线。
+		StockDataBean centerStockData = FractalFunction.getNoContainKLineInFractalBean(stockDataList, bottomOfLastBand, KTypeInFractal.CENTER);       // 得到底分型的中间K线。
 		
 		/*
 		 * +-----------------------------------------------------------+
@@ -103,7 +103,7 @@ public class StockDataFunction {
 		 */
 		
 		FractalBean topOfLastBand = BandFunction.getLastBand(bandList).getTop();                                                                      // 最后一个向上波段的顶分型。
-		StockDataBean centerStockData = FractalFunction.getNoContainKLineInFractalBean(stockDataList, topOfLastBand, KTypeInFractalEnum.CENTER);      // 得到顶分型的中间K线。
+		StockDataBean centerStockData = FractalFunction.getNoContainKLineInFractalBean(stockDataList, topOfLastBand, KTypeInFractal.CENTER);          // 得到顶分型的中间K线。
 
 		/*
 		 * +-----------------------------------------------------------+

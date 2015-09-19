@@ -57,7 +57,6 @@ public class TestOrderInfoRepositoryImpl implements TestOrderInfoRepository {
 			indexOps.ensureIndex(
 					new Index()
 					.on("tradeDate", Direction.ASC)
-					.on("tradeTime", Direction.ASC)
 					.unique(Duplicates.DROP)
 					.sparse()
 					.named(indexName)

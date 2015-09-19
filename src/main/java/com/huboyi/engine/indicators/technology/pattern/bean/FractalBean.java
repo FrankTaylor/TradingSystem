@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.huboyi.engine.indicators.technology.constant.FractalTypeEnum;
+import com.huboyi.engine.indicators.technology.constant.FractalType;
 import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.util.JAXBHelper;
 
@@ -26,7 +26,7 @@ public class FractalBean implements Serializable {
 	
 	/** 分型类别。*/
 	@JsonProperty(value = "fractal_type", required = true)
-	private FractalTypeEnum fractalType;
+	private FractalType fractalType;
 	
 	/** 分型左边的行情数据。*/
 	@JsonProperty(value = "left", required = true)
@@ -97,11 +97,11 @@ public class FractalBean implements Serializable {
 
 	// --- get method and set method ---
 	
-	public FractalTypeEnum getFractalType() {
+	public FractalType getFractalType() {
 		return fractalType;
 	}
 
-	public void setFractalType(FractalTypeEnum fractalType) {
+	public void setFractalType(FractalType fractalType) {
 		this.fractalType = fractalType;
 	}
 

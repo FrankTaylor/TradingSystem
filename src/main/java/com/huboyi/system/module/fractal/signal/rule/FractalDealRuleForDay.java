@@ -8,8 +8,8 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.huboyi.engine.indicators.technology.constant.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
 import com.huboyi.engine.load.bean.StockDataBean;

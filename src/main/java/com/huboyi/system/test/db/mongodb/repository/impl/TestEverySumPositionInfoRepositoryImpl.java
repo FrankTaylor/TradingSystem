@@ -58,7 +58,6 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 			indexOps.ensureIndex(
 					new Index()
 					.on("openDate", Direction.ASC)
-					.on("openTime", Direction.ASC)
 					.unique(Duplicates.DROP)
 					.sparse()
 					.named(indexName)
@@ -230,9 +229,8 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 			if (po.getStopPrice() != null) { update.set("stopPrice", po.getStopPrice()); }                            // 止损价格。
 			if (po.getCloseContractCode() != null) { update.set("closeContractCode", po.getCloseContractCode()); }    // 平仓合同编号。
 			if (po.getSystemClosePoint() != null) { update.set("systemClosePoint", po.getSystemClosePoint()); }       // 系统平仓点。
-			if (po.getCloseSignalTime() != null) { update.set("closeSignalTime", po.getCloseSignalTime()); }          // 平仓信号发出时间。
-			if (po.getCloseDate() != null) { update.set("closeDate", po.getCloseDate()); }                            // 平仓日期（格式：%Y%m%d）。
-			if (po.getCloseTime() != null) { update.set("closeTime", po.getCloseTime()); }                            // 平仓时间（格式：HH:mm:ss）。
+			if (po.getCloseSignalDate() != null) { update.set("closeSignalDate", po.getCloseSignalDate()); }          // 平仓信号发出时间（格式：yyyyMMddhhmmssSSS）。
+			if (po.getCloseDate() != null) { update.set("closeDate", po.getCloseDate()); }                            // 平仓日期（格式：yyyyMMddhhmmssSSS）。
 			if (po.getClosePrice() != null) { update.set("closePrice", po.getClosePrice()); }                         // 平仓价格。
 			if (po.getCloseNumber() != null) { update.set("closeNumber", po.getCloseNumber()); }                      // 平仓数量。
 			if (po.getNewPrice() != null) {update.set("newPrice", po.getNewPrice()); }                                // 当前价。

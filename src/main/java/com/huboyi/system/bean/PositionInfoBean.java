@@ -24,12 +24,10 @@ public class PositionInfoBean {
 	private String openContractCode;
 	/** 系统建仓点（买入信号类型）。*/
 	private String systemOpenPoint;
-	/** 建仓信号发出时间。*/
-	private Long openSignalTime;
-	/** 建仓日期（格式：%Y%m%d）。*/
-	private Integer openDate;
-	/** 建仓时间（详细时间）。*/
-	private Long openTime;
+	/** 建仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+	private Long openSignalDate;
+	/** 建仓日期（格式：yyyyMMddhhmmssSSS）。*/
+	private Long openDate;
 	/** 建仓价格。*/
 	private BigDecimal openPrice;
 	/** 建仓数量。*/
@@ -48,12 +46,10 @@ public class PositionInfoBean {
 	private String closeContractCode;
 	/** 系统平仓点（卖出信号类型）。*/
 	private String systemClosePoint;
-	/** 平仓信号发出时间。*/
-	private Long closeSignalTime;
-	/** 平仓日期（格式：%Y%m%d）。*/
-	private Integer closeDate;
-	/** 平仓时间（详细时间）。*/
-	private Long closeTime;
+	/** 平仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+	private Long closeSignalDate;
+	/** 平仓日期（格式：yyyyMMddhhmmssSSS）。*/
+	private Long closeDate;
 	/** 平仓价格。*/
 	private BigDecimal closePrice;
 	/** 平仓数量。*/
@@ -86,9 +82,8 @@ public class PositionInfoBean {
 		// --- 
 		.append("    ").append("openContractCode").append(":").append("'").append(openContractCode).append("'").append(", \n")
 		.append("    ").append("systemOpenPoint").append(":").append("'").append(systemOpenPoint).append("'").append(", \n")
-		.append("    ").append("openSignalTime").append(":").append("'").append(openSignalTime).append("'").append(", \n")
+		.append("    ").append("openSignalDate").append(":").append("'").append(openSignalDate).append("'").append(", \n")
 		.append("    ").append("openDate").append(":").append("'").append(openDate).append("'").append(", \n")
-		.append("    ").append("openTime").append(":").append("'").append(openTime).append("'").append(", \n")
 		.append("    ").append("openPrice").append(":").append("'").append(openPrice).append("'").append(", \n")
 		.append("    ").append("openNumber").append(":").append("'").append(openNumber).append("'").append(", \n")
 		.append("    ").append("openCost").append(":").append("'").append(openCost).append("'").append(", \n")
@@ -100,9 +95,8 @@ public class PositionInfoBean {
 		// --- 
 		.append("    ").append("closeContractCode").append(":").append("'").append(closeContractCode).append("'").append(", \n")
 		.append("    ").append("systemClosePoint").append(":").append("'").append(systemClosePoint).append("'").append(", \n")
-		.append("    ").append("closeSignalTime").append(":").append("'").append(closeSignalTime).append("'").append(", \n")
+		.append("    ").append("closeSignalDate").append(":").append("'").append(closeSignalDate).append("'").append(", \n")
 		.append("    ").append("closeDate").append(":").append("'").append(closeDate).append("'").append(", \n")
-		.append("    ").append("closeTime").append(":").append("'").append(closeTime).append("'").append(", \n")
 		.append("    ").append("closePrice").append(":").append("'").append(closePrice).append("'").append(", \n")
 		.append("    ").append("closeNumber").append(":").append("'").append(closeNumber).append("'").append(", \n")
 		
@@ -160,28 +154,20 @@ public class PositionInfoBean {
 		this.systemOpenPoint = systemOpenPoint;
 	}
 
-	public Long getOpenSignalTime() {
-		return openSignalTime;
+	public Long getOpenSignalDate() {
+		return openSignalDate;
 	}
 
-	public void setOpenSignalTime(Long openSignalTime) {
-		this.openSignalTime = openSignalTime;
+	public void setOpenSignalDate(Long openSignalDate) {
+		this.openSignalDate = openSignalDate;
 	}
 
-	public Integer getOpenDate() {
+	public Long getOpenDate() {
 		return openDate;
 	}
 
-	public void setOpenDate(Integer openDate) {
+	public void setOpenDate(Long openDate) {
 		this.openDate = openDate;
-	}
-
-	public Long getOpenTime() {
-		return openTime;
-	}
-
-	public void setOpenTime(Long openTime) {
-		this.openTime = openTime;
 	}
 
 	public BigDecimal getOpenPrice() {
@@ -240,28 +226,20 @@ public class PositionInfoBean {
 		this.systemClosePoint = systemClosePoint;
 	}
 
-	public Long getCloseSignalTime() {
-		return closeSignalTime;
+	public Long getCloseSignalDate() {
+		return closeSignalDate;
 	}
 
-	public void setCloseSignalTime(Long closeSignalTime) {
-		this.closeSignalTime = closeSignalTime;
+	public void setCloseSignalDate(Long closeSignalDate) {
+		this.closeSignalDate = closeSignalDate;
 	}
 
-	public Integer getCloseDate() {
+	public Long getCloseDate() {
 		return closeDate;
 	}
 
-	public void setCloseDate(Integer closeDate) {
+	public void setCloseDate(Long closeDate) {
 		this.closeDate = closeDate;
-	}
-
-	public Long getCloseTime() {
-		return closeTime;
-	}
-
-	public void setCloseTime(Long closeTime) {
-		this.closeTime = closeTime;
 	}
 
 	public BigDecimal getClosePrice() {
@@ -319,4 +297,5 @@ public class PositionInfoBean {
 	public void setStockholder(String stockholder) {
 		this.stockholder = stockholder;
 	}
+	
 }
