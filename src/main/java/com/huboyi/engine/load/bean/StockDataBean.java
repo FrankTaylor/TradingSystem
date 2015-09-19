@@ -19,20 +19,41 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * @since 2014/10/16
  * @version 1.0
  */
-@JsonPropertyOrder(value = {"date", "time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
+@JsonPropertyOrder(value = {"year", "month", "day", "hour", "minute", "second", "millisecond", "date", "time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
 public class StockDataBean implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 8359291706658391235L;
-
+	private static final long serialVersionUID = 2880136741244920021L;
+	
 	/*---------- 时间信息 ---------*/
+	/** 年。*/
+	@JsonProperty(value = "year", required = true)
+	private Integer year;
+	/** 月。*/
+	@JsonProperty(value = "month", required = true)
+	private Integer month;
+	/** 日。*/
+	@JsonProperty(value = "day", required = true)
+	private Integer day;
+	/** 时。*/
+	@JsonProperty(value = "hour", required = true)
+	private Integer hour;
+	/** 分。*/
+	@JsonProperty(value = "minute", required = true)
+	private Integer minute;
+	/** 秒。*/
+	@JsonProperty(value = "second", required = true)
+	private Integer second;
+	/** 毫秒。*/
+	@JsonProperty(value = "millisecond", required = true)
+	private Integer millisecond;
 	
-	/** 日期。*/
+	/** 日期（格式：yyyyMMddhhmmssSSS）。*/
 	@JsonProperty(value = "date", required = true)
-	private Integer date;
-	
-	/** 时间。*/
+	private Long date;
+	/** 时间（格式为当前计算机时间和GMT时间(格林威治时间)1970年1月1号0时0分0秒所差的毫秒数）。*/
 	@JsonProperty(value = "time", required = true)
 	private Long time;
+	
 	/*---------- 价格信息 ---------*/
 	
 	/** 开盘价。*/
@@ -68,14 +89,29 @@ public class StockDataBean implements Serializable, Cloneable {
 	public String toString() {
 		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append("[\n")
+		
+		// --- 时间信息 ---
+		.append("\t").append("year = ").append(year).append("\n")
+		.append("\t").append("month = ").append(month).append("\n")
+		.append("\t").append("day = ").append(day).append("\n")
+		.append("\t").append("hour = ").append(hour).append("\n")
+		.append("\t").append("minute = ").append(minute).append("\n")
+		.append("\t").append("second = ").append(second).append("\n")
+		.append("\t").append("millisecond = ").append(millisecond).append("\n")
 		.append("\t").append("date = ").append(date).append("\n")
 		.append("\t").append("time = ").append(time).append("\n")
+		
+		// --- 价格信息 ---
 		.append("\t").append("open = ").append(open).append("\n")
 		.append("\t").append("high = ").append(high).append("\n")
 		.append("\t").append("low = ").append(low).append("\n")
 		.append("\t").append("close = ").append(close).append("\n")
+		
+		// --- 成交信息 ---
 		.append("\t").append("volume = ").append(volume).append("\n")
 		.append("\t").append("amount = ").append(amount).append("\n")
+		
+		// --- 其他信息 ---
 		.append("\t").append("prev_date = ").append((null != prev) ? prev.getDate() : null).append("\n")
 		.append("\t").append("next_date = ").append((null != next) ? next.getDate() : null).append("\n")
 		.append("]\n");
@@ -127,11 +163,67 @@ public class StockDataBean implements Serializable, Cloneable {
 	
 	// --- get method and set method ---
 	
-	public Integer getDate() {
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public Integer getMonth() {
+		return month;
+	}
+
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
+	}
+
+	public Integer getHour() {
+		return hour;
+	}
+
+	public void setHour(Integer hour) {
+		this.hour = hour;
+	}
+
+	public Integer getMinute() {
+		return minute;
+	}
+
+	public void setMinute(Integer minute) {
+		this.minute = minute;
+	}
+
+	public Integer getSecond() {
+		return second;
+	}
+
+	public void setSecond(Integer second) {
+		this.second = second;
+	}
+
+	public Integer getMillisecond() {
+		return millisecond;
+	}
+
+	public void setMillisecond(Integer millisecond) {
+		this.millisecond = millisecond;
+	}
+	
+	public Long getDate() {
 		return date;
 	}
 
-	public void setDate(Integer date) {
+	public void setDate(Long date) {
 		this.date = date;
 	}
 	
