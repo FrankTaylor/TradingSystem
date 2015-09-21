@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.IndexOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.index.Index.Duplicates;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -51,13 +50,13 @@ public class TestFundsFlowRepositoryImpl implements TestFundsFlowRepository {
 			
 			/*
 			 * 2.在该集合上建立复合索引，且该索引还是唯一和稀疏的。
-			 * 原生语句：db.test_fundsFlow_123456.ensureIndex({"tradeDate" : 1, "tradeTime" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "tradeDate@tradeTime", "background" : 1})
+			 * 原生语句：db.test_fundsFlow_123456.ensureIndex({"tradeDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "tradeDate", "background" : 1})
 			 */
-			String indexName = "tradeDate@tradeTime";
+			String indexName = "tradeDate";
 			indexOps.ensureIndex(
 					new Index()
 					.on("tradeDate", Direction.ASC)
-					.unique(Duplicates.DROP)
+//					.unique(Duplicates.DROP) Dropping Duplicates was removed in MongoDB Server 2.8.0-rc0.
 					.sparse()
 					.named(indexName)
 					.background()
@@ -122,11 +121,10 @@ public class TestFundsFlowRepositoryImpl implements TestFundsFlowRepository {
 		
 		try {
 			/*
-			 * 原生语句：db.test_fundsFlow_123456.find().sort({tradeDate : -1, tradeTime : -1}).limit(1);
+			 * 原生语句：db.test_fundsFlow_123456.find().sort({tradeDate : -1}).limit(1);
 			 */
 			Query query = new Query();
 			query.with(new Sort(Direction.DESC, "tradeDate"));
-			query.with(new Sort(Direction.DESC, "tradeTime"));
 			query.limit(1);
 			
 			List<FundsFlowPO> poList = mongoTemplate.find(query, FundsFlowPO.class, getCollectionPath(stockCode));
@@ -161,8 +159,8 @@ public class TestFundsFlowRepositoryImpl implements TestFundsFlowRepository {
 			 * 原生语句：
 			 * db.test_fundsFlow_123456
 			 * .find({"tradeDate" : {"$gte" : 20100101, "$lte" : 20151212}})
-			 * .sort({tradeDate : 1, tradeTime : 1})
-			 * .hint('tradeDate@tradeTime')
+			 * .sort({tradeDate : 1})
+			 * .hint('tradeDate')
 			 * .skip(10)
 			 * .limit(10);
 			 */
@@ -181,8 +179,7 @@ public class TestFundsFlowRepositoryImpl implements TestFundsFlowRepository {
 			}
 			
 			query.with(new Sort(Direction.ASC, "tradeDate"));
-			query.with(new Sort(Direction.ASC, "tradeTime"));
-			query.withHint("tradeDate@tradeTime");
+			query.withHint("tradeDate");
 			
 			if (beginPage != null) {
 				query.skip(beginPage);

@@ -7,13 +7,12 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.po.OrderInfoPO;
 import com.huboyi.system.test.db.TestOrderInfoRepository;
 /**
@@ -26,9 +25,6 @@ import com.huboyi.system.test.db.TestOrderInfoRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/config/system/test/db/redis/redis-spring.xml", "/config/system/test/db/redis/repository-spring.xml"})
 public class TestTestOrderInfoRepository {
-	
-	/** 日志。*/
-	private final Logger log = Logger.getLogger(TestTestOrderInfoRepository.class);
 
 	/** 证券代码。*/
 	private static final String STOCK_CODE = "000518";
@@ -68,17 +64,9 @@ public class TestTestOrderInfoRepository {
 			tradeDateMonth = tradeDateMonth.length() == 1 ? "0" + tradeDateMonth : tradeDateMonth;
 			String tradeDateDay = "" + (random.nextInt(31));
 			tradeDateDay = tradeDateDay.length() == 1 ? "0" + tradeDateDay : tradeDateDay;
-			po.setTradeDate(Integer.valueOf((tradeDateYear + tradeDateMonth + tradeDateDay)));
-			/* 交易时间。 */
-			String tradeTimeHour = "" + (random.nextInt(24));
-			tradeTimeHour = tradeTimeHour.length() == 1 ? "0" + tradeTimeHour : tradeTimeHour;
-			String tradeTimeMinute = "" + (random.nextInt(60));
-			tradeTimeMinute = tradeTimeMinute.length() == 1 ? "0" + tradeTimeMinute : tradeTimeMinute;
-			String tradeTimeSecond = "" + (random.nextInt(60));
-			tradeTimeSecond = tradeTimeSecond.length() == 1 ? "0" + tradeTimeSecond : tradeTimeSecond;
-			po.setTradeTime(Long.valueOf((tradeTimeHour + tradeTimeMinute + tradeTimeSecond)));
+			po.setTradeDate(Long.valueOf((tradeDateYear + tradeDateMonth + tradeDateDay + "000000000")));
 			/* 买卖标志。*/
-			po.setTradeFlag(random.nextInt(1) == 0 ? OrderInfoTradeFlagEnum.STOCK_BUY.getType() : OrderInfoTradeFlagEnum.STOCK_SELL.getType());
+			po.setTradeFlag(random.nextInt(1) == 0 ? OrderInfoTradeFlag.STOCK_BUY.getType() : OrderInfoTradeFlag.STOCK_SELL.getType());
 			
 			/* 成交价格。 */
 			po.setTradePrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));

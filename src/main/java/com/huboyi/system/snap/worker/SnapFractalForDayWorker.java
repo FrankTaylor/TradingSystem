@@ -200,7 +200,7 @@ public class SnapFractalForDayWorker implements Callable<SnapResultBean[]> {
 		/* 证券代码。*/
 		result.setStockCode(stockCode);
 		/* 信号日期。*/
-		result.setSignalDate(Long.valueOf(dealPoint.getDate()));
+		result.setSignalDate(dealPoint.getDate());
 		/* 信号类型。*/
 		result.setSignalType(dealSignal.getType().getType());
 		/* 信号名称。*/

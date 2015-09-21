@@ -3,7 +3,6 @@ package com.huboyi.system.test.rule;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,9 +18,9 @@ import org.springframework.beans.BeanUtils;
 
 import com.huboyi.engine.DealFeeCalculator;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
-import com.huboyi.system.constant.FundsFlowBusinessEnum;
-import com.huboyi.system.constant.OrderInfoTradeFlagEnum;
+import com.huboyi.system.constant.DealSignal;
+import com.huboyi.system.constant.FundsFlowBusiness;
+import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.po.FundsFlowPO;
 import com.huboyi.system.po.OrderInfoPO;
@@ -111,22 +110,20 @@ public class TestFractalPositionInfoRule {
 	 * 
 	 * @param businessType 业务类型
 	 * @param stockCode 证券代码
-	 * @param tradeDate 转账日期
-	 * @param tradeTime 转账时间
+	 * @param tradeDate 转账日期 （格式：yyyyMMddhhmmssSSS）
 	 * @param transferMoney 转存金额
 	 * @return boolean true：转存成功；false：转存失败
 	 */
 	public boolean 
 	insertBankTransfer (
-			FundsFlowBusinessEnum businessType, String stockCode, 
-			Long tradeDate, Long tradeTime, BigDecimal transferMoney) {
+			FundsFlowBusiness businessType, String stockCode, 
+			Long tradeDate, BigDecimal transferMoney) {
 		
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存银行转存记录] 方法").append("\n");
 		logMsg.append("@param [businessType = " + businessType + "]\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]\n");
 		logMsg.append("@param [tradeDate = " + tradeDate + "]\n");
-		logMsg.append("@param [tradeTime = " + tradeTime + "]\n");
 		logMsg.append("@param [transferMoney = " + transferMoney + "]\n");
 		log.info(logMsg.toString());
 		
@@ -134,7 +131,7 @@ public class TestFractalPositionInfoRule {
 		// #TODO 略
 		
 		// --- 业务逻辑正确性验证 ---
-		if (businessType != FundsFlowBusinessEnum.ROLL_IN && businessType != FundsFlowBusinessEnum.ROLL_OUT) {
+		if (businessType != FundsFlowBusiness.ROLL_IN && businessType != FundsFlowBusiness.ROLL_OUT) {
 			log.error("在保存银行转存记录时出现错误，业务类型只能是银行转入或资金转出！[businessType = " + businessType + "]");
 			return false;
 		}
@@ -151,15 +148,14 @@ public class TestFractalPositionInfoRule {
 		
 	    if (oldFundsFlowPo != null) {
 	    	Long oldTradeDate = oldFundsFlowPo.getTradeDate();
-	    	Long oldTradeTime = oldFundsFlowPo.getTradeTime();
-	    	if (oldTradeDate == null || oldTradeTime == null) {
-	    		log.error("在保存银行转存记录时出现错误，数据库记录中的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
+	    	if (oldTradeDate == null) {
+	    		log.error("在保存银行转存记录时出现错误，数据库记录中的交易日期不能为null，请检查程序，完善数据的完整性！");
 	    		return false;
 	    	}
 
-	    	if (tradeTime < oldTradeTime) {
+	    	if (tradeDate < oldTradeDate) {
 	    		log.error("在保存银行转存记录时出现错误，新插入记录的日期不能小于数据库中其他记录的日期！" +
-	    				"[tradeTime = " + tradeTime + "] | [oldTradeTime = " + oldTradeTime + "]");
+	    				"[tradeDate = " + tradeDate + "] | [oldTradeDate = " + oldTradeDate + "]");
 	    		return false;
 	    	}
 	    }
@@ -169,7 +165,7 @@ public class TestFractalPositionInfoRule {
     		return false;
 	    }
 	    
-	    if (businessType == FundsFlowBusinessEnum.ROLL_OUT) {
+	    if (businessType == FundsFlowBusiness.ROLL_OUT) {
 	    	if (transferMoney.compareTo(oldFundsBalance) == 1) {
 	    		log.error("在保存银行转存记录时出现错误，转出的金额不能超过资金余额！" +
 	    				"[oldFundsBalance = " + oldFundsBalance + "] | [transferMoney = " + transferMoney + "]");
@@ -179,7 +175,7 @@ public class TestFractalPositionInfoRule {
 	    
 	    // --- 计算新的资金余额 ---
 	    BigDecimal fundsBalance = null;
-	    if (businessType == FundsFlowBusinessEnum.ROLL_IN) {
+	    if (businessType == FundsFlowBusiness.ROLL_IN) {
 	    	fundsBalance = oldFundsBalance.add(transferMoney);
 	    } else {
 	    	fundsBalance = oldFundsBalance.subtract(transferMoney);
@@ -193,10 +189,8 @@ public class TestFractalPositionInfoRule {
 		po.setStockCode(stockCode);
 		/* 证券名称。 */
 		po.setStockName(null);
-		/* 交易日期。 */
+		/* 交易日期 （格式：yyyyMMddhhmmssSSS）。 */
 		po.setTradeDate(tradeDate);
-		/* 交易时间。 */
-		po.setTradeTime(tradeTime);
 		/* 成交价格。 */
 		po.setTradePrice(null);
 		/* 成交数量。 */
@@ -232,9 +226,8 @@ public class TestFractalPositionInfoRule {
 	 *        
 	 * @param systemOpenPoint 系统建仓点
 	 * @param stockCode 证券代码
-	 * @param openSignalTime 建仓信号发出时间
-	 * @param tradeDate 交易日期
-	 * @param tradeTime 交易时间
+	 * @param openSignalDate 建仓信号发出时间 （格式：yyyyMMddhhmmssSSS）
+	 * @param tradeDate 交易日期 （格式：yyyyMMddhhmmssSSS）
 	 * @param tradePrice 成交价格
 	 * @param stopPrice 止损价格
 	 * @throws ParseException 
@@ -242,16 +235,15 @@ public class TestFractalPositionInfoRule {
 	 */
 	public void 
 	insertBuyInfo (
-			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
-			Long tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
+			DealSignal systemOpenPoint, String stockCode, Long openSignalDate, 
+			Long tradeDate, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存买入证券时的资金流水记录和仓位信息] 方法").append("\n");
 		logMsg.append("@param [systemOpenPoint = " + systemOpenPoint + "]\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]\n");
-		logMsg.append("@param [openSignalTime = " + openSignalTime + "]\n");
+		logMsg.append("@param [openSignalDate = " + openSignalDate + "]\n");
 		logMsg.append("@param [tradeDate = " + tradeDate + "]\n");
-		logMsg.append("@param [tradeTime = " + tradeTime + "]\n");
 		logMsg.append("@param [tradePrice = " + tradePrice + "]\n");
 		logMsg.append("@param [stopPrice = " + stopPrice + "]\n");
 		log.info(logMsg.toString());
@@ -262,7 +254,7 @@ public class TestFractalPositionInfoRule {
 		}
 		
 		// --- 执行仓位控制策略 ---
-		if (!positionControlForBuy(systemOpenPoint, stockCode, openSignalTime, tradeDate, tradeTime, tradePrice, stopPrice)) {
+		if (!positionControlForBuy(systemOpenPoint, stockCode, openSignalDate, tradeDate, tradePrice, stopPrice)) {
     		return;
 		}
 		
@@ -283,14 +275,13 @@ public class TestFractalPositionInfoRule {
 	    	return;
 	    }
 		
-		Integer oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                               // 得到已存在的成交日期（格式：%Y%m%d）。
-    	Long oldTradeTimeOfFundsFlow = oldFundsFlowPo.getTradeTime();                                                  // 得到已存在的成交时间（详细时间）。
-    	if (oldTradeDateOfFundsFlow == null || oldTradeTimeOfFundsFlow == null) {
-    		log.error("数据库记录中资金流水的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
+		Long oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                                  // 得到已存在的成交日期（格式：yyyyMMddhhmmssSSS）。
+    	if (oldTradeDateOfFundsFlow == null) {
+    		log.error("数据库记录中资金流水的交易日期不能为null，请检查程序，完善数据的完整性！");
     		return;
     	}
     	
-    	Integer newTradeDateOfFundsFlow = tradeDate;                                                                   // 得到最新的资金流水的成交日期（格式：%Y%m%d）。
+    	Long newTradeDateOfFundsFlow = tradeDate;                                                                      // 得到最新的资金流水的成交日期（格式：yyyyMMddhhmmssSSS）。
     	if (newTradeDateOfFundsFlow < oldTradeDateOfFundsFlow) {
     		log.error(
     				"新插入资金流水记录中的交易日期不能小于已存在资金流水记录中的交易日期！" +
@@ -298,24 +289,15 @@ public class TestFractalPositionInfoRule {
     				"[oldTradeDateOfFundsFlow = " + oldTradeDateOfFundsFlow + "]");
     		return;
     	}
-    	
-    	Long newTradeTimeOfFundsFlow = tradeTime;                                                                      // 得到最新的资金流水的成交时间（详细时间）。
-    	if (newTradeDateOfFundsFlow.equals(oldTradeDateOfFundsFlow)) {
-    		if (newTradeTimeOfFundsFlow <= oldTradeTimeOfFundsFlow) {
-    			newTradeTimeOfFundsFlow = oldTradeTimeOfFundsFlow + 1;
-    		}
-    	}
-    	
+
     	// --- 验证即将保存的订单记录中的业务数据的正确性 ---
     	OrderInfoPO oldOrderInfoPO = testOrderInfoRepository.findNewOne(stockCode);                                    // 得到最新的一条订单记录。
-    	Integer newTradeDateOfOrderInfo = tradeDate;                                                                   // 得到最新的订单记录的成交日期（格式：%Y%m%d）。
-    	Long newTradeTimeOfOrderInfo = tradeTime;                                                                      // 得到最新的订单记录的成交时间（详细时间）。
+    	Long newTradeDateOfOrderInfo = tradeDate;                                                                      // 得到最新的订单记录的成交日期（格式：yyyyMMddhhmmssSSS）。
     	
     	if (oldOrderInfoPO != null) {
-    		Integer oldTradeDateOfOrderInfo = oldOrderInfoPO.getTradeDate();                                           // 得到已存在的成交日期（格式：%Y%m%d）。
-        	Long oldTradeTimeOfOrderInfo = oldOrderInfoPO.getTradeTime();                                              // 得到已存在的成交时间（详细时间）。
-        	if (oldTradeDateOfOrderInfo == null || oldTradeTimeOfOrderInfo == null) {
-        		log.error("数据库记录中订单记录的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
+    		Long oldTradeDateOfOrderInfo = oldOrderInfoPO.getTradeDate();                                              // 得到已存在的成交日期（格式：yyyyMMddhhmmssSSS）。
+        	if (oldTradeDateOfOrderInfo == null) {
+        		log.error("数据库记录中订单记录的交易日期不能为null，请检查程序，完善数据的完整性！");
         		return;
         	}
         	
@@ -326,25 +308,17 @@ public class TestFractalPositionInfoRule {
         				"[oldTradeDateOfOrderInfo = " + oldTradeDateOfOrderInfo + "]");
         		return;
         	}
-        	
-        	if (newTradeDateOfOrderInfo.equals(oldTradeDateOfOrderInfo)) {
-        		if (newTradeTimeOfOrderInfo <= oldTradeTimeOfOrderInfo) {
-        			newTradeTimeOfOrderInfo = oldTradeTimeOfOrderInfo + 1;
-        		}
-        	}
     	}
 		
     	
     	// --- 验证即将保存的仓位记录中的业务数据的正确性 ---
     	EverySumPositionInfoPO oldEverySumPositionInfoPO = testEverySumPositionInfoRepository.findNewOne(stockCode);   // 得到最新的一条建仓记录。
-    	Integer newOpenDateOfEverySumPositionInfo = tradeDate;                                                         // 得到最新的建仓记录的建仓日期（格式：%Y%m%d）。
-    	Long newOpenTimeOfEverySumPositionInfo = tradeTime;                                                            // 得到最新的建仓记录的建仓时间（详细时间）。
+    	Long newOpenDateOfEverySumPositionInfo = tradeDate;                                                            // 得到最新的建仓记录的建仓日期（格式：yyyyMMddhhmmssSSS）。
     	
     	if (oldEverySumPositionInfoPO != null) {
-    		Integer oldOpenDateOfEverySumPositionInfo = oldEverySumPositionInfoPO.getOpenDate();                       // 得到已存在的建仓日期（格式：%Y%m%d）。
-        	Long oldOpenTimeOfEverySumPositionInfo = oldEverySumPositionInfoPO.getOpenTime();                          // 得到已存在的建仓时间（详细时间）。
-        	if (oldOpenDateOfEverySumPositionInfo == null || oldOpenTimeOfEverySumPositionInfo == null) {
-        		log.error("数据库记录中建仓记录的建仓日期和建仓时间不能为null，请检查程序，完善数据的完整性！");
+    		Long oldOpenDateOfEverySumPositionInfo = oldEverySumPositionInfoPO.getOpenDate();                          // 得到已存在的建仓日期（格式：yyyyMMddhhmmssSSS）。
+        	if (oldOpenDateOfEverySumPositionInfo == null) {
+        		log.error("数据库记录中建仓记录的建仓日期不能为null，请检查程序，完善数据的完整性！");
         		return;
         	}
         	
@@ -354,12 +328,6 @@ public class TestFractalPositionInfoRule {
         				"[newOpenDateOfEverySumPositionInfo = " + newOpenDateOfEverySumPositionInfo + "] | " +
         				"[oldOpenDateOfEverySumPositionInfo = " + oldOpenDateOfEverySumPositionInfo + "]");
         		return;
-        	}
-        	
-        	if (newOpenDateOfEverySumPositionInfo.equals(oldOpenDateOfEverySumPositionInfo)) {
-        		if (newOpenTimeOfEverySumPositionInfo <= oldOpenTimeOfEverySumPositionInfo) {
-        			newOpenTimeOfEverySumPositionInfo = newOpenTimeOfEverySumPositionInfo + 1;
-        		}
         	}
     	}
     	
@@ -431,10 +399,8 @@ public class TestFractalPositionInfoRule {
 		fundsFlowPO.setStockCode(stockCode);
 		/* 证券名称。 */
 		fundsFlowPO.setStockName(null);
-		/* 交易日期。 */
+		/* 交易日期（格式：yyyyMMddhhmmssSSS）。 */
 		fundsFlowPO.setTradeDate(newTradeDateOfFundsFlow);
-		/* 交易时间。 */
-		fundsFlowPO.setTradeTime(newTradeTimeOfFundsFlow);
 		/* 成交价格。 */
 		fundsFlowPO.setTradePrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 		/* 成交数量。 */
@@ -446,7 +412,7 @@ public class TestFractalPositionInfoRule {
 		
 		// --- 
 		/* 业务名称。 */
-		fundsFlowPO.setBusinessName(FundsFlowBusinessEnum.STOCK_BUY.getType());
+		fundsFlowPO.setBusinessName(FundsFlowBusiness.STOCK_BUY.getType());
 		
 		// --- 
 		/* 手续费。 */
@@ -474,12 +440,10 @@ public class TestFractalPositionInfoRule {
 		orderInfoPO.setStockCode(stockCode);
 		/* 证券名称。 */
 		orderInfoPO.setStockName(null);
-		/* 成交日期。 */
+		/* 成交日期（格式：yyyyMMddhhmmssSSS）。 */
 		orderInfoPO.setTradeDate(newTradeDateOfOrderInfo);
-		/* 成交时间。 */
-		orderInfoPO.setTradeTime(newTradeTimeOfOrderInfo);
 		/* 买卖标志。*/
-		orderInfoPO.setTradeFlag(OrderInfoTradeFlagEnum.STOCK_BUY.getType());
+		orderInfoPO.setTradeFlag(OrderInfoTradeFlag.STOCK_BUY.getType());
 		/* 成交价格。 */
 		orderInfoPO.setTradePrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 		/* 成交数量。 */
@@ -508,12 +472,10 @@ public class TestFractalPositionInfoRule {
 		everySumPositionInfoPO.setSystemOpenPoint(systemOpenPoint.getType());
 		/* 系统建仓点名称。*/
 		everySumPositionInfoPO.setSystemOpenName(systemOpenPoint.getName());
-		/* 建仓信号发出时间。*/
-		everySumPositionInfoPO.setOpenSignalTime(openSignalTime);
-		/* 建仓日期（格式：%Y%m%d）。 */
+		/* 建仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+		everySumPositionInfoPO.setOpenSignalDate(openSignalDate);
+		/* 建仓日期（格式：yyyyMMddhhmmssSSS）。 */
 		everySumPositionInfoPO.setOpenDate(newOpenDateOfEverySumPositionInfo);
-		/* 建仓时间（格式：HH:mm:ss）。 */
-		everySumPositionInfoPO.setOpenTime(newOpenTimeOfEverySumPositionInfo);
 		/* 建仓价格。 */
 		everySumPositionInfoPO.setOpenPrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 		/* 建仓数量。 */
@@ -563,26 +525,24 @@ public class TestFractalPositionInfoRule {
 	 * @param systemClosePoint 系统平仓点
 	 * @param stockCode 证券代码
 	 * @param openContractCode 建仓合同编号
-	 * @param closeSignalTime 平仓信号发出时间
-	 * @param tradeDate 交易日期
-	 * @param tradeTime 交易时间
+	 * @param closeSignalDate 平仓信号发出时间 （格式：yyyyMMddhhmmssSSS）
+	 * @param tradeDate 交易日期 （格式：yyyyMMddhhmmssSSS）
 	 * @param tradePrice 成交价格
 	 * @throws ParseException 
 	 * @throws NumberFormatException 
 	 */
 	public void 
 	insertSellInfo (
-			DealSignalEnum systemClosePoint, String stockCode, String openContractCode, 
-			Long closeSignalTime, Long tradeDate, Long tradeTime, BigDecimal tradePrice) 
+			DealSignal systemClosePoint, String stockCode, String openContractCode, 
+			Long closeSignalDate, Long tradeDate, BigDecimal tradePrice) 
 	throws NumberFormatException, ParseException {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [保存买入证券时的资金流水记录和仓位信息] 方法").append("\n");
 		logMsg.append("@param [systemClosePoint = " + systemClosePoint + "]\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]\n");
 		logMsg.append("@param [openContractCode = " + openContractCode + "]\n");
-		logMsg.append("@param [closeSignalTime = " + closeSignalTime + "]\n");
+		logMsg.append("@param [closeSignalDate = " + closeSignalDate + "]\n");
 		logMsg.append("@param [tradeDate = " + tradeDate + "]\n");
-		logMsg.append("@param [tradeTime = " + tradeTime + "]\n");
 		logMsg.append("@param [tradePrice = " + tradePrice + "]\n");
 		log.info(logMsg.toString());
 		
@@ -591,16 +551,16 @@ public class TestFractalPositionInfoRule {
 		
 	    // --- 业务逻辑正确性验证 ---
 		if (
-				systemClosePoint != DealSignalEnum.SELL_ONE_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_TWO_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_THREE_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_FOUR_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_FIVE_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_SIX_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_SEVEN_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_EIGHT_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_NINE_TENTH &&
-				systemClosePoint != DealSignalEnum.SELL_ALL
+				systemClosePoint != DealSignal.SELL_ONE_TENTH &&
+				systemClosePoint != DealSignal.SELL_TWO_TENTH &&
+				systemClosePoint != DealSignal.SELL_THREE_TENTH &&
+				systemClosePoint != DealSignal.SELL_FOUR_TENTH &&
+				systemClosePoint != DealSignal.SELL_FIVE_TENTH &&
+				systemClosePoint != DealSignal.SELL_SIX_TENTH &&
+				systemClosePoint != DealSignal.SELL_SEVEN_TENTH &&
+				systemClosePoint != DealSignal.SELL_EIGHT_TENTH &&
+				systemClosePoint != DealSignal.SELL_NINE_TENTH &&
+				systemClosePoint != DealSignal.SELL_ALL
 			) {
 			log.error("传入的平仓点不合法！[systemClosePoint = " + systemClosePoint + "]");
 			return;
@@ -619,27 +579,19 @@ public class TestFractalPositionInfoRule {
 	    	return;
 	    }
 		
-		Long oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                                  // 得到已存在的成交日期（格式：%Y%m%d）。
-    	Long oldTradeTimeOfFundsFlow = oldFundsFlowPo.getTradeTime();                                                  // 得到已存在的成交时间（详细时间）。
-    	if (oldTradeDateOfFundsFlow == null || oldTradeTimeOfFundsFlow == null) {
-    		log.error("数据库记录中资金流水的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
+		Long oldTradeDateOfFundsFlow = oldFundsFlowPo.getTradeDate();                                                  // 得到已存在的成交日期（格式：yyyyMMddhhmmssSSS）。
+    	if (oldTradeDateOfFundsFlow == null) {
+    		log.error("数据库记录中资金流水的交易日期不能为null，请检查程序，完善数据的完整性！");
     		return;
     	}
     	
-    	Long newTradeDateOfFundsFlow = tradeDate;                                                                      // 得到最新的资金流水的成交日期（格式：%Y%m%d）。
+    	Long newTradeDateOfFundsFlow = tradeDate;                                                                      // 得到最新的资金流水的成交日期（格式：yyyyMMddhhmmssSSS）。
     	if (newTradeDateOfFundsFlow < oldTradeDateOfFundsFlow) {
     		log.error(
     				"新插入资金流水记录中的交易日期不能小于已存在资金流水记录中的交易日期！" +
     				"[newTradeDateOfFundsFlow = " + newTradeDateOfFundsFlow + "] | " +
     				"[oldTradeDateOfFundsFlow = " + oldTradeDateOfFundsFlow + "]");
     		return;
-    	}
-    	
-    	Long newTradeTimeOfFundsFlow = tradeTime;                                                                      // 得到最新的资金流水的成交时间（详细时间）。
-    	if (newTradeDateOfFundsFlow.equals(oldTradeDateOfFundsFlow)) {
-    		if (newTradeTimeOfFundsFlow <= oldTradeTimeOfFundsFlow) {
-    			newTradeTimeOfFundsFlow = oldTradeTimeOfFundsFlow + 1;
-    		}
     	}
     	
     	// --- 验证即将保存的订单记录中的业务数据的正确性 ---
@@ -649,13 +601,10 @@ public class TestFractalPositionInfoRule {
 	    	return;
 		}
     	
-    	Long newTradeDateOfOrderInfo = tradeDate;                                                                      // 得到最新的订单记录的成交日期（格式：%Y%m%d）。
-    	Long newTradeTimeOfOrderInfo = tradeTime;                                                                      // 得到最新的订单记录的成交时间（详细时间）。
-    	
-    	Integer oldTradeDateOfOrderInfo = oldOrderInfoPO.getTradeDate();                                               // 得到已存在的成交日期（格式：%Y%m%d）。
-    	Long oldTradeTimeOfOrderInfo = oldOrderInfoPO.getTradeTime();                                                  // 得到已存在的成交时间（详细时间）。
-    	if (oldTradeDateOfOrderInfo == null || oldTradeTimeOfOrderInfo == null) {
-    		log.error("数据库记录中订单记录的交易日期和交易时间不能为null，请检查程序，完善数据的完整性！");
+    	Long newTradeDateOfOrderInfo = tradeDate;                                                                      // 得到最新的订单记录的成交日期（格式：yyyyMMddhhmmssSSS）。
+    	Long oldTradeDateOfOrderInfo = oldOrderInfoPO.getTradeDate();                                                  // 得到已存在的成交日期（格式：yyyyMMddhhmmssSSS）。
+    	if (oldTradeDateOfOrderInfo == null) {
+    		log.error("数据库记录中订单记录的交易日期不能为null，请检查程序，完善数据的完整性！");
     		return;
     	}
     	
@@ -667,12 +616,6 @@ public class TestFractalPositionInfoRule {
     		return;
     	}
     	
-    	if (newTradeDateOfOrderInfo.equals(oldTradeDateOfOrderInfo)) {
-    		if (newTradeTimeOfOrderInfo <= oldTradeTimeOfOrderInfo) {
-    			newTradeTimeOfOrderInfo = oldTradeTimeOfOrderInfo + 1;
-    		}
-    	}
-		
 		/*
 		 * +-----------------------------------------------------------+
 		 * + 每一笔持仓信息 。                                                                                                                                             +
@@ -712,25 +655,25 @@ public class TestFractalPositionInfoRule {
 		}
 		
 		BigDecimal sellPercent = new BigDecimal(0);                                                                   // 计算需要卖掉仓位的百分比。
-		if (systemClosePoint == DealSignalEnum.SELL_ONE_TENTH) {
+		if (systemClosePoint == DealSignal.SELL_ONE_TENTH) {
 			sellPercent = new BigDecimal(0.1);
-		} else if (systemClosePoint == DealSignalEnum.SELL_TWO_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_TWO_TENTH) {
 			sellPercent = new BigDecimal(0.2);
-		} else if (systemClosePoint == DealSignalEnum.SELL_THREE_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_THREE_TENTH) {
 			sellPercent = new BigDecimal(0.3);
-		} else if (systemClosePoint == DealSignalEnum.SELL_FOUR_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_FOUR_TENTH) {
 			sellPercent = new BigDecimal(0.4);
-		} else if (systemClosePoint == DealSignalEnum.SELL_FIVE_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_FIVE_TENTH) {
 			sellPercent = new BigDecimal(0.5);
-		} else if (systemClosePoint == DealSignalEnum.SELL_SIX_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_SIX_TENTH) {
 			sellPercent = new BigDecimal(0.6);
-		} else if (systemClosePoint == DealSignalEnum.SELL_SEVEN_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_SEVEN_TENTH) {
 			sellPercent = new BigDecimal(0.7);
-		} else if (systemClosePoint == DealSignalEnum.SELL_EIGHT_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_EIGHT_TENTH) {
 			sellPercent = new BigDecimal(0.8);
-		} else if (systemClosePoint == DealSignalEnum.SELL_NINE_TENTH) {
+		} else if (systemClosePoint == DealSignal.SELL_NINE_TENTH) {
 			sellPercent = new BigDecimal(0.9);
-		} else if (systemClosePoint == DealSignalEnum.SELL_ALL) {
+		} else if (systemClosePoint == DealSignal.SELL_ALL) {
 			sellPercent = new BigDecimal(1);
 		}
 		
@@ -798,12 +741,10 @@ public class TestFractalPositionInfoRule {
 				updatePO.setSystemClosePoint(systemClosePoint.getType());
 				/* 系统平仓点名称。*/
 				updatePO.setSystemCloseName(systemClosePoint.getName());
-				/* 平仓信号发出时间。*/
-				updatePO.setCloseSignalTime(closeSignalTime);
-				/* 平仓日期（格式：%Y%m%d）。 */
+				/* 平仓信号发出时间（格式：yyyyMMddhhmmssSSS）。*/
+				updatePO.setCloseSignalDate(closeSignalDate);
+				/* 平仓日期（格式：yyyyMMddhhmmssSSS）。 */
 				updatePO.setCloseDate(tradeDate);
-				/* 平仓时间（格式：HH:mm:ss）。 */
-				updatePO.setCloseTime(tradeTime);
 				/* 平仓价格。 */
 				updatePO.setClosePrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 				/* 平仓数量。 */
@@ -887,10 +828,8 @@ public class TestFractalPositionInfoRule {
 		orderInfoPO.setStockName(null);
 		/* 成交日期。 */
 		orderInfoPO.setTradeDate(newTradeDateOfOrderInfo);
-		/* 成交时间。 */
-		orderInfoPO.setTradeTime(newTradeTimeOfOrderInfo);
 		/* 买卖标志。*/
-		orderInfoPO.setTradeFlag(OrderInfoTradeFlagEnum.STOCK_SELL.getType());
+		orderInfoPO.setTradeFlag(OrderInfoTradeFlag.STOCK_SELL.getType());
 		/* 成交价格。 */
 		orderInfoPO.setTradePrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 		/* 成交数量。 */
@@ -914,8 +853,6 @@ public class TestFractalPositionInfoRule {
 		fundsFlowPO.setStockName(null);
 		/* 交易日期。 */
 		fundsFlowPO.setTradeDate(newTradeDateOfFundsFlow);
-		/* 交易时间。 */
-		fundsFlowPO.setTradeTime(newTradeTimeOfFundsFlow);
 		/* 成交价格。 */
 		fundsFlowPO.setTradePrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
 		/* 成交数量。 */
@@ -927,7 +864,7 @@ public class TestFractalPositionInfoRule {
 		
 		// --- 
 		/* 业务名称。 */
-		fundsFlowPO.setBusinessName(FundsFlowBusinessEnum.STOCK_SELL.getType());
+		fundsFlowPO.setBusinessName(FundsFlowBusiness.STOCK_SELL.getType());
 		
 		// --- 
 		/* 手续费。 */
@@ -957,10 +894,10 @@ public class TestFractalPositionInfoRule {
 	 * 每天收盘时刷新每笔仓位信息。
 	 * 
 	 * @param stockCode 证券代码
-	 * @param date 日期
+	 * @param date 日期 （格式：yyyyMMddhhmmssSSS）
 	 * @param newPrice 当前价格
 	 */
-	public void flushEverySumPositionInfoInClosing (String stockCode, Integer date, BigDecimal newPrice) {
+	public void flushEverySumPositionInfoInClosing (String stockCode, Long date, BigDecimal newPrice) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用  [每天收盘时刷新每笔仓位信息] 方法").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]\n");
@@ -1000,7 +937,8 @@ public class TestFractalPositionInfoRule {
 			
 			/* 可平仓数量。*/
 			Long canCloseNumber = po.getCanCloseNumber();
-			if (canCloseNumber == null && date.equals(po.getOpenSignalTime().intValue())) {
+			if (canCloseNumber == null && 
+					Integer.valueOf(String.valueOf(date).substring(0, 8)).equals(Integer.valueOf(String.valueOf(po.getOpenSignalDate()).substring(0, 8)))) {
 				canCloseNumber = po.getOpenNumber();
 				updatePo.setCanCloseNumber(canCloseNumber);
 			}
@@ -1025,7 +963,7 @@ public class TestFractalPositionInfoRule {
 	}
 	
 	/**
-	 * 查询某证券全部的资金流水信息（按照trade_date + tradetime 升序）。
+	 * 查询某证券全部的资金流水信息（按照trade_date 升序）。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return List<EverySumPositionInfoPO>
@@ -1035,7 +973,7 @@ public class TestFractalPositionInfoRule {
 	}
 	
 	/**
-	 * 查询某证券全部的订单信息（按照trade_date + tradetime 升序）。
+	 * 查询某证券全部的订单信息（按照trade_date 升序）。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return List<EverySumPositionInfoPO>
@@ -1045,7 +983,7 @@ public class TestFractalPositionInfoRule {
 	}
 	
 	/**
-	 * 查询某证券每一笔持仓信息（按照trade_date + tradetime 升序）。
+	 * 查询某证券每一笔持仓信息（按照trade_date 升序）。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return List<EverySumPositionInfoPO>
@@ -1062,9 +1000,8 @@ public class TestFractalPositionInfoRule {
 	 * 
 	 * @param systemOpenPoint 系统建仓点
 	 * @param stockCode 证券代码
-	 * @param openSignalTime 建仓信号发出时间
-	 * @param tradeDate 交易日期
-	 * @param tradeTime 交易时间
+	 * @param openSignalDate 建仓信号发出时间 （格式：yyyyMMddhhmmssSSS）
+	 * @param tradeDate 交易日期 （格式：yyyyMMddhhmmssSSS）
 	 * @param tradePrice 成交价格
 	 * @param stopPrice 止损价格
 	 * @return boolean true：可以建仓；false：不可以建仓
@@ -1073,8 +1010,8 @@ public class TestFractalPositionInfoRule {
 	 */
 	private boolean 
 	positionControlForBuy (
-			DealSignalEnum systemOpenPoint, String stockCode, Long openSignalTime, 
-			Long tradeDate, Long tradeTime, BigDecimal tradePrice, BigDecimal stopPrice) 
+			DealSignal systemOpenPoint, String stockCode, Long openSignalDate, 
+			Long tradeDate, BigDecimal tradePrice, BigDecimal stopPrice) 
 	throws NumberFormatException, ParseException {
 		
 		List<EverySumPositionInfoPO> everySumPositionInfoList =                                 // 查询出每一笔未平仓的仓位信息。
@@ -1097,12 +1034,12 @@ public class TestFractalPositionInfoRule {
 			
 			if (po.getSystemOpenPoint().equalsIgnoreCase(systemOpenPoint.getType())) {
 				// 记录尝试性仓位信息。
-				if (systemOpenPoint == DealSignalEnum.ONE_B) {
+				if (systemOpenPoint == DealSignal.ONE_B) {
 					if (oneBuyNums == 0) { firstOneBuy = po; }
 					oneBuyNums++;
 				}
 				// 记录斐波那契仓位信息
-				if (systemOpenPoint == DealSignalEnum.FIBO_B) {
+				if (systemOpenPoint == DealSignal.FIBO_B) {
 					if (oneFiboNums == 0) { firstFiboBuy = po; }
 					oneFiboNums++;
 				}		
@@ -1117,15 +1054,13 @@ public class TestFractalPositionInfoRule {
 		 * 
 		 * 目的：截短尝试性建仓的亏损，提高资金利用率，让系统有一定的容错性；
 		 */
-		if (systemOpenPoint == DealSignalEnum.ONE_B && oneBuyNums > 3) {
-			tradeTime = new SimpleDateFormat("yyyyMMddHHmmss").parse(tradeDate + "093100").getTime();
+		if (systemOpenPoint == DealSignal.ONE_B && oneBuyNums > 3) {
 			insertSellInfo (
-					DealSignalEnum.SELL_FIVE_TENTH,
+					DealSignal.SELL_FIVE_TENTH,
 					stockCode,
 					firstOneBuy.getOpenContractCode(), 
-					openSignalTime,
+					openSignalDate,
 					tradeDate,
-					tradeTime,
 					tradePrice);
 			return true;
 		}
@@ -1144,7 +1079,7 @@ public class TestFractalPositionInfoRule {
 			return true;
 		}
 		*/
-		if (systemOpenPoint == DealSignalEnum.FIBO_B) {
+		if (systemOpenPoint == DealSignal.FIBO_B) {
 			return true;
 		}
 		

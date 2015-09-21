@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.IndexOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.index.Index.Duplicates;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,7 +51,7 @@ public class TestPositionInfoRepositoryImpl implements TestPositionInfoRepositor
 			indexOps.ensureIndex(
 					new Index()
 					.on("stockCode", Direction.ASC)
-					.unique(Duplicates.DROP)
+//					.unique(Duplicates.DROP) Dropping Duplicates was removed in MongoDB Server 2.8.0-rc0.
 					.sparse()
 					.named(indexName)
 					.background()

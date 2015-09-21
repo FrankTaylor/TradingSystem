@@ -82,15 +82,7 @@ public class TestTestEverySumPositionInfoRepository {
 			openDateMonth = openDateMonth.length() == 1 ? "0" + openDateMonth : openDateMonth;
 			String openDateDay = "" + (random.nextInt(31));
 			openDateDay = openDateDay.length() == 1 ? "0" + openDateDay : openDateDay;
-			po.setOpenDate(Integer.valueOf((openDateYear + openDateMonth + openDateDay)));
-			/* 成交时间（格式：HH:mm:ss）。 */
-			String openTimeHour = "" + (random.nextInt(24));
-			openTimeHour = openTimeHour.length() == 1 ? "0" + openTimeHour : openTimeHour;
-			String openTimeMinute = "" + (random.nextInt(60));
-			openTimeMinute = openTimeMinute.length() == 1 ? "0" + openTimeMinute : openTimeMinute;
-			String openTimeSecond = "" + (random.nextInt(60));
-			openTimeSecond = openTimeSecond.length() == 1 ? "0" + openTimeSecond : openTimeSecond;
-			po.setOpenTime(Long.valueOf((openTimeHour + openTimeMinute + openTimeSecond)));
+			po.setOpenDate(Long.valueOf((openDateYear + openDateMonth + openDateDay + "000000000")));
 			/* 开仓价格。 */
 			po.setOpenPrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 			/* 开仓数量。 */
@@ -116,15 +108,7 @@ public class TestTestEverySumPositionInfoRepository {
 				closeDateMonth = closeDateMonth.length() == 1 ? "0" + closeDateMonth : closeDateMonth;
 				String closeDateDay = "" + (random.nextInt(31));
 				closeDateDay = closeDateDay.length() == 1 ? "0" + closeDateDay : closeDateDay;
-				po.setCloseDate(Integer.valueOf((closeDateYear + closeDateMonth + closeDateDay)));
-				/* 平仓时间（格式：HH:mm:ss）。 */
-				String closeTimeHour = "" + (random.nextInt(24));
-				closeTimeHour = closeTimeHour.length() == 1 ? "0" + closeTimeHour : closeTimeHour;
-				String closeTimeMinute = "" + (random.nextInt(60));
-				closeTimeMinute = closeTimeMinute.length() == 1 ? "0" + closeTimeMinute : closeTimeMinute;
-				String closeTimeSecond = "" + (random.nextInt(60));
-				closeTimeSecond = closeTimeSecond.length() == 1 ? "0" + closeTimeSecond : closeTimeSecond;
-				po.setCloseTime(Long.valueOf((closeTimeHour + closeTimeMinute + closeTimeSecond)));
+				po.setCloseDate(Long.valueOf((closeDateYear + closeDateMonth + closeDateDay + "000000000")));
 				/* 平仓价格。 */
 				po.setClosePrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 				/* 平仓数量。 */
@@ -188,15 +172,7 @@ public class TestTestEverySumPositionInfoRepository {
 		closeDateMonth = closeDateMonth.length() == 1 ? "0" + closeDateMonth : closeDateMonth;
 		String closeDateDay = "" + (random.nextInt(31));
 		closeDateDay = closeDateDay.length() == 1 ? "0" + closeDateDay : closeDateDay;
-		po.setCloseDate(Integer.valueOf((closeDateYear + closeDateMonth + closeDateDay)));
-		/* 平仓时间（格式：HH:mm:ss）。 */
-		String closeTimeHour = "" + (random.nextInt(24));
-		closeTimeHour = closeTimeHour.length() == 1 ? "0" + closeTimeHour : closeTimeHour;
-		String closeTimeMinute = "" + (random.nextInt(60));
-		closeTimeMinute = closeTimeMinute.length() == 1 ? "0" + closeTimeMinute : closeTimeMinute;
-		String closeTimeSecond = "" + (random.nextInt(60));
-		closeTimeSecond = closeTimeSecond.length() == 1 ? "0" + closeTimeSecond : closeTimeSecond;
-		po.setCloseTime(Long.valueOf((closeTimeHour + closeTimeMinute + closeTimeSecond)));
+		po.setCloseDate(Long.valueOf((closeDateYear + closeDateMonth + closeDateDay + "000000000")));
 		/* 平仓价格。 */
 		po.setClosePrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 		/* 平仓数量。 */

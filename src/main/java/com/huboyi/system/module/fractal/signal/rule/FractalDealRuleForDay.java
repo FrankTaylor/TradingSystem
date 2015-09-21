@@ -17,7 +17,7 @@ import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.function.BPAndSPFunction;
 import com.huboyi.system.function.BandFunction;
 import com.huboyi.system.function.FractalFunction;
@@ -122,7 +122,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 			 * 
 			 * 风控目的：避免在某一波段内重复建仓。
 			 */
-			PositionInfoBean lastBuyPosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignalEnum.ONE_B);   // 查询出最后一笔未平仓的一买仓位。
+			PositionInfoBean lastBuyPosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignal.ONE_B);       // 查询出最后一笔未平仓的一买仓位。
 			if (lastBuyPosition != null) {
 				BandBean lastOpenBand = 
 					BandFunction.getBandBeanByDate(fractalIndicatorsInfo.getBandBeanList(), lastBuyPosition.getOpenDate());       // 查询出最后一个建仓的所在波段。
@@ -231,7 +231,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 			for (BandBean mergeBandOfPrvePower : mergeBandOfPrvePowerList) {
 				if (BPAndSPFunction.isProduceOneBuyPoint(stockDataList, mergeBandOfLastPower, mergeBandOfPrvePower)) {
 					System.out.println("|CHANLUN|BUY|" + lastStockData.getDate() + "|RIGHT|1|");
-					return new DealSignalBean(lastStockData, DealSignalEnum.ONE_B);
+					return new DealSignalBean(lastStockData, DealSignal.ONE_B);
 				}
 			}
 			
@@ -270,7 +270,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 				
 				if (BPAndSPFunction.isProduceOneBuyPoint(stockDataList, lastBand, mergeFirstBandOfLastPower)) {
 					System.out.println("|CHANLUN|BUY|" + lastStockData.getDate() + "|RIGHT|2|");
-					return new DealSignalBean(lastStockData, DealSignalEnum.ONE_B);
+					return new DealSignalBean(lastStockData, DealSignal.ONE_B);
 				} 
 				
 				// --- 累计向上波段的成交量和成交额 ---
@@ -304,7 +304,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 		/*
 		 * 1.1、如果不存在任何的一买仓位，就不用再捕捉一买平仓信号。
 		 */
-		PositionInfoBean lastNoClosePosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignalEnum.ONE_B);   // 查询出最后一笔未平仓的一买仓位。
+		PositionInfoBean lastNoClosePosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignal.ONE_B);       // 查询出最后一笔未平仓的一买仓位。
 		if (lastNoClosePosition == null) {
 			return null;
 		}
@@ -369,7 +369,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 			 * 
 			 * 风控目的：避免在某一波段内重复平仓。
 			 */
-			PositionInfoBean lastClosePosition = PositionFunction.getLastClosePosition(positionInfoList, DealSignalEnum.ONE_B);   // 查询出最后一笔已平仓的一买仓位。
+			PositionInfoBean lastClosePosition = PositionFunction.getLastClosePosition(positionInfoList, DealSignal.ONE_B);       // 查询出最后一笔已平仓的一买仓位。
 			if (lastClosePosition != null) {
 				BandBean lastOpenBand = 
 					BandFunction.getBandBeanByDate(fractalIndicatorsInfo.getBandBeanList(), lastClosePosition.getCloseDate());    // 查询出最后一个建仓的所在波段。
@@ -481,7 +481,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 			for (BandBean mergeBandOfPrvePower : mergeBandOfPrvePowerList) {
 				if (BPAndSPFunction.isProduceOneSellPoint(stockDataList, mergeBandOfLastPower, mergeBandOfPrvePower)) {
 					System.out.println("|CHANLUN|SELL|" + lastStockData.getDate() + "|LEFT|1|");
-					return new DealSignalBean(lastStockData, DealSignalEnum.SELL_ALL);
+					return new DealSignalBean(lastStockData, DealSignal.SELL_ALL);
 				}
 			}
 			
@@ -519,7 +519,7 @@ public class FractalDealRuleForDay implements SnapDealSignal {
 				
 				if (BPAndSPFunction.isProduceOneSellPoint(stockDataList, lastBand, mergeFirstBandOfLastPower)) {
 					System.out.println("|CHANLUN|SELL|" + lastStockData.getDate() + "|LEFT|1|");
-					return new DealSignalBean(lastStockData, DealSignalEnum.SELL_ALL);
+					return new DealSignalBean(lastStockData, DealSignal.SELL_ALL);
 				} 
 				
 				// --- 累计向上波段的成交量和成交额 ---

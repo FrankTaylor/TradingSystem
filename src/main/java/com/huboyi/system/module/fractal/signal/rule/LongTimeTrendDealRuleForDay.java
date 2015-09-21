@@ -20,7 +20,7 @@ import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.function.BandFunction;
 import com.huboyi.system.function.PositionFunction;
 import com.huboyi.system.function.StockDataFunction;
@@ -255,7 +255,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 		 * 
 		 * 风控目的：避免在某一上升波段内重复建仓。
 		 */
-		PositionInfoBean lastBuyPosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignalEnum.FIBO_B);                    // 查询出最后一笔未平仓的斐波那契仓位。
+		PositionInfoBean lastBuyPosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignal.FIBO_B);                        // 查询出最后一笔未平仓的斐波那契仓位。
 		if (lastBuyPosition != null) {
 			BandBean lastOpenBand = BandFunction.getBandBeanByDate(fractalIndicatorsInfo.getBandBeanList(), lastBuyPosition.getOpenDate());     // 查询出最后一个建仓的所在波段。
 			
@@ -309,7 +309,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 
 		if (StockDataFunction.isHaveEnoughUpStrength(stockDataList, fractalIndicatorsInfo.getBandBeanList(), 0.03)) {
 			System.out.println("---> " + lastStockData.getDate() + " 日，出现斐波那契建仓信号 " + " <---" );
-			return new DealSignalBean(lastStockData, DealSignalEnum.FIBO_B);
+			return new DealSignalBean(lastStockData, DealSignal.FIBO_B);
 		}
 		
 		return null;
@@ -362,7 +362,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 		/*
 		 * 限制1：如果没有菲薄纳妾信号，就不用捕捉该平仓信号了，以降低计算复杂度。
 		 */
-		PositionInfoBean lastNoClosePosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignalEnum.FIBO_B);                // 查询出最后的斐波仓位。
+		PositionInfoBean lastNoClosePosition = PositionFunction.getLastNoClosePosition(positionInfoList, DealSignal.FIBO_B);                    // 查询出最后的斐波仓位。
 		if (lastNoClosePosition == null) {
 			return null;
 		}
@@ -397,7 +397,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 		StockDataBean lastStockData = StockDataFunction.getLastStockData(stockDataList);                                                        // 得到最后一根K线。
 		
 		// --- 计算整体仓位的盈利情况。
-		List<PositionInfoBean> noClosePositionList = PositionFunction.getAllNoClosePositionList(positionInfoList, DealSignalEnum.FIBO_B);       // 查询出所有未平仓的斐波仓位。
+		List<PositionInfoBean> noClosePositionList = PositionFunction.getAllNoClosePositionList(positionInfoList, DealSignal.FIBO_B);           // 查询出所有未平仓的斐波仓位。
 		BigDecimal openCost = new BigDecimal(0);                                                                                                // 记录整体仓位的建仓成本。
 		Long canCloseNumber = 0L;                                                                                                               // 记录整体仓位的可平仓数量。
 		for (PositionInfoBean position : noClosePositionList) {
@@ -424,7 +424,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 		if (profitAndLossRatio.compareTo(stopLossRatio) != 1) {
 			initialize();
 			System.out.println("|FIBO|SELL|" + lastStockData.getDate() + "|RIGHT|1|");
-			return new DealSignalBean(lastStockData, DealSignalEnum.SELL_ALL);
+			return new DealSignalBean(lastStockData, DealSignal.SELL_ALL);
 		}
 		
 		/*
@@ -441,7 +441,7 @@ public class LongTimeTrendDealRuleForDay implements SnapDealSignal {
 		) {
 			initialize();
 			System.out.println("|FIBO|SELL|" + lastStockData.getDate() + "|LEFT|2|");
-			return new DealSignalBean(lastStockData, DealSignalEnum.SELL_ALL);
+			return new DealSignalBean(lastStockData, DealSignal.SELL_ALL);
 		}
 		
 		// --- 计算当前K线与120日均线之间涨跌幅。

@@ -92,14 +92,12 @@ public class TestFundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlow
 			// --- 查询Redis。
 			List<FundsFlowPO> poList = opsForList().range(getListKey(stockCode), 0, -1);
 			
-			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照trade_date + trade_time 升序。
+			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照trade_date升序。
 			Collections.sort(poList, new Comparator<FundsFlowPO>() {
 				@Override
 				public int compare(FundsFlowPO o1, FundsFlowPO o2) {
 					return (o1.getTradeDate() > o2.getTradeDate()) ? 1    :
 						   (o1.getTradeDate() < o2.getTradeDate()) ? -1   :
-						   (o1.getTradeTime() > o2.getTradeTime()) ? 1    :
-						   (o1.getTradeTime() < o2.getTradeTime()) ? -1   :
 				           0;
 				}
 			});

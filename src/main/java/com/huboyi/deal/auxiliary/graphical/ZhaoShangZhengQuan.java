@@ -2,6 +2,9 @@ package com.huboyi.deal.auxiliary.graphical;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,8 +13,8 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.huboyi.engine.indicators.technology.constant.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean.BandType;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 
@@ -26,6 +29,9 @@ public class ZhaoShangZhengQuan {
 
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(ZhaoShangZhengQuan.class);
+	
+	/** 处理日期和时间的格式类。（YYYY是国际标准ISO 8601所指定的以周来纪日的历法。yyyy是格里高利历，它以400年为一个周期，在这个周期中，一共有97个闰日，在这种历法的设计中，闰日尽可能均匀地分布在各个年份中，所以一年的长度有两种可能：365天或366天。）*/
+	private static final DateFormat dataFormat = new SimpleDateFormat("yyyyMMddhhmmssSSS");
 	
 	/**
 	 * 得到展示中枢的代码。
@@ -98,8 +104,8 @@ public class ZhaoShangZhengQuan {
 			return codeList;
 		}
 		
-		Map<Integer, EverySumPositionInfoPO> buyPointMap = new LinkedHashMap<Integer, EverySumPositionInfoPO>();
-		Map<Integer, EverySumPositionInfoPO> sellPointMap = new LinkedHashMap<Integer, EverySumPositionInfoPO>();
+		Map<Long, EverySumPositionInfoPO> buyPointMap = new LinkedHashMap<Long, EverySumPositionInfoPO>();
+		Map<Long, EverySumPositionInfoPO> sellPointMap = new LinkedHashMap<Long, EverySumPositionInfoPO>();
 		
 		for (EverySumPositionInfoPO po : positionInfoList) {
 			if (!buyPointMap.containsKey(po.getOpenDate())) {
@@ -112,11 +118,11 @@ public class ZhaoShangZhengQuan {
 			}
 		}
 		
-		for (Map.Entry<Integer, EverySumPositionInfoPO> entry : buyPointMap.entrySet()) {
+		for (Map.Entry<Long, EverySumPositionInfoPO> entry : buyPointMap.entrySet()) {
 			EverySumPositionInfoPO po = entry.getValue();
 			
-			int openSignalDate = (int)(po.getOpenSignalTime() - 19000000);
-			int openDate = po.getOpenDate() - 19000000;
+			int openSignalDate = (int)(Long.valueOf(dataFormat.format(new Date(po.getOpenSignalDate()))) - 19000000);
+			int openDate = (int)(Long.valueOf(dataFormat.format(new Date(po.getOpenDate()))) - 19000000);
 			String showRate = po.getOpenPrice().multiply(new BigDecimal(0.02)).setScale(2, RoundingMode.HALF_UP).toString();
 			
 			StringBuilder builder = new StringBuilder();
@@ -125,12 +131,12 @@ public class ZhaoShangZhengQuan {
 			codeList.add(builder.toString());
 		}
 		
-		for (Map.Entry<Integer, EverySumPositionInfoPO> entry : sellPointMap.entrySet()) {
+		for (Map.Entry<Long, EverySumPositionInfoPO> entry : sellPointMap.entrySet()) {
 			
 			EverySumPositionInfoPO po = entry.getValue();
 			
-			int closeSignalDate = (int)(po.getCloseSignalTime() - 19000000);
-			int closeDate = po.getCloseDate() - 19000000;
+			int closeSignalDate = (int)(Long.valueOf(dataFormat.format(new Date(po.getCloseSignalDate()))) - 19000000);
+			int closeDate = (int)(Long.valueOf(dataFormat.format(new Date(po.getCloseDate()))) - 19000000);
 			String showRate = po.getClosePrice().multiply(new BigDecimal(0.05)).setScale(2, RoundingMode.HALF_UP).toString();
 			
 			StringBuilder builder = new StringBuilder();

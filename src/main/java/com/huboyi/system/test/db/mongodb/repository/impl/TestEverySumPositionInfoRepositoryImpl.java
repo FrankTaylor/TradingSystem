@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.IndexOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
-import org.springframework.data.mongodb.core.index.Index.Duplicates;
 import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,13 +51,13 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 			
 			/*
 			 * 2.在该集合上建立复合索引，且该索引还是唯一和稀疏的。
-			 * 原生语句：db.test_everySumPositionInfo_123456.ensureIndex({"openDate" : 1, "openTime" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "openDate@openTime", "background" : 1})
+			 * 原生语句：db.test_everySumPositionInfo_123456.ensureIndex({"openDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "openDate", "background" : 1})
 			 */
-			String indexName = "openDate@openTime";
+			String indexName = "openDate";
 			indexOps.ensureIndex(
 					new Index()
 					.on("openDate", Direction.ASC)
-					.unique(Duplicates.DROP)
+//					.unique(Duplicates.DROP) Dropping Duplicates was removed in MongoDB Server 2.8.0-rc0.
 					.sparse()
 					.named(indexName)
 					.background()
@@ -114,11 +113,10 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 		
 		try {
 			/*
-			 * 原生语句：db.test_everySumPositionInfo_123456.find().sort({openDate : -1, openTime : -1}).limit(1);
+			 * 原生语句：db.test_everySumPositionInfo_123456.find().sort({openDate : -1}).limit(1);
 			 */
 			Query query = new Query();
 			query.with(new Sort(Direction.DESC, "openDate"));
-			query.with(new Sort(Direction.DESC, "openTime"));
 			query.limit(1);
 			
 			List<EverySumPositionInfoPO> poList = mongoTemplate.find(query, EverySumPositionInfoPO.class, getCollectionPath(stockCode));
@@ -138,7 +136,12 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 	}
 	
 	@Override
-	public List<EverySumPositionInfoPO> findEverySumPositionInfoList (String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage) {
+	public List<EverySumPositionInfoPO> 
+	findEverySumPositionInfoList (
+			String stockCode, String openContractCode, 
+			Integer beginOpenDate, Integer endOpenDate, 
+			String isClose, Integer beginPage, Integer endPage) {
+		
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findEverySumPositionInfoList method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]").append("\n");
@@ -155,8 +158,8 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 			 * 原生语句：
 			 * db.test_everySumPositionInfo_123456
 			 * .find({"openContractCode" : "000518", "beginOpenDate" : {"$gte" : 20100101, "$lte" : 20151212}, "closeContractCode" : {"$ne" : "no"}})
-			 * .sort({openDate : 1, openTime : 1})
-			 * .hint('openDate@openTime')
+			 * .sort({openDate : 1})
+			 * .hint('openDate')
 			 * .skip(10)
 			 * .limit(10);
 			 */
@@ -188,8 +191,7 @@ public class TestEverySumPositionInfoRepositoryImpl implements TestEverySumPosit
 			}
 						
 			query.with(new Sort(Direction.ASC, "openDate"));
-			query.with(new Sort(Direction.ASC, "openTime"));
-			query.withHint("openDate@openTime");
+			query.withHint("openDate");
 			
 			if (beginPage != null) {
 				query.skip(beginPage);

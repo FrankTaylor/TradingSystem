@@ -95,14 +95,12 @@ public class TestEverySumPositionInfoRepositoryImpl extends RedisTemplate<String
 			// --- 查询Redis。
 			List<EverySumPositionInfoPO> poList = opsForList().range(getListKey(stockCode), 0, -1);
 			
-			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照open_date + open_time 升序。
+			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照open_date升序。
 			Collections.sort(poList, new Comparator<EverySumPositionInfoPO>() {
 				@Override
 				public int compare(EverySumPositionInfoPO o1, EverySumPositionInfoPO o2) {
 					return (o1.getOpenDate() > o2.getOpenDate()) ? 1    :
 						   (o1.getOpenDate() < o2.getOpenDate()) ? -1   :
-						   (o1.getOpenTime() > o2.getOpenTime()) ? 1    :
-						   (o1.getOpenTime() < o2.getOpenTime()) ? -1   :
 				           0;
 				}
 			});
@@ -194,9 +192,8 @@ public class TestEverySumPositionInfoRepositoryImpl extends RedisTemplate<String
 					if (po.getStopPrice() != null) { updatePo.setStopPrice(po.getStopPrice()); }                            // 止损价格。
 					if (po.getCloseContractCode() != null) { updatePo.setCloseContractCode(po.getCloseContractCode()); }    // 平仓合同编号。
 					if (po.getSystemClosePoint() != null) { updatePo.setSystemClosePoint(po.getSystemClosePoint()); }       // 系统平仓点。
-					if (po.getCloseSignalTime() != null) { updatePo.setCloseSignalTime(po.getCloseSignalTime()); }          // 平仓信号发出时间。
-					if (po.getCloseDate() != null) { updatePo.setCloseDate(po.getCloseDate()); }                            // 平仓日期（格式：%Y%m%d）。
-					if (po.getCloseTime() != null) { updatePo.setCloseTime(po.getCloseTime()); }                            // 平仓时间（格式：HH:mm:ss）。
+					if (po.getCloseSignalDate() != null) { updatePo.setCloseSignalDate(po.getCloseSignalDate()); }          // 平仓信号发出时间（格式：yyyyMMddhhmmssSSS）。
+					if (po.getCloseDate() != null) { updatePo.setCloseDate(po.getCloseDate()); }                            // 平仓日期（格式：yyyyMMddhhmmssSSS）。
 					if (po.getClosePrice() != null) { updatePo.setClosePrice(po.getClosePrice()); }                         // 平仓价格。
 					if (po.getCloseNumber() != null) { updatePo.setCloseNumber(po.getCloseNumber()); }                      // 平仓数量。
 					if (po.getNewPrice() != null) {updatePo.setNewPrice(po.getNewPrice()); }                                // 当前价。

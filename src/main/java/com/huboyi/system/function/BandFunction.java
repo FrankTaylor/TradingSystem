@@ -36,7 +36,7 @@ public class BandFunction {
 	 * @return BandBean 建仓所在的波段
 	 */
 	public static BandBean 
-	getBandBeanByDate (final List<BandBean> bandList, final Integer date) {
+	getBandBeanByDate (final List<BandBean> bandList, final Long date) {
 		
 		if (bandList == null || bandList.isEmpty() || date == null) { return null; }
 		

@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.system.constant.DealSignalEnum;
+import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 import com.huboyi.system.test.db.TestEverySumPositionInfoRepository;
 /**
@@ -76,22 +76,14 @@ public class TestTestEverySumPositionInfoRepository {
 			/* 建仓合同编号。 */
 			po.setOpenContractCode(UUID.randomUUID().toString());
 			/* 系统建仓点。*/
-			po.setSystemOpenPoint(DealSignalEnum.FIBO_B.getType());			
+			po.setSystemOpenPoint(DealSignal.FIBO_B.getType());			
 			/* 成交日期（格式：%Y%m%d）。 */
 			String openDateYear = "" + (2010 + random.nextInt(10));
 			String openDateMonth = "" + (random.nextInt(12));
 			openDateMonth = openDateMonth.length() == 1 ? "0" + openDateMonth : openDateMonth;
 			String openDateDay = "" + (random.nextInt(31));
 			openDateDay = openDateDay.length() == 1 ? "0" + openDateDay : openDateDay;
-			po.setOpenDate(Integer.valueOf((openDateYear + openDateMonth + openDateDay)));
-			/* 成交时间（格式：HH:mm:ss）。 */
-			String openTimeHour = "" + (random.nextInt(24));
-			openTimeHour = openTimeHour.length() == 1 ? "0" + openTimeHour : openTimeHour;
-			String openTimeMinute = "" + (random.nextInt(60));
-			openTimeMinute = openTimeMinute.length() == 1 ? "0" + openTimeMinute : openTimeMinute;
-			String openTimeSecond = "" + (random.nextInt(60));
-			openTimeSecond = openTimeSecond.length() == 1 ? "0" + openTimeSecond : openTimeSecond;
-			po.setOpenTime(Long.valueOf((openTimeHour + openTimeMinute + openTimeSecond)));
+			po.setOpenDate(Long.valueOf((openDateYear + openDateMonth + openDateDay + "000000000")));
 			/* 开仓价格。 */
 			po.setOpenPrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 			/* 开仓数量。 */
@@ -110,22 +102,14 @@ public class TestTestEverySumPositionInfoRepository {
 				/* 平仓合同编号。*/
 				po.setCloseContractCode(UUID.randomUUID().toString());
 				/* 系统平仓点。*/
-				po.setSystemClosePoint(DealSignalEnum.SELL_ALL.getType());
+				po.setSystemClosePoint(DealSignal.SELL_ALL.getType());
 				/* 平仓日期（格式：%Y%m%d）。 */
 				String closeDateYear = "" + (2010 + random.nextInt(10));
 				String closeDateMonth = "" + (random.nextInt(12));
 				closeDateMonth = closeDateMonth.length() == 1 ? "0" + closeDateMonth : closeDateMonth;
 				String closeDateDay = "" + (random.nextInt(31));
 				closeDateDay = closeDateDay.length() == 1 ? "0" + closeDateDay : closeDateDay;
-				po.setCloseDate(Integer.valueOf((closeDateYear + closeDateMonth + closeDateDay)));
-				/* 平仓时间（格式：HH:mm:ss）。 */
-				String closeTimeHour = "" + (random.nextInt(24));
-				closeTimeHour = closeTimeHour.length() == 1 ? "0" + closeTimeHour : closeTimeHour;
-				String closeTimeMinute = "" + (random.nextInt(60));
-				closeTimeMinute = closeTimeMinute.length() == 1 ? "0" + closeTimeMinute : closeTimeMinute;
-				String closeTimeSecond = "" + (random.nextInt(60));
-				closeTimeSecond = closeTimeSecond.length() == 1 ? "0" + closeTimeSecond : closeTimeSecond;
-				po.setCloseTime(Long.valueOf((closeTimeHour + closeTimeMinute + closeTimeSecond)));
+				po.setCloseDate(Long.valueOf((closeDateYear + closeDateMonth + closeDateDay + "000000000")));
 				/* 平仓价格。 */
 				po.setClosePrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 				/* 平仓数量。 */
@@ -155,7 +139,7 @@ public class TestTestEverySumPositionInfoRepository {
 		List<EverySumPositionInfoPO> allPositionList = getAllClosePositionList ();                   // 查询出某一买点的全部仓位信息（按照open_date + open_time 升序）。
 		for (EverySumPositionInfoPO po : allPositionList) {
 			
-			System.out.println("po.getOpenContractCode() = " + po.getOpenContractCode() + ", po.getCloseContractCode() = " + po.getCloseContractCode() + ", po.getOpenDate() = " + po.getOpenDate() + ", po.getOpenTime() = " + po.getOpenTime() + ", po.getCloseDate() = " + po.getCloseDate() + ", po.getCloseTime() = " + po.getCloseTime());
+			System.out.println("po.getOpenContractCode() = " + po.getOpenContractCode() + ", po.getCloseContractCode() = " + po.getCloseContractCode() + ", po.getOpenDate() = " + po.getOpenDate() + ", po.getCloseDate() = " + po.getCloseDate());
 		}
 	}
 	
@@ -166,6 +150,7 @@ public class TestTestEverySumPositionInfoRepository {
 	 * @param dealSignalType 分型战法交易信号类型枚举
 	 * @return List<FractalPositionInfoBean>
 	 */
+	@SuppressWarnings("unused")
 	private List<EverySumPositionInfoPO> getAllNoClosePositionList () {
 		
 		// --- 查询到所有的仓位信息。
@@ -191,8 +176,6 @@ public class TestTestEverySumPositionInfoRepository {
 			public int compare(EverySumPositionInfoPO o1, EverySumPositionInfoPO o2) {
 				return (o1.getOpenDate() > o2.getOpenDate()) ? -1  :
 					   (o1.getOpenDate() < o2.getOpenDate()) ? 1   :
-					   (o1.getOpenTime() > o2.getOpenTime()) ? -1  :
-					   (o1.getOpenTime() < o2.getOpenTime()) ? 1   :
 			           0;
 			}
 		});
@@ -232,8 +215,6 @@ public class TestTestEverySumPositionInfoRepository {
 			public int compare(EverySumPositionInfoPO o1, EverySumPositionInfoPO o2) {
 				return (o1.getCloseDate() > o2.getCloseDate()) ? -1  :
 					   (o1.getCloseDate() < o2.getCloseDate()) ? 1   :
-					   (o1.getCloseTime() > o2.getCloseTime()) ? -1  :
-					   (o1.getCloseTime() < o2.getCloseTime()) ? 1   :
 			           0;
 			}
 		});
@@ -249,7 +230,7 @@ public class TestTestEverySumPositionInfoRepository {
 		List<EverySumPositionInfoPO> tempPositionInfoList = new ArrayList<EverySumPositionInfoPO>();
 		if (null != poList && !poList.isEmpty()) {
 			for (EverySumPositionInfoPO positionInfo : poList) {
-				if (positionInfo.getSystemOpenPoint().equalsIgnoreCase(DealSignalEnum.FIBO_B.getType())) {
+				if (positionInfo.getSystemOpenPoint().equalsIgnoreCase(DealSignal.FIBO_B.getType())) {
 					tempPositionInfoList.add(positionInfo);
 				}
 			}
@@ -257,39 +238,6 @@ public class TestTestEverySumPositionInfoRepository {
 		
 		return tempPositionInfoList;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * test {@link TestTestEverySumPositionInfoRepository#findEverySumPositionInfoList} method.
@@ -330,15 +278,7 @@ public class TestTestEverySumPositionInfoRepository {
 		closeDateMonth = closeDateMonth.length() == 1 ? "0" + closeDateMonth : closeDateMonth;
 		String closeDateDay = "" + (random.nextInt(31));
 		closeDateDay = closeDateDay.length() == 1 ? "0" + closeDateDay : closeDateDay;
-		po.setCloseDate(Integer.valueOf((closeDateYear + closeDateMonth + closeDateDay)));
-		/* 平仓时间（格式：HH:mm:ss）。 */
-		String closeTimeHour = "" + (random.nextInt(24));
-		closeTimeHour = closeTimeHour.length() == 1 ? "0" + closeTimeHour : closeTimeHour;
-		String closeTimeMinute = "" + (random.nextInt(60));
-		closeTimeMinute = closeTimeMinute.length() == 1 ? "0" + closeTimeMinute : closeTimeMinute;
-		String closeTimeSecond = "" + (random.nextInt(60));
-		closeTimeSecond = closeTimeSecond.length() == 1 ? "0" + closeTimeSecond : closeTimeSecond;
-		po.setCloseTime(Long.valueOf((closeTimeHour + closeTimeMinute + closeTimeSecond)));
+		po.setCloseDate(Long.valueOf((closeDateYear + closeDateMonth + closeDateDay + "000000000")));
 		/* 平仓价格。 */
 		po.setClosePrice(new BigDecimal(random.nextInt(100)).setScale(3, RoundingMode.HALF_UP));
 		/* 平仓数量。 */

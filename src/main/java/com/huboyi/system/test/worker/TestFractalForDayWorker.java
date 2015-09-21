@@ -42,9 +42,6 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(TestFractalForDayWorker.class);
-
-	/** 处理日期和时间的格式类。（YYYY是国际标准ISO 8601所指定的以周来纪日的历法。yyyy是格里高利历，它以400年为一个周期，在这个周期中，一共有97个闰日，在这种历法的设计中，闰日尽可能均匀地分布在各个年份中，所以一年的长度有两种可能：365天或366天。）*/
-	private final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	/** 证券代码。*/
 	private final String stockCode;
@@ -116,8 +113,7 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 			positionInfoRule.insertBankTransfer(
 					FundsFlowBusiness.ROLL_IN, 
 					stockCode, 
-					19800101, 
-					DATE_TIME_FORMAT.parse("19900101093000").getTime(), 
+					19800101000000000L, 
 					initMoney);
 			
 			// 用于顺序的装载测试数据。
@@ -195,9 +191,8 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 							positionInfoRule.insertBuyInfo(
 									dealSignal.getType(), 
 									stockCode, 
-									Long.valueOf(dealPoint.getDate()),
+									dealPoint.getDate(),
 									point.getDate(),
-									DATE_TIME_FORMAT.parse(point.getDate() + "093000").getTime(),
 									point.getOpen(), 
 									
 									/*
@@ -216,9 +211,8 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 									dealSignal.getType(), 
 									stockCode, 
 									null,
-									Long.valueOf(dealPoint.getDate()),
+									dealPoint.getDate(),
 									point.getDate(),
-									DATE_TIME_FORMAT.parse(point.getDate() + "093000").getTime(),
 									point.getOpen());
 						}
 					}
@@ -353,7 +347,10 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 			}
 			if (i < orderInfoList.size() - 2) {
 				OrderInfoPO next = orderInfoList.get(i + 1);
-				buyAndSellIntervalList.add((next.getTradeTime() - current.getTradeTime()) / (24 * 60 * 60 * 1000));
+				buyAndSellIntervalList.add(
+						(new Date(next.getTradeDate()).getTime() - new Date(current.getTradeDate()).getTime()) 
+						/ 
+						(24 * 60 * 60 * 1000));
 			}
 		}
 		Collections.sort(buyAndSellIntervalList);                                                                           // 对每次交易间隔时间的集合进行升序排序。
@@ -400,7 +397,10 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 					lossNumber++;
 					floatLossList.add(po.getFloatProfitAndLoss());
 				}
-				cycleIntervalList.add((po.getCloseTime() - po.getOpenTime()) / (24 * 60 * 60 * 1000));
+				cycleIntervalList.add(
+						(new Date(po.getCloseDate()).getTime() - new Date(po.getOpenDate()).getTime()) 
+						/ 
+						(24 * 60 * 60 * 1000));
 			}
 		}
 		Collections.sort(cycleIntervalList);                                                                                // 对每笔已平仓记录中建仓时间与平仓时间的间隔的集合进行升序排序。
