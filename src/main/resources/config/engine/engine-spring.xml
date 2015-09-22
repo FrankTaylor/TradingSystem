@@ -35,6 +35,9 @@
     	<constructor-arg name="indexDataFilepath" value="/usr/local/marketData/index" />
     </bean>
     
+    <bean id="mergeByTime" class="com.huboyi.engine.merge.MergeByTime">
+    </bean>
+    
     <!-- 交易费用计算类。 -->
     <bean id="dealFeeCalculator" class="com.huboyi.engine.DealFeeCalculator">
     	<!-- 佣金费率（我现在是万分之7.5）。 -->

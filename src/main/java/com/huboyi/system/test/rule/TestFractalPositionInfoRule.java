@@ -247,7 +247,7 @@ public class TestFractalPositionInfoRule {
 		logMsg.append("@param [tradePrice = " + tradePrice + "]\n");
 		logMsg.append("@param [stopPrice = " + stopPrice + "]\n");
 		log.info(logMsg.toString());
-		
+
 		if (tradePrice == null || tradePrice.doubleValue() <= 0) {
 			log.warn("购买价格出现小于等于0的情况[ tradePrice = "+ tradePrice +" ]，程序将退出本次购买。");
     		return;
@@ -257,7 +257,6 @@ public class TestFractalPositionInfoRule {
 		if (!positionControlForBuy(systemOpenPoint, stockCode, openSignalDate, tradeDate, tradePrice, stopPrice)) {
     		return;
 		}
-		
 		
 		// --- 参数完整性验证 ---
 		// #TODO 略
@@ -289,7 +288,7 @@ public class TestFractalPositionInfoRule {
     				"[oldTradeDateOfFundsFlow = " + oldTradeDateOfFundsFlow + "]");
     		return;
     	}
-
+    	
     	// --- 验证即将保存的订单记录中的业务数据的正确性 ---
     	OrderInfoPO oldOrderInfoPO = testOrderInfoRepository.findNewOne(stockCode);                                    // 得到最新的一条订单记录。
     	Long newTradeDateOfOrderInfo = tradeDate;                                                                      // 得到最新的订单记录的成交日期（格式：yyyyMMddhhmmssSSS）。
@@ -1054,14 +1053,18 @@ public class TestFractalPositionInfoRule {
 		 * 
 		 * 目的：截短尝试性建仓的亏损，提高资金利用率，让系统有一定的容错性；
 		 */
-		if (systemOpenPoint == DealSignal.ONE_B && oneBuyNums > 3) {
-			insertSellInfo (
-					DealSignal.SELL_FIVE_TENTH,
-					stockCode,
-					firstOneBuy.getOpenContractCode(), 
-					openSignalDate,
-					tradeDate,
-					tradePrice);
+//		if (systemOpenPoint == DealSignal.ONE_B && oneBuyNums > 3) {
+//			insertSellInfo (
+//					DealSignal.SELL_FIVE_TENTH,
+//					stockCode,
+//					firstOneBuy.getOpenContractCode(), 
+//					openSignalDate,
+//					tradeDate,
+//					tradePrice);
+//			return true;
+//		}
+		
+		if (systemOpenPoint == DealSignal.ONE_B) {
 			return true;
 		}
 		

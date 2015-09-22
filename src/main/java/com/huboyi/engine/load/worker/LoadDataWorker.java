@@ -175,7 +175,8 @@ public class LoadDataWorker implements Callable<Map<String, List<StockDataBean>>
 							bean.setDate(Long.valueOf(                                                                          // 日期（格式：yyyyMMddhhmmssSSS）。
 									yearAndMonthAndDay
 									.concat((hourAndMinute != null ? hourAndMinute : "0000"))
-									.concat("00000")));
+									.concat((bean.getSecond() > 0 ? String.valueOf(bean.getSecond()) : "00"))
+									.concat((bean.getMillisecond() > 0 ? String.valueOf(bean.getMillisecond()) : "000"))));
 							bean.setTime(dataFormat.parse(String.valueOf(bean.getDate())).getTime());                           // 时间（格式为当前计算机时间和GMT时间(格林威治时间)1970年1月1号0时0分0秒所差的毫秒数）。
 							
 							// --- 价格信息 ---

@@ -51,7 +51,7 @@ public class TestFractalForDay {
 	
 	public static void main(String[] args) {
 		execute();
-		outputTestResult();
+//		outputTestResult();
 		
 //		Map<String, List<StockDataBean>> map = loadEngine.getStockData();
 //		List<StockDataBean> stockDataBeanList = map.get("SZ000049");

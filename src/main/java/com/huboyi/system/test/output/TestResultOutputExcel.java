@@ -294,8 +294,7 @@ public class TestResultOutputExcel {
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 5, 10));                                                               // 资产分布。
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 11, 17));                                                              // 交易频率。
 		sheet.addMergedRegion(new CellRangeAddress(0, 0, 18, 24));                                                              // 交易周期。
-		sheet.addMergedRegion(new CellRangeAddress(0, 0, 25, 30));                                                              // 周期盈亏。
-		
+		sheet.addMergedRegion(new CellRangeAddress(0, 0, 25, 30));                                                              // 周期盈亏。	
 		
 		XSSFRow rowCategory = sheet.createRow(0);                                                                               // 创建Excel文件的第0行，用于显示标题分类。
 		
@@ -310,7 +309,6 @@ public class TestResultOutputExcel {
 		XSSFCellStyle ccCycleProfitAndLossStyle = createDefaultXSSFCellStyle(workbook, fontCategory, new int[] {247, 150, 70}); // 周期盈亏单元风格。
 		
 		// 输出标题分类。
-		
 		XSSFCell ccDealProfitAndLoss = rowCategory.createCell(0); 
 		ccDealProfitAndLoss.setCellStyle(ccDealProfitAndLossStyle);
 		ccDealProfitAndLoss.setCellValue("交易盈亏");
@@ -356,8 +354,8 @@ public class TestResultOutputExcel {
 	 * @return XSSFCellStyle
 	 */
 	private XSSFCellStyle createDefaultTitleCellStyle (XSSFWorkbook workbook) {
-		XSSFFont font = createDefaultXSSFFont(workbook, true, true, new int[] {255, 255, 255});          // 设置标题头单元的字体。
-		XSSFCellStyle cellStyle = createDefaultXSSFCellStyle(workbook, font, new int[] {236, 233, 216}); // 设置标题头单元的风格。
+		XSSFFont font = createDefaultXSSFFont(workbook, true, true, new int[] {0, 0, 0});                // 设置标题头单元的字体。
+		XSSFCellStyle cellStyle = createDefaultXSSFCellStyle(workbook, font, new int[] {192, 203, 216}); // 设置标题头单元的风格。
 		return cellStyle;
 	}
 	

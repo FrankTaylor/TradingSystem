@@ -155,7 +155,7 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 				List<DealSignalBean> dealSignalList = new ArrayList<DealSignalBean>();
 				if (sellToCloseSignal != null) { dealSignalList.add(sellToCloseSignal); }
 				if (buyToOpenSignal != null) { dealSignalList.add(buyToOpenSignal); }
-				
+
 				/*
 				 * ##################################################
 				 * # 4、插入资金流水、仓位信息、每一笔仓位等信息。                                                  #
@@ -172,11 +172,12 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 							lastDealSignal = dealSignal;
 						}
 					}
-					
+
 					if (point != null) {
 						if (
 								dealSignal.getType() == DealSignal.ONE_B ||
 								dealSignal.getType() == DealSignal.FIBO_B) {
+
 							/*
 							 * +-----------------------------------------------------------+
 							 * + 注意：1、建仓价为：产生交易信号隔天的开盘价；                                                                                   +
@@ -263,10 +264,10 @@ public class TestFractalForDayWorker implements Callable<TestResultBean> {
 	 */
 	private TestResultBean constructNewTestResultBean () {
 		
-		List<FundsFlowPO> fundsFlowList = positionInfoRule.findAllFundsFlow(stockCode);                                     // 查询某证券全部的资金流水信息（按照trade_date + tradetime 升序）。
-		List<OrderInfoPO> orderInfoList = positionInfoRule.findAllOrderInfo(stockCode);                                     // 查询某证券全部的订单信息（按照trade_date + tradetime 升序）。
-		List<EverySumPositionInfoPO> everySumPositionInfoList = positionInfoRule.findAllEverySumPositionInfo(stockCode);    // 查询某证券每一笔持仓信息（按照open_date + open_time 升序）。
-		
+		List<FundsFlowPO> fundsFlowList = positionInfoRule.findAllFundsFlow(stockCode);                                     // 查询某证券全部的资金流水信息（按照trade_date升序）。
+		List<OrderInfoPO> orderInfoList = positionInfoRule.findAllOrderInfo(stockCode);                                     // 查询某证券全部的订单信息（按照trade_date升序）。
+		List<EverySumPositionInfoPO> everySumPositionInfoList = positionInfoRule.findAllEverySumPositionInfo(stockCode);    // 查询某证券每一笔持仓信息（按照open_date升序）。
+
 		if (
 				(fundsFlowList == null || fundsFlowList.isEmpty()) || 
 				(orderInfoList == null || orderInfoList.isEmpty()) || 
