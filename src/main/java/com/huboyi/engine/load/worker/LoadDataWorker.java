@@ -165,7 +165,7 @@ public class LoadDataWorker implements Callable<Map<String, List<StockDataBean>>
 							// --- 时间信息 ---
 							
 							bean.setYear(Integer.valueOf(yearAndMonthAndDay.substring(0, 4)));                                  // 年。
-							bean.setMonth(Integer.valueOf(yearAndMonthAndDay.substring(0, 4)));                                 // 月。
+							bean.setMonth(Integer.valueOf(yearAndMonthAndDay.substring(4, 6)));                                 // 月。
 							bean.setDay(Integer.valueOf(yearAndMonthAndDay.substring(6, 8)));                                   // 日。
 							bean.setHour((hourAndMinute != null) ? Integer.valueOf(hourAndMinute.substring(0, 2)) : 0);         // 时。
 							bean.setMinute((hourAndMinute != null) ? Integer.valueOf(hourAndMinute.substring(2, 4)) : 0);       // 分。

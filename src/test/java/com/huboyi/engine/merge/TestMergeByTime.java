@@ -38,5 +38,25 @@ public class TestMergeByTime {
 		Map<String, List<StockDataBean>> stockDataListMap = load.getStockData();
 		Map<String, List<StockDataBean>> mergeMap = mergeByTime.merge(load.getStockData(), MergeTimeType.MINUTE, 30);
 		
+		for (Map.Entry<String, List<StockDataBean>> map : mergeMap.entrySet()) {
+			String code = map.getKey();
+			List<StockDataBean> stockDataList = map.getValue();
+			
+			for (StockDataBean stockData : stockDataList) {
+				StringBuilder builder = new StringBuilder();
+				builder
+				.append("[")
+				.append(code).append(",")
+				.append("open = ").append(stockData.getOpen()).append(",")
+				.append("high = ").append(stockData.getHigh()).append(",")
+				.append("low = ").append(stockData.getLow()).append(",")
+				.append("close = ").append(stockData.getClose()).append(",")
+				.append("volume = ").append(stockData.getVolume()).append(",")
+				.append("amount = ").append(stockData.getAmount())
+				.append("]");
+				
+				System.out.println(builder.toString());
+			}
+		}
 	}
 }
