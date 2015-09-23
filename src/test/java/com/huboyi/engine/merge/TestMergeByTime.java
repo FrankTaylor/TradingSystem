@@ -35,18 +35,19 @@ public class TestMergeByTime {
 	
 	@Test
 	public void testMerge() {
-		Map<String, List<StockDataBean>> stockDataListMap = load.getStockData();
-		Map<String, List<StockDataBean>> mergeMap = mergeByTime.merge(load.getStockData(), MergeTimeType.MINUTE, 30);
+		Map<String, List<StockDataBean>> mergeStockDataListMap = mergeByTime.merge(load.getStockData(), MergeTimeType.MINUTE_30);
 		
-		for (Map.Entry<String, List<StockDataBean>> map : mergeMap.entrySet()) {
-			String code = map.getKey();
-			List<StockDataBean> stockDataList = map.getValue();
+		for (Map.Entry<String, List<StockDataBean>> entrySet : mergeStockDataListMap.entrySet()) {
+			String stockCode = entrySet.getKey();
+			List<StockDataBean> stockDataList = entrySet.getValue();
 			
+			System.out.println("stockDataList.size() = " + stockDataList.size());
 			for (StockDataBean stockData : stockDataList) {
 				StringBuilder builder = new StringBuilder();
 				builder
 				.append("[")
-				.append(code).append(",")
+				.append("stockCode = ").append(stockCode).append(",")
+				.append("date = ").append(stockData.getDate()).append(",")
 				.append("open = ").append(stockData.getOpen()).append(",")
 				.append("high = ").append(stockData.getHigh()).append(",")
 				.append("low = ").append(stockData.getLow()).append(",")

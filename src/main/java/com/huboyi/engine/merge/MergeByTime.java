@@ -2,11 +2,9 @@ package com.huboyi.engine.merge;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,114 +38,118 @@ public class MergeByTime {
 	/** 处理日期和时间的格式类。（YYYY是国际标准ISO 8601所指定的以周来纪日的历法。yyyy是格里高利历，它以400年为一个周期，在这个周期中，一共有97个闰日，在这种历法的设计中，闰日尽可能均匀地分布在各个年份中，所以一年的长度有两种可能：365天或366天。）*/
 	private DateFormat dataFormat = new SimpleDateFormat("yyyyMMddhhmmssSSS");
 	
-	
-	
 	public Map<String, List<StockDataBean>> 
-	merge(Map<String, List<StockDataBean>> stockDataListMap, MergeTimeType mergeTimeType, int range) {
+	merge(Map<String, List<StockDataBean>> stockDataListMap, MergeTimeType type) {
 		
-		if (mergeTimeType == MergeTimeType.MINUTE) {
-			if (range == 0 || range > INTRADAY_DEAL_TIME_DURATION_MINUTE || (INTRADAY_DEAL_TIME_DURATION_MINUTE % range) != 0) {
-				throw new RuntimeException("在对行情数据进行分钟级别合并时，合并范围 [range = " + range + "] 不能为 0；" +
-						"不能大于 [" + INTRADAY_DEAL_TIME_DURATION_MINUTE + "]；" +
-								"还必须能被 [" + INTRADAY_DEAL_TIME_DURATION_MINUTE + "]整除！");
+		Map<String, List<StockDataBean>> mergeStockDataListMap = new HashMap<String, List<StockDataBean>>();   // 装载合并以后的行情数据。
+		
+		if (
+				type == MergeTimeType.MINUTE_1 || type == MergeTimeType.MINUTE_5 || 
+				type == MergeTimeType.MINUTE_10 || type == MergeTimeType.MINUTE_15 || 
+				type == MergeTimeType.MINUTE_30 || type == MergeTimeType.MINUTE_60) {
+			
+			// 根据枚举类型，得到出日内合并的时间范围链表的表头。
+			HourAndMinuteRange range = computeHourAndMinuteRange(type);
+			if (range == null) {
+				throw new RuntimeException("在计算日内合并的时间范围链表的表头的过程中出现问题，请检查调用 MergeByTime#merge() 方法时传入的枚举类型！");
 			}
 			
-			Map<String, List<StockDataBean>> mergeStockDataListMap = new HashMap<String, List<StockDataBean>>();
+			// --- 得到上/下午的开闭盘时间（时:分） ---
+			int amOpenHour = Integer.valueOf(AM_OPEN_TIME.split(":")[0]);
+			int pmCloseHour = Integer.valueOf(PM_CLOSE_TIME.split(":")[0]);
 			
 			for (Map.Entry<String, List<StockDataBean>> entrySet : stockDataListMap.entrySet()) {
-				String code = entrySet.getKey();
-				List<StockDataBean> stockDataList = entrySet.getValue();
+				String stockCode = entrySet.getKey();                                                              // 证券编码。
+				List<StockDataBean> stockDataList = entrySet.getValue();                                           // 合并之前的行情数据。
 				
-				Bar bar = new Bar();
-				List<Bar> barList = new ArrayList<Bar>();
-				long startDate = 0L, rangeDate = 0L;
-				
+				Bar bar = new Bar();                                                                               // 用于合并行情数据的Bar对象。
+				List<Bar> barList = new ArrayList<Bar>();                                                          // 用于装载Bar对象的集合。
 				for (int i = 0; i < stockDataList.size(); i++) {
 					
 					StockDataBean stockData = stockDataList.get(i);
-					String yearAndMonthAndDay = String.valueOf(stockData.getDate()).substring(0, 8);
-					
-					System.out.println(stockData);
-					
-					// --- 初始时间范围 ---
-					if (startDate == 0 && i == 0) {
-						startDate = Long.valueOf(yearAndMonthAndDay + OPEN_TIME);
-					}
-					if (rangeDate == 0) {
-						rangeDate = computeTimeRange(startDate, mergeTimeType, range);
-					}
-					
-					// --- 实际数据合并 ---
-					if (!Long.valueOf(yearAndMonthAndDay).equals(Long.valueOf(String.valueOf(rangeDate).substring(0, 8)))) {
-						continue;
-					}
-					
-					if (stockData.getDate() <= rangeDate) {
-						combineBar(bar, stockData.getOpen(), stockData.getHigh(), stockData.getLow(), stockData.getClose(), stockData.getVolume(), stockData.getAmount());
-					}
-					
-					if (stockData.getDate() == rangeDate) {
+					int hour = stockData.getHour(), minute = stockData.getMinute();
+
+					// 如果下一根K线的时间范围大于当前给定的范围，就说明当前时间范围的合并告一段落，可以开始下一阶段合并了。
+					if (
+							(hour > range.getHour() || (hour == range.getHour() && minute > range.getMinute())) 
+							||
+							(hour == amOpenHour && (range.getHour() >= pmCloseHour))
+					) {
 						
+						i--;
+						
+						// --- 设置当前 Bar 的时间信息 ---
+						StockDataBean prevStockData = stockDataList.get(i);
+						
+						bar.setYear(prevStockData.getYear());
+						bar.setMonth(prevStockData.getMonth());
+						bar.setDay(prevStockData.getDay());
+						bar.setHour(range.getHour());
+						bar.setMinute(range.getMinute());
+						bar.setSecond(0);
+						bar.setMillisecond(0);
+
+						// Calendar的月份从 0 开始计数，所以当前的月份要减1了。
+						Calendar date = Calendar.getInstance();
+						date.set(prevStockData.getYear(), (prevStockData.getMonth() - 1), prevStockData.getDay(), range.getHour(), range.getMinute(), 0);
+						date.set(Calendar.MILLISECOND, 0);
+						
+						bar.setDate(Long.valueOf(dataFormat.format(date.getTime())));
+						bar.setTime(date.getTime().getTime());
+
+						// --- 给当前 Bar 对象设置前后关联的 Bar 对象---
 						if (!barList.isEmpty()) {
 							Bar prev = barList.get(barList.size() - 1);
 							prev.setNext(bar);
 							bar.setPrev(prev);
 						}
-						
+
+						// --- 把当前 Bar 对象放入集合中 ---
 						barList.add(bar);
 						
+						// --- 重置，为下一个合并做准备 ---
 						bar = new Bar();
-						startDate = rangeDate;
-						rangeDate = computeTimeRange(startDate, mergeTimeType, range);
+						range = range.next;
+						continue;
 					}
+					
+					// --- 把行情数据合并到 Bar 对象中 ---
+					combineBar(bar, stockData.getOpen(), stockData.getHigh(), stockData.getLow(), stockData.getClose(), stockData.getVolume(), stockData.getAmount());
+					
+					
 				}
 				
-				List<StockDataBean> mergeList = new ArrayList<StockDataBean>();
-				for (Bar b : barList) {
-					StockDataBean source = new StockDataBean();
-					BeanUtils.copyProperties(source, b);
-					mergeList.add(source);
+				// --- 把 Bar 对象转换成 StockDateBean 对象 ---
+				List<StockDataBean> mergeStockDataList = new ArrayList<StockDataBean>();
+				for (Bar source : barList) {
+					StockDataBean target = new StockDataBean();
+					BeanUtils.copyProperties(source, target);
+					mergeStockDataList.add(target);
 				}
 				
-				mergeStockDataListMap.put(code, mergeList);
-			}
-			
-			return mergeStockDataListMap;
-		}
-		
-		if (mergeTimeType == MergeTimeType.HOUR) {
-			if (range == 0 || range > INTRADAY_DEAL_TIME_DURATION_HOUR || (INTRADAY_DEAL_TIME_DURATION_HOUR % range) != 0) {
-				throw new RuntimeException("在对行情数据进行小时级别合并时，合并范围 [range = " + range + "] 不能为 0；" +
-						"不能大于 [" + INTRADAY_DEAL_TIME_DURATION_HOUR + "]；" +
-								"还必须能被 [" + INTRADAY_DEAL_TIME_DURATION_HOUR + "]整除！");
-			}
-		}
-		
-		if (mergeTimeType == MergeTimeType.DAY) {
-			if (range == 0 || range != 1) {
-				throw new RuntimeException("在对行情数据进行天级别合并时，合并范围 [range = " + range + "] 不能为 0；还必须等于 1！");
-			}
-		}
-		
-		if (mergeTimeType == MergeTimeType.MONTH) {
-			if (range == 0 || range != 1) {
-				throw new RuntimeException("在对行情数据进行月级别合并时，合并范围 [range = " + range + "] 不能为 0；还必须等于 1！");
+				// --- 给合并后的 StockDataBean 对象设置前后关联关系 ---
+				for (int i = 0; i < mergeStockDataList.size(); i++) {
+					StockDataBean current = mergeStockDataList.get(i);
+					StockDataBean prev = (i > 0) ? mergeStockDataList.get(i - 1) : null;
+					StockDataBean next = (i < mergeStockDataList.size() - 1) ? mergeStockDataList.get(i + 1) : null;
+					
+					if (prev != null) {
+						prev.setNext(current);
+						current.setPrev(prev);
+					}
+					
+					if (next == null) { break; }
+					
+					current.setNext(next);
+					next.setPrev(current);
+				}
+				
+				// --- 把合并后的 StockDataBean 对象集合放入 Map 中。
+				mergeStockDataListMap.put(stockCode, mergeStockDataList);
 			}
 		}
 		
-		if (mergeTimeType == MergeTimeType.QUARTER) {
-			if (range == 0 || range != 1) {
-				throw new RuntimeException("在对行情数据进行季级别合并时，合并范围 [range = " + range + "] 不能为 0；还必须等于 1！");
-			}
-		}
-		
-		if (mergeTimeType == MergeTimeType.YEAR) {
-			if (range == 0 || range != 1) {
-				throw new RuntimeException("在对行情数据进行年级别合并时，合并范围 [range = " + range + "] 不能为 0；还必须等于 1！");
-			}
-		}
-		
-		return null;
+		return mergeStockDataListMap;
 	}
 
 	/**
@@ -201,8 +203,15 @@ public class MergeByTime {
 		}
 	}
 	
+	/**
+	 * 根据枚举类型，得到出日内合并的时间范围链表的表头。
+	 * 
+	 * @param type 合并K线的时间类型枚举
+	 * @return HourAndMinuteRange
+	 */
 	private HourAndMinuteRange computeHourAndMinuteRange(MergeTimeType type) {
 		
+		// --- 得到上/下午的开闭盘时间（时:分） ---
 		String amOpenTime[] = AM_OPEN_TIME.split(":");
 		String amCloseTime[] = AM_CLOSE_TIME.split(":");
 		
@@ -219,6 +228,7 @@ public class MergeByTime {
 		int pmCloseHour = Integer.valueOf(pmCloseTime[0]);
 		int pmCloseMinute = Integer.valueOf(pmCloseTime[1]);
 		
+		// --- 根据枚举类型，得到计算时间范围时用到的增幅 ---
 		int addRange = 
 			(type == MergeTimeType.MINUTE_1) ? 1 :
 				(type == MergeTimeType.MINUTE_5) ? 5 :
@@ -227,7 +237,7 @@ public class MergeByTime {
 							(type == MergeTimeType.MINUTE_30) ? 30 :
 								(type == MergeTimeType.MINUTE_60) ? 60 :0;
 		
-		
+		// --- 根据增幅计算出日内合并的时间范围 ---
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, amOpenHour);
 		calendar.set(Calendar.MINUTE, amOpenMinute);
@@ -239,11 +249,17 @@ public class MergeByTime {
 			int hour = calendar.get(Calendar.HOUR_OF_DAY);
 			int minute = calendar.get(Calendar.MINUTE);
 			
+			// 当计算的时间范围超过了下午闭市的时间，就退出循环。
 			if (hour > pmCloseHour || (hour == pmCloseHour && minute > pmCloseMinute)) {
 				break;
 			}
-			
-			if (hour == amCloseHour && minute > amCloseMinute) {
+
+			// 当计算的时间范围超过了上午闭市的时间，就重置时间为下午开始的时间。
+			if (
+					(hour > amCloseHour && hour < pmOpenHour) 
+					|| 
+					(hour == amCloseHour && minute > amCloseMinute)
+				) {
 				calendar.set(Calendar.HOUR_OF_DAY, pmOpenHour);
 				calendar.set(Calendar.MINUTE, pmOpenMinute);
 				continue;
@@ -252,11 +268,13 @@ public class MergeByTime {
 			rangeList.add(new HourAndMinuteRange().setHour(hour).setMinute(minute));
 		}
 		
+		// --- 把所有日内合并的时间范围搞成单项链表 ---
 		for (int i = 0; i < rangeList.size() - 1; i++) {
 			rangeList.get(i).setNext(rangeList.get(i + 1));
 		}
 		rangeList.get(rangeList.size() - 1).setNext(rangeList.get(0));
 		
+		// --- 返回该链表的表头 ---
 		return rangeList.get(0);
 	}
 	
@@ -280,14 +298,14 @@ public class MergeByTime {
 	
 	public static void main(String[] args) {
 		MergeByTime mbt = new MergeByTime();
-		HourAndMinuteRange range = mbt.computeHourAndMinuteRange(MergeTimeType.MINUTE_15);
+		HourAndMinuteRange range = mbt.computeHourAndMinuteRange(MergeTimeType.MINUTE_1);
 		
 		try {
-			for (int i = 0; i < 200; i++) {
+			for (int i = 0; i < 3000; i++) {
 				System.out.println(range);
 				range = range.getNext();
 				
-				TimeUnit.MILLISECONDS.sleep(500);
+				TimeUnit.MILLISECONDS.sleep(10);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
