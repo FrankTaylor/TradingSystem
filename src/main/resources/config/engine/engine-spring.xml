@@ -23,8 +23,8 @@
 	
     <!-- 装载股票数据的引擎类。（行情数据文件的路径为我笔记本WIN7操作系统中的路径）-->
     <bean id="winLoadEngine" class="com.huboyi.engine.load.LoadEngine">
-    	<!-- <constructor-arg name="stockDataFilepath" value="D:/Program Files/招商证券/高级导出/沪深A股" /> -->
-    	<!-- <constructor-arg name="indexDataFilepath" value="D:/Program Files/招商证券/高级导出/沪深指数" /> -->
+    	<constructor-arg name="stockDataFilepath" value="D:/Program Files/招商证券/高级导出/沪深A股" />
+    	<constructor-arg name="indexDataFilepath" value="D:/Program Files/招商证券/高级导出/沪深指数" />
     	<!-- <constructor-arg name="stockDataFilepath" value="F:/Bond Data/Stock" /> -->
     	<!-- <constructor-arg name="indexDataFilepath" value="F:/Bond Data/Index" /> -->
     </bean>
