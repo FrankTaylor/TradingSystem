@@ -10,7 +10,7 @@ import com.huboyi.system.bean.IndicatorsInfoBean;
 /**
  * 指标集合信息Bean。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/9/12
  * @version 1.0
  */

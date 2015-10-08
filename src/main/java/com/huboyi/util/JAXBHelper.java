@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 /**
  * 以XStream和Jackson框架为核心，为测试用例提供JAXB功能的帮助类。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/2/28
  * @version 1.0
  */

@@ -7,7 +7,7 @@ import com.huboyi.engine.indicators.technology.constant.SingleMaPattern;
 /**
  * 普通平均线分析结果指标。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 上午11:25:57
  * @version 1.0
  */

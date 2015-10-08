@@ -4,7 +4,7 @@ package com.huboyi.engine.indicators.technology.constant;
 /**
  * 单均线形态枚举。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/2/6
  * @version 1.0
  */

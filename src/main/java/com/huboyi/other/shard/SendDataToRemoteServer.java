@@ -25,7 +25,7 @@ import com.huboyi.other.shard.bean.RemoteServerInfo;
 /**
  * 把行情数据发送到远程主机。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/3/31
  * @version 1.0
  */

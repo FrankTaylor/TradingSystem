@@ -3,7 +3,7 @@ package com.huboyi.engine.indicators.technology.constant;
 /**
  * K线在分型中的类型枚举。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/9/15
  * @version 1.0
  */

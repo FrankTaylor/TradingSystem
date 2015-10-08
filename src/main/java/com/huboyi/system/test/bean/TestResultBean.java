@@ -9,7 +9,7 @@ import com.huboyi.system.bean.DealSignalBean;
 /**
  * 测试结果信息。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/1/13
  * @version 1.0
  */

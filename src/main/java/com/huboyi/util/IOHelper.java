@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * 提供对IO的操作。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/8/13
  * @version 1.0
  */

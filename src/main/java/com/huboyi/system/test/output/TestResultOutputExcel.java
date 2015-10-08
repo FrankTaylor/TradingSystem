@@ -31,7 +31,7 @@ import com.huboyi.system.test.bean.TestResultBean;
  * 把测试结果输出到Excel中。生成Excel的版本为2007及以上，使用的框架是POI-3.10.1，
  * 在该框架中已经不建议使用CellRangeAddress类了，但是我还没有找到合适的代替类。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/1/13
  * @version 1.0
  */

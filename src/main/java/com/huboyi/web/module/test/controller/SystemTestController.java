@@ -25,7 +25,7 @@ import com.huboyi.web.module.test.command.StanWeinTestCommand;
 /**
  * 交易系统测试的控制类。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/11/06
  * @version 1.0
  */
