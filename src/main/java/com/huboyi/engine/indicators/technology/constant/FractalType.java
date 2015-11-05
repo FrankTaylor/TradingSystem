@@ -3,7 +3,7 @@ package com.huboyi.engine.indicators.technology.constant;
 /**
  * 用于标示分型类别的枚举类。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/10/24
  * @version 1.0
  */

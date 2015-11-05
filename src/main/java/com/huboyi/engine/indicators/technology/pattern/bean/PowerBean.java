@@ -20,7 +20,7 @@ public class PowerBean implements Serializable, Cloneable {
 	/**
 	 * 用于标示中枢方向（中枢方向是指该中枢所在走势类型的方向）的枚举类。
 	 * 
-	 * @author FrankTaylor <mailto:hubin@300.cn>
+	 * @author FrankTaylor <mailto:franktaylor@163.com>
 	 * @since 2014/10/28
 	 * @version 1.0
 	 */

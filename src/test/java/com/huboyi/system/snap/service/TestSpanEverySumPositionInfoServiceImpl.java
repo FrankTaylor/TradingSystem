@@ -17,7 +17,7 @@ import com.huboyi.system.snap.service.impl.SpanEverySumPositionInfoServiceImpl;
 /**
  * 对{@link EverySumPositionInfoRepository}的测试。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/1/3
  * @version 1.0
  */

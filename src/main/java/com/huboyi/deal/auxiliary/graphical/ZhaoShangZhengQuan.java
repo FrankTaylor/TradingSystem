@@ -21,7 +21,7 @@ import com.huboyi.system.po.EverySumPositionInfoPO;
 /**
  * 根据计算结果生成可用于在招商证券上展示的代码。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/10/25
  * @version 1.0
  */
@@ -253,7 +253,7 @@ public class ZhaoShangZhengQuan {
 	/**
 	 * 因为招商证券只能支持100条语句，所以需要对代码集合进行截取。
 	 * 
-	 * @author FrankTaylor <mailto:hubin@300.cn>
+	 * @author FrankTaylor <mailto:franktaylor@163.com>
 	 * @since 2014/10/25
 	 * @version 1.0
 	 */

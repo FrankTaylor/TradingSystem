@@ -12,7 +12,7 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 /**
  * spring返回中文乱码修正类。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/3/4
  * @version 1.0
  */

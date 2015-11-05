@@ -8,7 +8,7 @@ import com.huboyi.system.snap.engine.SnapFractalForDayEngine;
 /**
  * 执行顶底分型日线交易系统捕捉交易信号。
  * 
- * @author FrankTaylor <mailto:hubin@300.cn>
+ * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2015/4/20
  * @version 1.0
  */
