@@ -38,6 +38,13 @@ public class MergeByTime {
 	/** 处理日期和时间的格式类。（YYYY是国际标准ISO 8601所指定的以周来纪日的历法。yyyy是格里高利历，它以400年为一个周期，在这个周期中，一共有97个闰日，在这种历法的设计中，闰日尽可能均匀地分布在各个年份中，所以一年的长度有两种可能：365天或366天。）*/
 	private DateFormat dataFormat = new SimpleDateFormat("yyyyMMddhhmmssSSS");
 	
+	/**
+	 * 把小时间单位的行情数据合并成大时间单位的行情数据。
+	 * 
+	 * @param stockDataListMap 小时间单位的行情数据
+	 * @param type 合并K线的时间类型枚举
+	 * @return Map<String, List<StockDataBean>>
+	 */
 	public Map<String, List<StockDataBean>> 
 	merge(Map<String, List<StockDataBean>> stockDataListMap, MergeTimeType type) {
 		
@@ -115,8 +122,6 @@ public class MergeByTime {
 					
 					// --- 把行情数据合并到 Bar 对象中 ---
 					combineBar(bar, stockData.getOpen(), stockData.getHigh(), stockData.getLow(), stockData.getClose(), stockData.getVolume(), stockData.getAmount());
-					
-					
 				}
 				
 				// --- 把 Bar 对象转换成 StockDateBean 对象 ---
@@ -137,7 +142,7 @@ public class MergeByTime {
 						prev.setNext(current);
 						current.setPrev(prev);
 					}
-					
+					 
 					if (next == null) { break; }
 					
 					current.setNext(next);
