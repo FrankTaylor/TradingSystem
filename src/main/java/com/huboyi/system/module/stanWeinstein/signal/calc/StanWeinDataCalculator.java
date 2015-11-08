@@ -2,8 +2,8 @@ package com.huboyi.system.module.stanWeinstein.signal.calc;
 
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.TechAlgorithm;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.module.stanWeinstein.signal.bean.StanWeinDataCalcResultBean;
 import com.huboyi.system.module.stanWeinstein.signal.param.StanWeinMACDParam;
 import com.huboyi.system.module.stanWeinstein.signal.param.StanWeinMAParam;

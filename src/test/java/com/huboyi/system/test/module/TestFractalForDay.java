@@ -9,13 +9,13 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.deal.auxiliary.graphical.ZhaoShangZhengQuan;
 import com.huboyi.engine.indicators.technology.PatternAlogrithm;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
 import com.huboyi.engine.load.LoadEngine;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.test.db.TestEverySumPositionInfoRepository;
 import com.huboyi.system.test.engine.TestFractalForDayEngine;
 import com.huboyi.util.IOHelper;

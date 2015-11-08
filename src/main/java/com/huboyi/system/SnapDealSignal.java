@@ -2,7 +2,7 @@ package com.huboyi.system;
 
 import java.util.List;
 
-import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 import com.huboyi.system.bean.PositionInfoBean;

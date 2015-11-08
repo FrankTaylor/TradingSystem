@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.BeanUtils;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.constant.MergeTimeType;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.engine.merge.bean.Bar;
 
 /**

@@ -2,9 +2,9 @@ package com.huboyi.system.module.fractal.signal.calc;
 
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.PatternAlogrithm;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 
 /**

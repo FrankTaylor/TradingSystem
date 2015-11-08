@@ -1,6 +1,6 @@
 package com.huboyi.system.bean;
 
-import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.system.constant.DealSignal;
 
 /**

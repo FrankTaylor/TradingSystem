@@ -1,4 +1,4 @@
-package com.huboyi.engine.load.bean;
+package com.huboyi.data.load.bean;
 
 import java.io.IOException;
 import java.io.Serializable;

@@ -3,10 +3,10 @@ package com.huboyi.system.module.stanWeinstein.signal.rule;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.TechAlgorithm;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageBean;
 import com.huboyi.engine.indicators.technology.volume.bean.VolMoveAverageBean;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.module.stanWeinstein.signal.bean.StanWeinDataCalcResultBean;
 import com.huboyi.system.module.stanWeinstein.signal.param.StanWeinRuleParam;
 

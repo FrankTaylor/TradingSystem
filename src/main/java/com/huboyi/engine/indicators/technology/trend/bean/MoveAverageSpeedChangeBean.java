@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.TechAlgorithm;
-import com.huboyi.engine.load.bean.StockDataBean;
 
 /**
  * 均线运动速度改变的结果类。

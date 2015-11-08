@@ -1,4 +1,4 @@
-package com.huboyi.engine.load.worker;
+package com.huboyi.data.load.task;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -38,10 +38,10 @@ import com.huboyi.data.load.bean.StockDataBean;
  * @since 2014/10/16
  * @version 1.0
  */
-public class LoadDataWorker implements Callable<Map<String, List<StockDataBean>>> {
+public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> {
 
 	/** 日志。*/
-	private final Logger log = LogManager.getLogger(LoadDataWorker.class);
+	private final Logger log = LogManager.getLogger(DataLoadTask.class);
 	
 	/** 日期格式处理类。*/
 	private final DateFormat dataFormat = new SimpleDateFormat("yyyyMMddhhmmssSSS");
@@ -58,7 +58,7 @@ public class LoadDataWorker implements Callable<Map<String, List<StockDataBean>>
 	 * @param marketDataFilepathMap 行情数据文件路径集合
 	 * @param currentReadMarketDataNum 当前已经载入的股票行情数据的个数
 	 */
-	public LoadDataWorker (Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
+	public DataLoadTask (Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
 		this.marketDataFilepathMap = marketDataFilepathMap;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
 	}

@@ -11,9 +11,9 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.constant.MergeTimeType;
 import com.huboyi.engine.load.LoadEngine;
-import com.huboyi.engine.load.bean.StockDataBean;
 /**
  * 对{@link MergeByTime}的测试。
  * 

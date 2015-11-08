@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.constant.FractalType;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.util.JAXBHelper;
 
 /**

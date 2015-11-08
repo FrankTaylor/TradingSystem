@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.constant.SingleMaPattern;
 import com.huboyi.engine.indicators.technology.energy.bean.MACDBean;
 import com.huboyi.engine.indicators.technology.energy.bean.RSIBean;
@@ -13,7 +14,6 @@ import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageBean;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageSpeedChangeBean;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageStatisticsBean;
 import com.huboyi.engine.indicators.technology.volume.bean.VolMoveAverageBean;
-import com.huboyi.engine.load.bean.StockDataBean;
 
 /**
  * 技术指标算法类。

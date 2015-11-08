@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.constant.BandType;
 import com.huboyi.engine.indicators.technology.constant.FractalType;
 import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
 import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean.PowerType;
-import com.huboyi.engine.load.bean.StockDataBean;
 
 /**
  * 技术形态算法类。

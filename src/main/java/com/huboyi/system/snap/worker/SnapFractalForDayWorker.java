@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.PositionInfoBean;

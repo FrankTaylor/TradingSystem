@@ -3,10 +3,10 @@ package com.huboyi.system.module.stanWeinstein.signal.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.indicators.technology.energy.bean.MACDBean;
 import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageBean;
 import com.huboyi.engine.indicators.technology.volume.bean.VolMoveAverageBean;
-import com.huboyi.engine.load.bean.StockDataBean;
 
 /**
  * StanWeinstein交易系统所需数据的计算结果。

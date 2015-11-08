@@ -15,8 +15,8 @@ import javax.annotation.Resource;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.huboyi.data.load.bean.StockDataBean;
 import com.huboyi.engine.load.LoadEngine;
-import com.huboyi.engine.load.bean.StockDataBean;
 import com.huboyi.system.constant.OrderInfoTradeFlag;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
 import com.huboyi.system.module.fractal.signal.rule.FractalDealRuleForDay;

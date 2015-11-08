@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.engine.load.bean.StockDataBean;
+import com.huboyi.data.load.bean.StockDataBean;
 
 /**
  * 行情中枢Bean。
