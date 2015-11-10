@@ -62,31 +62,6 @@
     </plugins>
   </build>
   
-  <!--
-  <pluginRepositories>
-    <pluginRepository>
-	  <id>public</id>
-	  <name>Public Repositories</name>
-	  <url>http://119.10.30.82:8081/nexus/content/groups/public</url>
-	  <snapshots>
-	    <enabled>true</enabled>
-	  </snapshots>
-	  <releases>
-	    <enabled>true</enabled>
-	  </releases>
-	</pluginRepository>
-	
-	<pluginRepository>
-	  <id>snapshots</id>
-	  <name>snapshots</name>
-	  <url>http://119.10.30.82:8081/nexus/content/repositories/snapshots</url>
-	  <snapshots>
-	    <enabled>true</enabled>
-	  </snapshots>
-	</pluginRepository>
-  </pluginRepositories>
-  -->
-  
   <dependencies>
     
     <!-- DB 驱动组件 -->
