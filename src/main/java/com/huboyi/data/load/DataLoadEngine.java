@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -40,16 +41,27 @@ public class DataLoadEngine {
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(DataLoadEngine.class);
 	
-	/** 市场行情数据文件路径。*/
-	private final String marketDataFilepath;
+	/** 市场行情数据文件读取文件的线程数路径。*/
+	private final String MARKET_DATA_FILEPATH;
+	/** 读取文件的线程数。*/
+	private final int LOAD_DATA_THREAD_NUMS;
 	
 	/**
 	 * 当采用需要传入参数的构造函数时，表明我需要在Linux系统上做计算，该路径应为Linux系统上的行情数据路径。
 	 * 
 	 * @param marketDataFilepath
 	 */
-	public DataLoadEngine (String marketDataFilepath) {
-		this.marketDataFilepath = marketDataFilepath;
+	public DataLoadEngine (String marketDataFilepath, int loadDataThreadNums) {
+		this.MARKET_DATA_FILEPATH = marketDataFilepath;
+		this.LOAD_DATA_THREAD_NUMS = loadDataThreadNums;
+		
+		if (StringUtils.isBlank(MARKET_DATA_FILEPATH)) {
+			throw new IllegalArgumentException("市场行情数据文件夹路径不能为空 [" + MARKET_DATA_FILEPATH + "]！");
+		}
+		
+		if (LOAD_DATA_THREAD_NUMS <= 0) {
+			throw new IllegalArgumentException("读取文件的线程数必须大于0 [" + LOAD_DATA_THREAD_NUMS + "]");
+		}
 	}
 	
 	/**
@@ -69,11 +81,11 @@ public class DataLoadEngine {
 		// 得到监控装载行情数据进度的线程池。
 		ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
 		// 得到处理装载行情数据的线程池。
-		ExecutorService workerExec = getLoadMarketDataThreadPool(8);
+		ExecutorService workerExec = getLoadMarketDataThreadPool(LOAD_DATA_THREAD_NUMS);
 		
 		try {
 			// 1、读取市场行情数据文件路径集合。
-			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(marketDataFilepath);
+			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(MARKET_DATA_FILEPATH);
 
 			// 2、对装载市场行情数据文件路径的集合进行分割。
 			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, 10);
@@ -98,7 +110,7 @@ public class DataLoadEngine {
 				}
 			}
 		} catch (Exception e) {
-			log.error(e);
+			throw new RuntimeException(e);
 		}
 		
 		// 结束时间。
@@ -289,5 +301,10 @@ public class DataLoadEngine {
 			}
 		});
 		return es;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		DataLoadEngine dataLoad = new DataLoadEngine("D:\\Program Files\\招商证券\\高级导出\\沪深A股", 8);
+		Map<String, List<StockDataBean>> map = dataLoad.getStockData();
 	}
 }
