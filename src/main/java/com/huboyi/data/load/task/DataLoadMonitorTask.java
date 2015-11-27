@@ -24,6 +24,8 @@ public class DataLoadMonitorTask implements Runnable {
 	private final Integer marketDataFilepathNum;
 	/** 当前已经载入的行情数据的个数。*/
 	private final AtomicInteger currentReadMarketDataNum;
+	/** 监控间隔时间（单位毫秒）。*/
+	private final long monitoringInterval;
 	
 	/** 监控线程任务的执行控制信号，true：执行；false：停止。*/
 	private boolean executionSignal;
@@ -33,10 +35,12 @@ public class DataLoadMonitorTask implements Runnable {
 	 * 
 	 * @param marketDataFilepathMap 需要载入行情数据的总个数
 	 * @param currentReadMarketDataNum 当前已经载入的行情数据的个数
+	 * @param monitoringInterval 监控间隔时间（单位毫秒）
 	 */
-	public DataLoadMonitorTask (Integer marketDataFilepathNum, AtomicInteger currentReadMarketDataNum) {
+	public DataLoadMonitorTask (Integer marketDataFilepathNum, AtomicInteger currentReadMarketDataNum, long monitoringInterval) {
 		this.marketDataFilepathNum = marketDataFilepathNum;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
+		this.monitoringInterval = monitoringInterval;
 		
 		this.executionSignal = true;
 	}
@@ -59,7 +63,7 @@ public class DataLoadMonitorTask implements Runnable {
 				}
 				
 				log.info("当前载入行情数据的进度为：" + rate.floatValue() + "%");
-				TimeUnit.MILLISECONDS.sleep(1000);
+				TimeUnit.MILLISECONDS.sleep(monitoringInterval);
 			}
 		} catch (Exception e) {
 			log.error("[name = " + name + "]在监控行情数据载入的过程中出现错误！");
