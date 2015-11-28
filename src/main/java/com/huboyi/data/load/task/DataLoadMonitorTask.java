@@ -8,15 +8,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.huboyi.data.load.DataLoadEngine;
+
 /**
  * 监控载入股票行情数据的工作类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/10/18
- * @version 1.0
+ * @see DataLoadEngine
+ * @since 1.0
  */
 public class DataLoadMonitorTask implements Runnable {
-
+	
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(DataLoadMonitorTask.class);
 	

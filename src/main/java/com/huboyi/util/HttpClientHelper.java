@@ -37,8 +37,7 @@ import org.apache.http.protocol.HttpContext;
  * Apache HttpClient框架使用快捷帮助类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/2/26
- * @version 1.0
+ * @since 1.0
  */
 public class HttpClientHelper {
 	

@@ -19,8 +19,7 @@ import org.apache.log4j.Logger;
  * 提供对IO的操作。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/8/13
- * @version 1.0
+ * @since 1.0
  */
 public class IOHelper {
 	

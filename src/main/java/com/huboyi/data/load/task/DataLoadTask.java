@@ -22,7 +22,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
-import com.huboyi.data.load.bean.StockDataBean;
+import com.huboyi.data.bean.StockDataBean;
 
 /**
  * 这个类主要用于，读取由“招商证券、金魔方、飞狐交易师”导出的股票行情文件。</p>
@@ -35,8 +35,8 @@ import com.huboyi.data.load.bean.StockDataBean;
  * 在此还需要说明一下，如果导出的数据是日线，那就不会有“时分”这个列了。所以在上边给出的内容示例有两个，一个是7列，一个是8列。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/10/16
- * @version 1.0
+ * @see DataLoadEngine
+ * @since 1.0
  */
 public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> {
 

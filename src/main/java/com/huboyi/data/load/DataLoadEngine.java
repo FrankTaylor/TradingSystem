@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.data.load.bean.StockDataBean;
+import com.huboyi.data.bean.StockDataBean;
 import com.huboyi.data.load.task.DataLoadMonitorTask;
 import com.huboyi.data.load.task.DataLoadTask;
 
@@ -33,8 +33,7 @@ import com.huboyi.data.load.task.DataLoadTask;
  * 装载股票数据的引擎类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2014/10/16
- * @version 1.0
+ * @since 1.0
  */
 public class DataLoadEngine {
 	

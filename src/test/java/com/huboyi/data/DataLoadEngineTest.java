@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.huboyi.data.bean.StockDataBean;
 import com.huboyi.data.load.DataLoadEngine;
-import com.huboyi.data.load.bean.StockDataBean;
 
 /**
  * 对{@link com.huboyi.data.load.DataLoadEngine}的测试。

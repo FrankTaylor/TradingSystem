@@ -13,9 +13,9 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.engine.indicators.technology.constant.BandType;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
+import com.huboyi.indicators.technology.bean.pattern.BandBean;
+import com.huboyi.indicators.technology.bean.pattern.PowerBean;
+import com.huboyi.indicators.technology.constant.BandType;
 import com.huboyi.system.po.EverySumPositionInfoPO;
 
 /**
