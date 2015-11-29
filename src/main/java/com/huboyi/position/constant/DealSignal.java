@@ -1,4 +1,4 @@
-package com.huboyi.system.constant;
+package com.huboyi.position.constant;
 
 
 /**

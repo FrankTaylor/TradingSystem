@@ -17,14 +17,14 @@ public interface OrderInfoRepository {
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void createIndex (String stockCode);
+	public void createIndex(String stockCode);
 	
 	/**
 	 * 插入订单信息。
 	 * 
 	 * @param po OrderInfoPO
 	 */
-	public void insert (OrderInfoPO po);
+	public void insert(OrderInfoPO po);
 	
 	/**
 	 * 找到最新的一条订单（按照trade_date + trade_time 降序）。
@@ -32,7 +32,7 @@ public interface OrderInfoRepository {
 	 * @param stockCode 证券代码
 	 * @return OrderInfoPO
 	 */
-	public OrderInfoPO findNewOne (String stockCode);
+	public OrderInfoPO findNewOne(String stockCode);
 	
 	/**
 	 * 按照条件查询订单记录（按照trade_date + trade_time 升序）。
@@ -44,12 +44,12 @@ public interface OrderInfoRepository {
 	 * @param endLimit 结束页
 	 * @return List<OrderInfoPO>
 	 */
-	public List<OrderInfoPO> findOrderInfoList (String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage);
+	public List<OrderInfoPO> findOrderInfoList(String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage);
 	
 	/**
 	 * 删除订单信息集合。
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void dropCollection (String stockCode);
+	public void dropCollection(String stockCode);
 }

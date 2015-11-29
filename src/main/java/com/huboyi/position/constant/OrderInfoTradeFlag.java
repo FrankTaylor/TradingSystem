@@ -1,4 +1,4 @@
-package com.huboyi.system.constant;
+package com.huboyi.position.constant;
 
 /**
  * 订单信息中的买卖标志枚举类。

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.huboyi.data.bean.StockDataBean;
-import com.huboyi.engine.constant.MergeTimeType;
+import com.huboyi.data.merge.constant.MergeTimeType;
 
 /**
  * 按照时间合并K线数据。

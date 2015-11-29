@@ -33,7 +33,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 	
 	@Override
-	public void insert (EverySumPositionInfoPO po) {
+	public void insert(EverySumPositionInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke insert method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
@@ -42,8 +42,8 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 		try {
 
 			// --- 把记录保存到Redis。
-			po.setId(UUID.randomUUID().toString() + "-" + TestEverySumPositionInfoRepository.class.getName());
-			opsForList().rightPush(getListKey(po.getStockCode()), po);
+			po.setId(UUID.randomUUID().toString() + "-" + getClass().getName());
+			opsForList().rightPush(getListName(po.getStockCode()), po);
 			
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的每一笔持仓记录成功。");
 		} catch (Throwable e) {
@@ -55,7 +55,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 	
 	@Override
-	public EverySumPositionInfoPO findNewOne (String stockCode) {
+	public EverySumPositionInfoPO findNewOne(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findNewOne method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -78,7 +78,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 	
 	@Override
-	public List<EverySumPositionInfoPO> findEverySumPositionInfoList (String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage) {
+	public List<EverySumPositionInfoPO> findEverySumPositionInfoList(String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findEverySumPositionInfoList method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]").append("\n");
@@ -93,7 +93,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 		try {
 
 			// --- 查询Redis。
-			List<EverySumPositionInfoPO> poList = opsForList().range(getListKey(stockCode), 0, -1);
+			List<EverySumPositionInfoPO> poList = opsForList().range(getListName(stockCode), 0, -1);
 			
 			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照open_date升序。
 			Collections.sort(poList, new Comparator<EverySumPositionInfoPO>() {
@@ -160,7 +160,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 
 	@Override
-	public void update (final EverySumPositionInfoPO po) {
+	public void update(final EverySumPositionInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke update method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
@@ -175,7 +175,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 				public String execute(RedisOperations operation) throws DataAccessException {
 					
 					// --- 查询Redis。
-					List<EverySumPositionInfoPO> poList = operation.opsForList().range(getListKey(po.getStockCode()), 0, -1);
+					List<EverySumPositionInfoPO> poList = operation.opsForList().range(getListName(po.getStockCode()), 0, -1);
 					
 					// --- 从原始集合中找出将要修改的记录和其在Redis集合中的索引。
 					int indexOfReidsList = 0;
@@ -201,10 +201,10 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 					if (po.getFloatProfitAndLoss() != null) {updatePo.setFloatProfitAndLoss(po.getFloatProfitAndLoss()); }  // 浮动盈亏。
 					if (po.getProfitAndLossRatio() != null) { updatePo.setProfitAndLossRatio(po.getProfitAndLossRatio()); } // 盈亏比例。
 					
-					operation.watch(getListKey(po.getStockCode()));
+					operation.watch(getListName(po.getStockCode()));
 					operation.multi();
 					
-					opsForList().set(getListKey(po.getStockCode()), indexOfReidsList, updatePo);
+					opsForList().set(getListName(po.getStockCode()), indexOfReidsList, updatePo);
 					
 					operation.exec();
 					return null;
@@ -221,7 +221,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 	
 	@Override
-	public void dropCollection (String stockCode) {
+	public void dropCollection(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke dropCollection method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -229,7 +229,7 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 		
 		try {
 			// --- 把记录从Redis中删除。
-			delete(getListKey(stockCode));
+			delete(getListName(stockCode));
 			log.info("删除  [证券代码 = " + stockCode + "] 用于每一笔持仓记录的集合成功。");
 		} catch (Throwable e) {
 			String errorMsg = "删除  [证券代码 = " + stockCode + "] 用于每一笔持仓记录的集合失败!";
@@ -239,12 +239,12 @@ public class EverySumPositionInfoRepositoryImpl extends RedisTemplate<String, Ev
 	}
 	
 	/**
-	 * 得到集合键值。
+	 * 得到集合名称。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return String
 	 */
-	private String getListKey (String stockCode) {
-		return "test" + ":" + "everySumPositionInfo" + ":" + stockCode;
+	private String getListName(String stockCode) {
+		return "everySumPositionInfo" + ":" + stockCode;
 	}
 }

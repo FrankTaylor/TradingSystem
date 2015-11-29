@@ -2,8 +2,6 @@ package com.huboyi.position.dao.mongodb.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,19 +35,19 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	private MongoTemplate mongoTemplate; 
 	
 	@Override
-	public void createIndex (String stockCode) {
+	public void createIndex(String stockCode) {
 		try {
-			IndexOperations indexOps = mongoTemplate.indexOps(getCollectionPath());
+			IndexOperations indexOps = mongoTemplate.indexOps(getDocCollectionName());
 			
 			/*
 			 * 1.删除该集合上的所有索引。
-			 * 原生语句：db.test_positionInfo.dropIndexes();
+			 * 原生语句：db.positionInfo.dropIndexes();
 			 */
 			indexOps.dropAllIndexes();
 			
 			/*
 			 * 2.在该集合上建立复合索引，且该索引还是唯一和稀疏的。
-			 * 原生语句：db.test_positionInfo.ensureIndex({"stockCode" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "stockCode", "background" : 1})
+			 * 原生语句：db.positionInfo.ensureIndex({"stockCode" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "stockCode", "background" : 1})
 			 */
 			String indexName = "stockCode";
 			indexOps.ensureIndex(
@@ -63,7 +61,7 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 			
 			/*
 			 * 3.验证索引是否建立成功。
-			 * 原生语句：db.test_positionInfo.getIndexes();
+			 * 原生语句：db.positionInfo.getIndexes();
 			 */
 			boolean isSuccessEnsureIndex = false;
 			List<IndexInfo> indexInfoList = indexOps.getIndexInfo();
@@ -86,9 +84,9 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 	
 	@Override
-	public void insert (PositionInfoPO po) {
+	public void insert(PositionInfoPO po) {
 		try {			
-			mongoTemplate.insert(po, getCollectionPath());
+			mongoTemplate.insert(po, getDocCollectionName());
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的持仓信息记录成功。");
 		} catch (Exception e) {
 			String errorMsg = "插入 [证券代码 = " + po.getStockCode() + "] 的持仓信息记录失败!";
@@ -98,15 +96,15 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 
 	@Override
-	public List<PositionInfoPO> findAll () {
+	public List<PositionInfoPO> findAll() {
 		try {
 			/*
-			 * 原生语句：db.test_positionInfo.find();
+			 * 原生语句：db.positionInfo.find();
 			 */
 			
 			log.info("查询所有的持仓信息记录成功。");
 			
-			return mongoTemplate.findAll(PositionInfoPO.class, getCollectionPath());
+			return mongoTemplate.findAll(PositionInfoPO.class, getDocCollectionName());
 		} catch (Exception e) {
 			String errorMsg = "查询所有的持仓信息记录记录失败!";
 			log.error(errorMsg, e);
@@ -115,10 +113,10 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 
 	@Override
-	public void update (PositionInfoPO po) {
+	public void update(PositionInfoPO po) {
 		try {
 			/*
-			 * 原生语句：db.test_prositionInfo.update({"stockCode" : "123456"}, {$set : {"stockNumber" : 100}});
+			 * 原生语句：db.prositionInfo.update({"stockCode" : "123456"}, {$set : {"stockNumber" : 100}});
 			 */
 			Criteria criteria = Criteria.where("stockCode").is(po.getStockCode());
 			Query query = new Query();
@@ -136,7 +134,7 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 			if (po.getTodayBuyNumber() != null) {update.set("todayBuyNumber", po.getTodayBuyNumber()); }              // 今买数量。
 			if (po.getTodaySellNumber() != null) { update.set("todaySellNumber", po.getTodaySellNumber()); }          // 今卖数量。
 			
-			mongoTemplate.updateMulti(query, update, getCollectionPath());
+			mongoTemplate.updateMulti(query, update, getDocCollectionName());
 			
 			log.info("修改 [证券代码 = " + po.getStockCode() + "] 的持仓信息记录成功。");
 		} catch (Exception e) {
@@ -147,16 +145,16 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 
 	@Override
-	public void removeByStockCode (String stockCode) {
+	public void removeByStockCode(String stockCode) {
 		try {
 			/*
-			 * 原生语句：db.test_positionInfo.remove({"stockCode" : "123456"});
+			 * 原生语句：db.positionInfo.remove({"stockCode" : "123456"});
 			 */
 			Criteria criteria = Criteria.where("stockCode").is(stockCode);
 			Query query = new Query();
 			query.addCriteria(criteria);
 			
-			mongoTemplate.remove(query, getCollectionPath());
+			mongoTemplate.remove(query, getDocCollectionName());
 			log.info("删除 [证券代码 = " + stockCode + "] 的持仓信息记录成功。");
 		} catch (Exception e) {
 			String errorMsg = "删除 [证券代码 = " + stockCode + "] 的持仓信息记录失败!";
@@ -166,10 +164,10 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 	
 	@Override
-	public void removeForNoStockNumber () {
+	public void removeForNoStockNumber() {
 		try {
 			/*
-			 * 原生语句：db.test_positionInfo.remove({"stockNumber" : 0, "canSellNumber" : 0});
+			 * 原生语句：db.positionInfo.remove({"stockNumber" : 0, "canSellNumber" : 0});
 			 */
 			Criteria criteria_1 = Criteria.where("stockNumber").is(0);
 			Criteria criteria_2 = Criteria.where("canSellNumber").is(0);
@@ -178,7 +176,7 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 			query.addCriteria(criteria_1);
 			query.addCriteria(criteria_2);
 			
-			mongoTemplate.remove(query, getCollectionPath());
+			mongoTemplate.remove(query, getDocCollectionName());
 			log.info("删除没有仓位的持仓信息记录成功。");
 		} catch (Exception e) {
 			String errorMsg = "删除没有仓位的持仓信息记录失败!";
@@ -188,12 +186,12 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	}
 	
 	@Override
-	public void dropCollection () {
+	public void dropCollection() {
 		try {
 			/*
-			 * 原生语句：db.test_positionInfo.drop();
+			 * 原生语句：db.positionInfo.drop();
 			 */
-			mongoTemplate.dropCollection(getCollectionPath());
+			mongoTemplate.dropCollection(getDocCollectionName());
 			log.info("删除用于记录持仓信息的集合成功。");
 		} catch (Exception e) {
 			String errorMsg = "删除用于记录持仓信息的集合失败!";
@@ -207,7 +205,7 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 	 * 
 	 * @return String
 	 */
-	private String getCollectionPath () {
-		return "test_positionInfo";
+	private String getDocCollectionName() {
+		return "positionInfo";
 	}
 }

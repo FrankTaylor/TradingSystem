@@ -1,4 +1,4 @@
-package com.huboyi.system.constant;
+package com.huboyi.position.constant;
 
 /**
  * 资金流水业务类型枚举。

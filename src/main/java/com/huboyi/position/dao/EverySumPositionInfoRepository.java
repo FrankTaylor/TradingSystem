@@ -17,14 +17,14 @@ public interface EverySumPositionInfoRepository {
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void createIndex (String stockCode);
+	public void createIndex(String stockCode);
 	
 	/**
 	 * 插入每一笔的持仓信息。
 	 * 
 	 * @param po EverySumPositionInfoPO
 	 */
-	public void insert (EverySumPositionInfoPO po);
+	public void insert(EverySumPositionInfoPO po);
 	
 	/**
 	 * 找到最新的一条订单（按照open_date + open_time 降序）。
@@ -32,7 +32,7 @@ public interface EverySumPositionInfoRepository {
 	 * @param stockCode 证券代码
 	 * @return EverySumPositionInfoPO
 	 */
-	public EverySumPositionInfoPO findNewOne (String stockCode);
+	public EverySumPositionInfoPO findNewOne(String stockCode);
 	
 	/**
 	 * 按照条件查询每一个持仓记录（按照open_date + open_time 升序）。
@@ -46,19 +46,19 @@ public interface EverySumPositionInfoRepository {
 	 * @param endLimit 结束页
 	 * @return List<EverySumPositionInfoPO>
 	 */
-	public List<EverySumPositionInfoPO> findEverySumPositionInfoList (String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage);
+	public List<EverySumPositionInfoPO> findEverySumPositionInfoList(String stockCode, String openContractCode, Integer beginOpenDate, Integer endOpenDate, String isClose, Integer beginPage, Integer endPage);
 	
 	/**
 	 * 修改每一笔的持仓信息。
 	 * 
 	 * @param po EverySumPositionInfoPO
 	 */
-	public void update (EverySumPositionInfoPO po);
+	public void update(EverySumPositionInfoPO po);
 	
 	/**
 	 * 删除每一笔持仓信息集合。
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void dropCollection (String stockCode);
+	public void dropCollection(String stockCode);
 }

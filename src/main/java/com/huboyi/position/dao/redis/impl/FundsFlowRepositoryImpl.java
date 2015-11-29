@@ -40,8 +40,8 @@ public class FundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlowPO> 
 		try {
 
 			// --- 把记录保存到Redis。
-			po.setId(UUID.randomUUID().toString() + "-" + FundsFlowRepository.class.getName());
-			opsForList().rightPush(getListKey(po.getStockCode()), po);
+			po.setId(UUID.randomUUID().toString() + "-" + getClass().getName());
+			opsForList().rightPush(getListName(po.getStockCode()), po);
 			
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的资金流水记录成功。");
 		} catch (Throwable e) {
@@ -91,7 +91,7 @@ public class FundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlowPO> 
 		try {
 
 			// --- 查询Redis。
-			List<FundsFlowPO> poList = opsForList().range(getListKey(stockCode), 0, -1);
+			List<FundsFlowPO> poList = opsForList().range(getListName(stockCode), 0, -1);
 			
 			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照trade_date升序。
 			Collections.sort(poList, new Comparator<FundsFlowPO>() {
@@ -139,7 +139,7 @@ public class FundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlowPO> 
 		
 		try {
 			// --- 把记录从Redis中删除。
-			delete(getListKey(stockCode));
+			delete(getListName(stockCode));
 			log.info("删除  [证券代码 = " + stockCode + "] 用于记录资金流水的集合成功。");
 		} catch (Throwable e) {
 			String errorMsg = "删除  [证券代码 = " + stockCode + "] 用于记录资金流水的集合失败!";
@@ -149,12 +149,12 @@ public class FundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlowPO> 
 	}
 	
 	/**
-	 * 得到集合键值。
+	 * 得到集合名称。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return String
 	 */
-	private String getListKey (String stockCode) {
+	private String getListName(String stockCode) {
 		return "test" + ":" + "fundsFlow" + ":" + stockCode;
 	}
 }

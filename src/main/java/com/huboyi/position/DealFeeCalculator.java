@@ -29,7 +29,7 @@ public class DealFeeCalculator {
 	 * @param amountMoney 发生金额 == 股票单价 * 股票数量
 	 * @return BigDecimal
 	 */
-	public BigDecimal calcCharges (BigDecimal amountMoney) {
+	public BigDecimal calcCharges(BigDecimal amountMoney) {
 		if (amountMoney == null || amountMoney.doubleValue() == 0) {
 			throw new RuntimeException("在计算手续费时参数出现错误！[amountMoney = "+ amountMoney +"]");
 		}
@@ -52,7 +52,7 @@ public class DealFeeCalculator {
 	 * @param amountMoney 发生金额 == 股票单价 * 股票数量
 	 * @return BigDecimal
 	 */
-	public BigDecimal calStampDuty (BigDecimal amountMoney) {
+	public BigDecimal calStampDuty(BigDecimal amountMoney) {
 		if (amountMoney == null || amountMoney.doubleValue() == 0) {
 			throw new RuntimeException("在计算印花税时参数出现错误！[amountMoney = "+ amountMoney +"]");
 		}
@@ -72,7 +72,7 @@ public class DealFeeCalculator {
 	 * @param tradeNumber 成交数量
 	 * @return BigDecimal
 	 */
-	public BigDecimal calcTransferFee (String stockCode, Long tradeNumber) {
+	public BigDecimal calcTransferFee(String stockCode, Long tradeNumber) {
 		if (stockCode == null || stockCode.isEmpty() || tradeNumber == null || tradeNumber == 0) {
 			throw new RuntimeException("在计算过户费时参数出现错误！[stockCode = "+ stockCode +"] | [tradeNumber = "+ tradeNumber +"]");
 		}

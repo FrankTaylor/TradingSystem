@@ -2,8 +2,6 @@ package com.huboyi.position.dao.mongodb.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,24 +35,24 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	private MongoTemplate mongoTemplate;  
 
 	@Override
-	public void createIndex (String stockCode) {
+	public void createIndex(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke createIndex method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
 		log.info(logMsg.toString());
 		
 		try {
-			IndexOperations indexOps = mongoTemplate.indexOps(getCollectionPath(stockCode));
+			IndexOperations indexOps = mongoTemplate.indexOps(getDocCollectionName(stockCode));
 			
 			/*
 			 * 1.删除该集合上的所有索引。
-			 * 原生语句：db.test_everySumPositionInfo_123456.dropIndexes();
+			 * 原生语句：db.everySumPositionInfo_123456.dropIndexes();
 			 */
 			indexOps.dropAllIndexes();
 			
 			/*
 			 * 2.在该集合上建立复合索引，且该索引还是唯一和稀疏的。
-			 * 原生语句：db.test_everySumPositionInfo_123456.ensureIndex({"openDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "openDate", "background" : 1})
+			 * 原生语句：db.everySumPositionInfo_123456.ensureIndex({"openDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "openDate", "background" : 1})
 			 */
 			String indexName = "openDate";
 			indexOps.ensureIndex(
@@ -68,7 +66,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 			
 			/*
 			 * 3.验证索引是否建立成功。
-			 * 原生语句：db.test_everySumPositionInfo_123456.getIndexes();
+			 * 原生语句：db.everySumPositionInfo_123456.getIndexes();
 			 */
 			boolean isSuccessEnsureIndex = false;
 			List<IndexInfo> indexInfoList = indexOps.getIndexInfo();
@@ -91,14 +89,14 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	}
 	
 	@Override
-	public void insert (EverySumPositionInfoPO po) {
+	public void insert(EverySumPositionInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke insert method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 		
 		try {			
-			mongoTemplate.insert(po, getCollectionPath(po.getStockCode()));
+			mongoTemplate.insert(po, getDocCollectionName(po.getStockCode()));
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的每一笔持仓记录成功。");
 		} catch (Exception e) {
 			String errorMsg = "插入 [证券代码 = " + po.getStockCode() + "] 的每一笔持仓记录失败!";
@@ -108,7 +106,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	}
 	
 	@Override
-	public EverySumPositionInfoPO findNewOne (String stockCode) {
+	public EverySumPositionInfoPO findNewOne(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findNewOne method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -116,13 +114,13 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 		
 		try {
 			/*
-			 * 原生语句：db.test_everySumPositionInfo_123456.find().sort({openDate : -1}).limit(1);
+			 * 原生语句：db.everySumPositionInfo_123456.find().sort({openDate : -1}).limit(1);
 			 */
 			Query query = new Query();
 			query.with(new Sort(Direction.DESC, "openDate"));
 			query.limit(1);
 			
-			List<EverySumPositionInfoPO> poList = mongoTemplate.find(query, EverySumPositionInfoPO.class, getCollectionPath(stockCode));
+			List<EverySumPositionInfoPO> poList = mongoTemplate.find(query, EverySumPositionInfoPO.class, getDocCollectionName(stockCode));
 			
 			log.info("查询  [证券代码 = " + stockCode + "] 最近的每一笔持仓记录成功。");
 			
@@ -140,7 +138,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	
 	@Override
 	public List<EverySumPositionInfoPO> 
-	findEverySumPositionInfoList (
+	findEverySumPositionInfoList(
 			String stockCode, String openContractCode, 
 			Integer beginOpenDate, Integer endOpenDate, 
 			String isClose, Integer beginPage, Integer endPage) {
@@ -159,7 +157,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 		try {
 			/*
 			 * 原生语句：
-			 * db.test_everySumPositionInfo_123456
+			 * db.everySumPositionInfo_123456
 			 * .find({"openContractCode" : "000518", "beginOpenDate" : {"$gte" : 20100101, "$lte" : 20151212}, "closeContractCode" : {"$ne" : "no"}})
 			 * .sort({openDate : 1})
 			 * .hint('openDate')
@@ -206,7 +204,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 			
 			log.info("按照条件查询 [证券代码 = " + stockCode + "] 的每一笔持仓记录成功。");
 			
-			return mongoTemplate.find(query, EverySumPositionInfoPO.class, getCollectionPath(stockCode));
+			return mongoTemplate.find(query, EverySumPositionInfoPO.class, getDocCollectionName(stockCode));
 		} catch (Exception e) {
 			String errorMsg = "按照条件查询 [证券代码 = " + stockCode + "] 的每一笔持仓记录失败!";
 			log.error(errorMsg, e);
@@ -215,7 +213,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	}
 	
 	@Override
-	public void update (EverySumPositionInfoPO po) {
+	public void update(EverySumPositionInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke update method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
@@ -224,7 +222,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 		try {
 			/*
 			 * 我之前用的是这条原生语句，现在用_id来修改了，应该可以提升速度。
-			 * 原生语句：db.test_everySumPositionInfo_123456.update({"openContractCode" : "879877-98987", "stockCode" : "123456"}, {$set : {"stockNumber" : 100}});
+			 * 原生语句：db.everySumPositionInfo_123456.update({"openContractCode" : "879877-98987", "stockCode" : "123456"}, {$set : {"stockNumber" : 100}});
 			 */
 			Query query = new Query();
 			query.addCriteria(Criteria.where("_id").is(po.getId()));
@@ -243,7 +241,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 			if (po.getFloatProfitAndLoss() != null) {update.set("floatProfitAndLoss", po.getFloatProfitAndLoss()); }  // 浮动盈亏。
 			if (po.getProfitAndLossRatio() != null) { update.set("profitAndLossRatio", po.getProfitAndLossRatio()); } // 盈亏比例。
 
-			mongoTemplate.updateFirst(query, update, getCollectionPath(po.getStockCode()));
+			mongoTemplate.updateFirst(query, update, getDocCollectionName(po.getStockCode()));
 			
 			log.info("修改 [证券代码 = " + po.getStockCode() + "] 的每一笔持仓记录成功。");
 		} catch (Exception e) {
@@ -254,7 +252,7 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	}
 
 	@Override
-	public void dropCollection (String stockCode) {
+	public void dropCollection(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke dropCollection method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -262,9 +260,9 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 		
 		try {
 			/*
-			 * 原生语句：db.test_everySumPositionInfo_123456.drop();
+			 * 原生语句：db.everySumPositionInfo_123456.drop();
 			 */
-			mongoTemplate.dropCollection(getCollectionPath(stockCode));
+			mongoTemplate.dropCollection(getDocCollectionName(stockCode));
 			log.info("删除  [证券代码 = " + stockCode + "] 用于每一笔持仓记录的集合成功。");
 		} catch (Exception e) {
 			String errorMsg = "删除  [证券代码 = " + stockCode + "] 用于每一笔持仓记录的集合失败!";
@@ -274,12 +272,12 @@ public class EverySumPositionInfoRepositoryImpl implements EverySumPositionInfoR
 	}
 	
 	/**
-	 * 得到操作集合路径。
+	 * 得到MongoDB中文档集合的名称。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return String
 	 */
-	private String getCollectionPath (String stockCode) {
-		return "test_everySumPositionInfo_" + stockCode;
+	private String getDocCollectionName(String stockCode) {
+		return "everySumPositionInfo_" + stockCode;
 	}
 }

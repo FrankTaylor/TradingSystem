@@ -17,14 +17,14 @@ public interface FundsFlowRepository {
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void createIndex (String stockCode);
+	public void createIndex(String stockCode);
 	
 	/**
 	 * 插入资金流水。
 	 * 
 	 * @param po FundsFlowPO
 	 */
-	public void insert (FundsFlowPO po);
+	public void insert(FundsFlowPO po);
 	
 	/**
 	 * 为了找到剩余资金，需要找到最新的一条资金流水（按照trade_date + trade_time 降序）。
@@ -32,7 +32,7 @@ public interface FundsFlowRepository {
 	 * @param stockCode 证券代码
 	 * @return FundsFlowPO
 	 */
-	public FundsFlowPO findNewOne (String stockCode);
+	public FundsFlowPO findNewOne(String stockCode);
 	
 	/**
 	 * 按照条件查询资金流水记录（按照trade_date + tradetime 升序）。
@@ -44,12 +44,12 @@ public interface FundsFlowRepository {
 	 * @param endLimit 结束页
 	 * @return List<FundsFlowPO>
 	 */
-	public List<FundsFlowPO> findFundsFlowList (String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage);
+	public List<FundsFlowPO> findFundsFlowList(String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage);
 	
 	/**
 	 * 删除资金流水信息集合。
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void dropCollection (String stockCode);
+	public void dropCollection(String stockCode);
 }

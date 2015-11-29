@@ -58,7 +58,7 @@ public class FundsFlowPO {
 	private String stockholder = "672288";
 	
 	@Override
-	public String toString () {
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ \n")
 		.append("    ").append("id").append(":").append("'").append(id).append("'").append(", \n")

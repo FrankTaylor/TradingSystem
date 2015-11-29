@@ -2,8 +2,6 @@ package com.huboyi.position.dao.mongodb.impl;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,24 +35,24 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	private MongoTemplate mongoTemplate;
 	
 	@Override
-	public void createIndex (String stockCode) {
+	public void createIndex(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke createIndex method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
 		log.info(logMsg.toString());
 		
 		try {
-			IndexOperations indexOps = mongoTemplate.indexOps(getCollectionPath(stockCode));
+			IndexOperations indexOps = mongoTemplate.indexOps(getDocCollectionName(stockCode));
 			
 			/*
 			 * 1.删除该集合上的所有索引。
-			 * 原生语句：db.test_orderInfo_123456.dropIndexes();
+			 * 原生语句：db.orderInfo_123456.dropIndexes();
 			 */
 			indexOps.dropAllIndexes();
 			
 			/*
 			 * 2.在该集合上建立复合索引，且该索引还是唯一和稀疏的。
-			 * 原生语句：db.test_orderInfo_123456.ensureIndex({"tradeDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "tradeDate", "background" : 1})
+			 * 原生语句：db.orderInfo_123456.ensureIndex({"tradeDate" : 1}, {"unique" : true, "dropDups" : true, "sparse" : true, "name" : "tradeDate", "background" : 1})
 			 */
 			String indexName = "tradeDate";
 			indexOps.ensureIndex(
@@ -68,7 +66,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 			
 			/*
 			 * 3.验证索引是否建立成功。
-			 * 原生语句：db.test_orderInfo_123456.getIndexes();
+			 * 原生语句：db.orderInfo_123456.getIndexes();
 			 */
 			boolean isSuccessEnsureIndex = false;
 			List<IndexInfo> indexInfoList = indexOps.getIndexInfo();
@@ -91,14 +89,14 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	}
 	
 	@Override
-	public void insert (OrderInfoPO po) {
+	public void insert(OrderInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke insert method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 		
 		try {			
-			mongoTemplate.insert(po, getCollectionPath(po.getStockCode()));
+			mongoTemplate.insert(po, getDocCollectionName(po.getStockCode()));
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的订单信息记录成功。");
 		} catch (Throwable e) {
 			String errorMsg = "插入 [证券代码 = " + po.getStockCode() + "] 的订单信息记录失败!";
@@ -108,7 +106,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	}
 	
 	@Override
-	public OrderInfoPO findNewOne (String stockCode) {
+	public OrderInfoPO findNewOne(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findNewOne method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -116,13 +114,13 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		
 		try {
 			/*
-			 * 原生语句：db.test_orderInfo_123456.find().sort({tradeDate : -1}).limit(1);
+			 * 原生语句：db.orderInfo_123456.find().sort({tradeDate : -1}).limit(1);
 			 */
 			Query query = new Query();
 			query.with(new Sort(Direction.DESC, "tradeDate"));
 			query.limit(1);
 			
-			List<OrderInfoPO> poList = mongoTemplate.find(query, OrderInfoPO.class, getCollectionPath(stockCode));
+			List<OrderInfoPO> poList = mongoTemplate.find(query, OrderInfoPO.class, getDocCollectionName(stockCode));
 			
 			log.info("查询  [证券代码 = " + stockCode + "] 最近的一条订单记录成功。");
 			
@@ -139,7 +137,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	}
 	
 	@Override
-	public List<OrderInfoPO> findOrderInfoList (String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage) {
+	public List<OrderInfoPO> findOrderInfoList(String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findOrderInfoList method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]").append("\n");
@@ -152,7 +150,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		try {
 			/*
 			 * 原生语句：
-			 * db.test_orderInfo_123456
+			 * db.orderInfo_123456
 			 * .find({"tradeDate" : {"$gte" : 20100101, "$lte" : 20151212}})
 			 * .sort({tradeDate : 1})
 			 * .hint('tradeDate')
@@ -185,7 +183,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 			
 			log.info("按照条件查询 [证券代码 = " + stockCode + "] 的订单信息记录成功。");
 			
-			return mongoTemplate.find(query, OrderInfoPO.class, getCollectionPath(stockCode));
+			return mongoTemplate.find(query, OrderInfoPO.class, getDocCollectionName(stockCode));
 		} catch (Exception e) {
 			String errorMsg = "按照条件查询 [证券代码 = " + stockCode + "] 的订单信息记录失败!";
 			log.error(errorMsg, e);
@@ -194,7 +192,7 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	}
 	
 	@Override
-	public void dropCollection (String stockCode) {
+	public void dropCollection(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke dropCollection method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -202,9 +200,9 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		
 		try {
 			/*
-			 * 原生语句：db.test_orderInfo_123456.drop();
+			 * 原生语句：db.orderInfo_123456.drop();
 			 */
-			mongoTemplate.dropCollection(getCollectionPath(stockCode));
+			mongoTemplate.dropCollection(getDocCollectionName(stockCode));
 			log.info("删除  [证券代码 = " + stockCode + "] 用于记录订单信息的集合成功。");
 		} catch (Exception e) {
 			String errorMsg = "删除  [证券代码 = " + stockCode + "] 用于记录订单信息的集合失败!";
@@ -214,12 +212,12 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 	}
 	
 	/**
-	 * 得到操作集合路径。
+	 * 得到MongoDB中文档集合的名称。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return String
 	 */
-	private String getCollectionPath (String stockCode) {
-		return "test_orderInfo_" + stockCode;
+	private String getDocCollectionName(String stockCode) {
+		return "orderInfo_" + stockCode;
 	}
 }

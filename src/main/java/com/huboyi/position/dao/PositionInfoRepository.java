@@ -17,43 +17,43 @@ public interface PositionInfoRepository {
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void createIndex (String stockCode);
+	public void createIndex(String stockCode);
 	
 	/**
 	 * 插入持仓信息。
 	 * 
 	 * @param po PositionInfoPO
 	 */
-	public void insert (PositionInfoPO po);
+	public void insert(PositionInfoPO po);
 	
 	/**
 	 * 查询全部的持仓信息记录。
 	 * 
 	 * @return List<PositionInfoPO>
 	 */
-	public List<PositionInfoPO> findAll ();
+	public List<PositionInfoPO> findAll();
 	
 	/**
 	 * 修改持仓信息记录。
 	 * 
 	 * @param po PositionInfoPO
 	 */
-	public void update (PositionInfoPO po);
+	public void update(PositionInfoPO po);
 	
 	/**
 	 * 根据证券代码删除持仓信息记录。
 	 * 
 	 * @param stockCode 证券代码
 	 */
-	public void removeByStockCode (String stockCode);
+	public void removeByStockCode(String stockCode);
 	
 	/**
 	 * 删除没有仓位的持仓信息记录。
 	 */
-	public void removeForNoStockNumber ();
+	public void removeForNoStockNumber();
 	
 	/**
 	 * 删除持仓信息集合。
 	 */
-	public void dropCollection ();
+	public void dropCollection();
 }

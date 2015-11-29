@@ -29,7 +29,7 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 	}
 	
 	@Override
-	public void insert (OrderInfoPO po) {
+	public void insert(OrderInfoPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke insert method").append("\n");
 		logMsg.append("@param [po = " + po + "]");
@@ -38,8 +38,8 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 		try {
 			
 			// --- 把记录保存到Redis。
-			po.setId(UUID.randomUUID().toString() + "-" + OrderInfoRepository.class.getName());
-			opsForList().rightPush(getListKey(po.getStockCode()), po);
+			po.setId(UUID.randomUUID().toString() + "-" + getClass().getName());
+			opsForList().rightPush(getListName(po.getStockCode()), po);
 			
 			log.info("插入 [证券代码 = " + po.getStockCode() + "] 的订单信息记录成功。");
 		} catch (Throwable e) {
@@ -74,7 +74,7 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 	}
 	
 	@Override
-	public List<OrderInfoPO> findOrderInfoList (String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage) {
+	public List<OrderInfoPO> findOrderInfoList(String stockCode, Integer beginTradeDate, Integer endTradeDate, Integer beginPage, Integer endPage) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke findFundsFlowList method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]").append("\n");
@@ -87,7 +87,7 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 		try {
 
 			// --- 查询Redis。
-			List<OrderInfoPO> poList = opsForList().range(getListKey(stockCode), 0, -1);
+			List<OrderInfoPO> poList = opsForList().range(getListName(stockCode), 0, -1);
 			
 			// --- 由于Redis没有其他数据库中的排序功能，这里需要自己实现按照trade_date升序。
 			Collections.sort(poList, new Comparator<OrderInfoPO>() {
@@ -127,7 +127,7 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 	}
 	
 	@Override
-	public void dropCollection (String stockCode) {
+	public void dropCollection(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("invoke dropCollection method").append("\n");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
@@ -135,7 +135,7 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 		
 		try {
 			// --- 把记录从Redis中删除。
-			delete(getListKey(stockCode));
+			delete(getListName(stockCode));
 			log.info("删除  [证券代码 = " + stockCode + "] 用于记录订单信息的集合成功。");
 		} catch (Throwable e) {
 			String errorMsg = "删除  [证券代码 = " + stockCode + "] 用于记录订单信息的集合失败!";
@@ -145,12 +145,12 @@ public class OrderInfoRepositoryImpl extends RedisTemplate<String, OrderInfoPO> 
 	}
 	
 	/**
-	 * 得到集合键值。
+	 * 得到集合名称。
 	 * 
 	 * @param stockCode 证券代码
 	 * @return String
 	 */
-	private String getListKey (String stockCode) {
+	private String getListName(String stockCode) {
 		return "test" + ":" + "orderInfo" + ":" + stockCode;
 	}
 }
