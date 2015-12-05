@@ -1,4 +1,4 @@
-package com.huboyi.data.bean;
+package com.huboyi.data.entity;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @JsonPropertyOrder(value = {"year", "month", "day", "hour", "minute", "second", "millisecond", "date", "time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
 public class StockDataBean implements Serializable, Cloneable {
 
-	private static final long serialVersionUID = 2880136741244920021L;
+	private static final long serialVersionUID = 8450060620320425027L;
 	
 	/*---------- 时间信息 ---------*/
 	/** 年。*/

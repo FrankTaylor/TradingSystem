@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.data.merge.constant.MergeTimeType;
 
 /**

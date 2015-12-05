@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.trend;
+package com.huboyi.indicators.technology.entity.energy;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -13,50 +13,44 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**
- * 布林带指标。
+ * MACD指标。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
  */
-@JsonPropertyOrder(value = {"date", "mdValue", "upValue", "middleValue", "downValue"}, alphabetic = false)
-public class BollBean implements Serializable {
+@JsonPropertyOrder(value = {"date", "diff", "dea", "macd"}, alphabetic = false)
+public class MACDBean implements Serializable {
 
-	private static final long serialVersionUID = 5717556981398863110L;
+	private static final long serialVersionUID = -3233924019723973835L;
 
 	/** 日期。*/
 	@JsonProperty(value = "date", required = true)
 	private Long date = 19700101000000000L;
 	
-	/** 波动率。*/
-	@JsonProperty(value = "md_value", required = true)
-	private BigDecimal mdValue = BigDecimal.valueOf(0);
+	/** 短期均线与长期均线的差值。*/
+	@JsonProperty(value = "diff", required = true)
+	private BigDecimal diff = BigDecimal.valueOf(0);
 	
-	/** 计算后的上轨值。*/
-	@JsonProperty(value = "up_value", required = true)
-	private BigDecimal upValue = BigDecimal.valueOf(0);
+	/** 短期均线与长期均线的差值的平均值。*/
+	@JsonProperty(value = "dea", required = true)
+	private BigDecimal dea = BigDecimal.valueOf(0);
 	
-	/** 计算后的中轨值。*/
-	@JsonProperty(value = "middle_value", required = true)
-	private BigDecimal middleValue = BigDecimal.valueOf(0);
-	
-	/** 计算后的下轨值。*/
-	@JsonProperty(value = "down_value", required = true)
-	private BigDecimal downValue = BigDecimal.valueOf(0);
+	/** diff与dea差值。*/
+	@JsonProperty(value = "macd", required = true)
+	private BigDecimal macd = BigDecimal.valueOf(0);
 	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
 		builder.append("[\n")
 		.append("\t").append("date = ").append(date).append("\n")
-		.append("\t").append("md_value = ").append(mdValue).append("\n")
-		.append("\t").append("up_value = ").append(upValue).append("\n")
-		.append("\t").append("middle_value = ").append(middleValue).append("\n")
-		.append("\t").append("down_value = ").append(downValue).append("\n")
+		.append("\t").append("diff = ").append(diff).append("\n")
+		.append("\t").append("dea = ").append(dea).append("\n")
+		.append("\t").append("macd = ").append(macd).append("\n")
 		.append("]\n");
 		return builder.toString();
 	}
 	
-
 	/**
 	 * 把JavaBean转换为默认格式的JSON。 
 	 * 
@@ -85,16 +79,16 @@ public class BollBean implements Serializable {
 	 * 把JSON转换为JavaBean。
 	 * 
 	 * @param json json信息
-	 * @return BollBean
+	 * @return MACDBean
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	public static BollBean 
+	public static MACDBean 
 	jsonToJava (String json) throws JsonParseException, JsonMappingException, IOException {
-		return JAXBHelper.jsonToJava(json, BollBean.class);
+		return JAXBHelper.jsonToJava(json, MACDBean.class);
 	}
-	
+
 	// --- get method and set method ---
 	
 	public Long getDate() {
@@ -105,35 +99,27 @@ public class BollBean implements Serializable {
 		this.date = date;
 	}
 
-	public BigDecimal getMdValue() {
-		return mdValue;
+	public BigDecimal getDiff() {
+		return diff;
 	}
 
-	public void setMdValue(BigDecimal mdValue) {
-		this.mdValue = mdValue;
+	public void setDiff(BigDecimal diff) {
+		this.diff = diff;
 	}
 
-	public BigDecimal getUpValue() {
-		return upValue;
+	public BigDecimal getDea() {
+		return dea;
 	}
 
-	public void setUpValue(BigDecimal upValue) {
-		this.upValue = upValue;
+	public void setDea(BigDecimal dea) {
+		this.dea = dea;
 	}
 
-	public BigDecimal getMiddleValue() {
-		return middleValue;
+	public BigDecimal getMacd() {
+		return macd;
 	}
 
-	public void setMiddleValue(BigDecimal middleValue) {
-		this.middleValue = middleValue;
-	}
-
-	public BigDecimal getDownValue() {
-		return downValue;
-	}
-
-	public void setDownValue(BigDecimal downValue) {
-		this.downValue = downValue;
+	public void setMacd(BigDecimal macd) {
+		this.macd = macd;
 	}
 }

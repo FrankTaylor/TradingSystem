@@ -5,38 +5,20 @@ package com.huboyi.position.constant;
  * 交易信号类型枚举。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2015/9/12
- * @version 1.0
+ * @since 1.1
  */
 public enum DealSignal {
-	ONE_B("1B", "第一买点"),
 	
-	FIBO_B("fiboB", "斐波那契买点"),
+	/** 多头开仓。*/
+	BUY_TO_OPEN,
+	/** 多头平仓。*/
+	SELL_TO_CLOSE,
 	
-	SELL_ONE_TENTH("sell one tenth", "卖出十分之一"),
-	SELL_TWO_TENTH("sell two tenth", "卖出十分之二"),
-	SELL_THREE_TENTH("sell three tenth", "卖出十分之三"),
-	SELL_FOUR_TENTH("sell four tenth", "卖出十分之四"),
-	SELL_FIVE_TENTH("sell five tenth", "卖出十分之五"),
-	SELL_SIX_TENTH("sell six tenth", "卖出十分之六"),
-	SELL_SEVEN_TENTH("sell seven tenth", "卖出十分之七"),
-	SELL_EIGHT_TENTH("sell eight tenth", "卖出十分之八"),
-	SELL_NINE_TENTH("sell nine tenth", "卖出十分之九"),
-	SELL_ALL("sell all", "全部卖出");
-
-	private final String type;
-	private final String name;
-	private DealSignal (String type, String name) {
-		this.type = type;
-		this.name = name;
-	}
+	/** 空头开仓。*/
+	SELL_TO_OPEN,
+	/** 空头平仓。*/
+	BUY_TO_CLOSE;
 	
-	public String getType () {
-		return type;
-	}
-	
-	public String getName () {
-		return name;
-	}
+	private DealSignal () {}
 }
 	

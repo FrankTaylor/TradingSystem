@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.pattern;
+package com.huboyi.indicators.technology.entity.pattern;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.indicators.technology.constant.FractalType;
 import com.huboyi.util.JAXBHelper;
 

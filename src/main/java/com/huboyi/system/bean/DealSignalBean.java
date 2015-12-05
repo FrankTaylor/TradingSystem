@@ -1,7 +1,7 @@
 package com.huboyi.system.bean;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.system.constant.DealSignal;
+import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.position.constant.DealSignal;
 
 /**
  * 用于记录交易信号的Bean。

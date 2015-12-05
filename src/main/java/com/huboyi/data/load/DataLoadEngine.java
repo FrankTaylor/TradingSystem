@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.data.load.task.DataLoadMonitorTask;
 import com.huboyi.data.load.task.DataLoadTask;
 

@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.volume;
+package com.huboyi.indicators.technology.entity.trend;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -12,15 +12,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.huboyi.util.JAXBHelper;
 
 /**
- * 量能平均指标。
+ * 普通平均线指标。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
  */
 @JsonPropertyOrder(value = {"date", "source", "avg"}, alphabetic = false)
-public class VolMoveAverageBean implements Serializable {
+public class MoveAverageBean implements Serializable {
 
-	private static final long serialVersionUID = 7429376063579815691L;
+	private static final long serialVersionUID = 3897316158075774750L;
 
 	/** 日期。*/
 	@JsonProperty(value = "date", required = true)
@@ -74,14 +74,14 @@ public class VolMoveAverageBean implements Serializable {
 	 * 把JSON转换为JavaBean。
 	 * 
 	 * @param json json信息
-	 * @return VolMoveAverageBean
+	 * @return MoveAverageBean
 	 * @throws JsonParseException
 	 * @throws JsonMappingException
 	 * @throws IOException
 	 */
-	public static VolMoveAverageBean 
+	public static MoveAverageBean 
 	jsonToJava (String json) throws JsonParseException, JsonMappingException, IOException {
-		return JAXBHelper.jsonToJava(json, VolMoveAverageBean.class);
+		return JAXBHelper.jsonToJava(json, MoveAverageBean.class);
 	}
 	
 	// --- get method and set method ---
@@ -109,5 +109,4 @@ public class VolMoveAverageBean implements Serializable {
 	public void setAvg(BigDecimal avg) {
 		this.avg = avg;
 	}
-	
 }

@@ -50,7 +50,7 @@ public class FundsFlowRepositoryImpl extends RedisTemplate<String, FundsFlowPO> 
 			throw new RuntimeException(errorMsg, e);
 		}
 	}
-
+	
 	@Override
 	public FundsFlowPO findNewOne(String stockCode) {
 		StringBuilder logMsg = new StringBuilder();

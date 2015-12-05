@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.pattern;
+package com.huboyi.indicators.technology.entity.pattern;
 
 import java.io.IOException;
 import java.io.Serializable;

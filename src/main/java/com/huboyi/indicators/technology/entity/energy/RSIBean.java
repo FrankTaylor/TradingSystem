@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.energy;
+package com.huboyi.indicators.technology.entity.energy;
 
 import java.io.IOException;
 import java.io.Serializable;

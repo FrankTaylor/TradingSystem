@@ -1,4 +1,4 @@
-package com.huboyi.indicators.technology.bean.trend;
+package com.huboyi.indicators.technology.entity.trend;
 
 import java.util.List;
 

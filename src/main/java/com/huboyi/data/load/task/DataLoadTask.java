@@ -22,7 +22,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.data.load.DataLoadEngine;
 
 /**
  * 这个类主要用于，读取由“招商证券、金魔方、飞狐交易师”导出的股票行情文件。</p>

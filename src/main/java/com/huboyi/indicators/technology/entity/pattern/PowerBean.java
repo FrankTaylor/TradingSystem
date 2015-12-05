@@ -1,10 +1,10 @@
-package com.huboyi.indicators.technology.bean.pattern;
+package com.huboyi.indicators.technology.entity.pattern;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 
 /**
  * 行情中枢Bean。

@@ -1,10 +1,10 @@
-package com.huboyi.indicators.technology.bean.trend;
+package com.huboyi.indicators.technology.entity.trend;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.indicators.technology.TechAlgorithm;
 
 /**
