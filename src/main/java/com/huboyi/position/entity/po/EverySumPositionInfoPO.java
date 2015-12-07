@@ -1,4 +1,4 @@
-package com.huboyi.position.po;
+package com.huboyi.position.entity.po;
 
 import java.math.BigDecimal;
 
