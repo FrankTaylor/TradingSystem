@@ -1,5 +1,6 @@
 package com.huboyi.position.entity.po;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.springframework.data.annotation.Id;
@@ -10,17 +11,17 @@ import org.springframework.data.annotation.Id;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
  */
-public class OrderInfoPO {
+public class OrderInfoPO implements Serializable {
+
+	private static final long serialVersionUID = -2568952561693772857L;
 	
-	@Id
 	/** id */
-	private String id;
+	@Id
+	private long id;
 	/** 合同编号。*/
 	private String contractCode;
 	
 	// --- 
-	/** 系统名称。*/
-	private String systemName;
 	/** 证券代码。*/
 	private String stockCode;
 	/** 证券名称。*/
@@ -51,7 +52,6 @@ public class OrderInfoPO {
 		.append("    ").append("contractCode").append(":").append("'").append(contractCode).append("'").append(", \n")
 		
 		// --- 
-		.append("    ").append("systemName").append(":").append("'").append(systemName).append("'").append(", \n")
 		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
@@ -68,11 +68,11 @@ public class OrderInfoPO {
 	
 	// --- get method and set method ---
 	
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -82,14 +82,6 @@ public class OrderInfoPO {
 
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
-	}
-
-	public String getSystemName() {
-		return systemName;
-	}
-
-	public void setSystemName(String systemName) {
-		this.systemName = systemName;
 	}
 
 	public String getStockCode() {

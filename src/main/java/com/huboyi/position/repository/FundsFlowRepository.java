@@ -1,17 +1,16 @@
-package com.huboyi.position.dao;
+package com.huboyi.position.repository;
 
 import java.util.List;
 
 import com.huboyi.position.entity.po.FundsFlowPO;
 
 /**
- * 资金流水DAO。
+ * 资金流水Repository。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
-public interface FundsFlowDao {
-	
+public interface FundsFlowRepository {	
 	/**
 	 * 插入一条资金流水记录。
 	 * 

@@ -1,11 +1,11 @@
-package com.huboyi.position.dao;
+package com.huboyi.position.repository;
 
 import java.util.List;
 
 import com.huboyi.position.entity.po.OrderInfoPO;
 
 /**
- * 订单信息DAO。
+ * 订单信息Repository。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
