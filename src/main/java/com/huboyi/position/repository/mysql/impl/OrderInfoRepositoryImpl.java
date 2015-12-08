@@ -38,27 +38,27 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("INSERT INTO order_info ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO order_info ");
 		
-		sqlBuilder.append(" ( ");
-		sqlBuilder.append("contract_code, ");
-		sqlBuilder.append("stock_code, stock_name, trade_date, trade_flag, trade_price, trade_number, trade_money, ");
-		sqlBuilder.append("stockholder");
-		sqlBuilder.append(" ) "); 
+		sql.append(" ( ");
+		sql.append("contract_code, ");
+		sql.append("stock_code, stock_name, trade_date, trade_flag, trade_price, trade_number, trade_money, ");
+		sql.append("stockholder");
+		sql.append(" ) "); 
 		
-		sqlBuilder.append(" VALUES ");
-		sqlBuilder.append(" ( ");
-		sqlBuilder.append(":contractCode, ");
-		sqlBuilder.append(":stockCode, :stockName, :tradeDate, :tradeFlag, :tradePrice, :tradeNumber, :tradeMoney, ");
-		sqlBuilder.append(":stockholder");
-		sqlBuilder.append(" ) "); 
+		sql.append(" VALUES ");
+		sql.append(" ( ");
+		sql.append(":contractCode, ");
+		sql.append(":stockCode, :stockName, :tradeDate, :tradeFlag, :tradePrice, :tradeNumber, :tradeMoney, ");
+		sql.append(":stockholder");
+		sql.append(" ) "); 
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(po);
 		
-		namedParameterJdbcTemplate.update(sqlBuilder.toString(), paramSource);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
@@ -67,47 +67,67 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		logMsg.append("调用 truncate 方法").append("\n");
 		log.info(logMsg.toString());
 
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("truncate order_info");
+		StringBuilder sql = new StringBuilder();
+		sql.append("TRUNCATE order_info");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
-		namedParameterJdbcTemplate.getJdbcOperations().update(sqlBuilder.toString());
+		namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
 
+	@Override
+	public void delete(String stockholder) {
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("调用 delete 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
+		log.info(logMsg.toString());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM order_info WHERE stockholder = :stockholder");
+		
+		log.info("执行的 sql 语句 -> " + sql);
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockholder", stockholder);
+		
+		namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+	}
+	
 	@Override
 	public OrderInfoPO findLastOne(String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findLastOne 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date DESC LIMIT 1");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date DESC LIMIT 1");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 
-		return namedParameterJdbcTemplate.queryForObject(sqlBuilder.toString(), paramMap, OrderInfoPO.class);
+		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, OrderInfoPO.class);
 	}
 
 	@Override
 	public List<OrderInfoPO> findAll(String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findAll 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date ASC");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date ASC");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 		
 		
-		return namedParameterJdbcTemplate.queryForList(sqlBuilder.toString(), paramMap, OrderInfoPO.class);
+		return namedParameterJdbcTemplate.queryForList(sql.toString(), paramMap, OrderInfoPO.class);
 	}
 	
 }

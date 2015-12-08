@@ -37,31 +37,31 @@ public class FundsFlowRepositoryImpl implements FundsFlowRepository {
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("INSERT INTO funds_flow ");
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO funds_flow ");
 		
-		sqlBuilder.append(" ( ");
-		sqlBuilder.append("contract_code, currency, ");
-		sqlBuilder.append("stock_code, stock_name, trade_date, trade_price, trade_number, trade_money, funds_balance, ");
-		sqlBuilder.append("business_name, ");
-		sqlBuilder.append("charges, stamp_duty, transfer_fee, clearing_fee, ");
-		sqlBuilder.append("stockholder");
-		sqlBuilder.append(" ) "); 
+		sql.append(" ( ");
+		sql.append("contract_code, currency, ");
+		sql.append("stock_code, stock_name, trade_date, trade_price, trade_number, trade_money, funds_balance, ");
+		sql.append("business_name, ");
+		sql.append("charges, stamp_duty, transfer_fee, clearing_fee, ");
+		sql.append("stockholder");
+		sql.append(" ) "); 
 		
-		sqlBuilder.append(" VALUES ");
-		sqlBuilder.append(" ( ");
-		sqlBuilder.append(":contractCode, :currency, ");
-		sqlBuilder.append(":stockCode, :stockName, :tradeDate, :tradePrice, :tradeNumber, :tradeMoney, :fundsBalance, ");
-		sqlBuilder.append(":businessName, ");
-		sqlBuilder.append(":charges, :stampDuty, :transferFee, :clearingFee, ");
-		sqlBuilder.append(":stockholder");
-		sqlBuilder.append(" ) "); 
+		sql.append(" VALUES ");
+		sql.append(" ( ");
+		sql.append(":contractCode, :currency, ");
+		sql.append(":stockCode, :stockName, :tradeDate, :tradePrice, :tradeNumber, :tradeMoney, :fundsBalance, ");
+		sql.append(":businessName, ");
+		sql.append(":charges, :stampDuty, :transferFee, :clearingFee, ");
+		sql.append(":stockholder");
+		sql.append(" ) "); 
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(po);
 		
-		namedParameterJdbcTemplate.update(sqlBuilder.toString(), paramSource);
+		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
@@ -70,47 +70,66 @@ public class FundsFlowRepositoryImpl implements FundsFlowRepository {
 		logMsg.append("调用 truncate 方法").append("\n");
 		log.info(logMsg.toString());
 
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("truncate funds_flow");
+		StringBuilder sql = new StringBuilder();
+		sql.append("TRUNCATE funds_flow");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
-		namedParameterJdbcTemplate.getJdbcOperations().update(sqlBuilder.toString());
+		namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+	}
+	
+	@Override
+	public void delete(String stockholder) {
+		StringBuilder logMsg = new StringBuilder();
+		logMsg.append("调用 delete 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
+		log.info(logMsg.toString());
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("DELETE FROM funds_flow WHERE stockholder = :stockholder");
+		
+		log.info("执行的 sql 语句 -> " + sql);
+		
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockholder", stockholder);
+		
+		namedParameterJdbcTemplate.update(sql.toString(), paramMap);
 	}
 	
 	@Override
 	public FundsFlowPO findLastOne(String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findLastOne 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("SELECT * FROM funds_flow WHERE stockholder = :stockholder ORDER BY trade_date DESC LIMIT 1");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM funds_flow WHERE stockholder = :stockholder ORDER BY trade_date DESC LIMIT 1");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 
-		return namedParameterJdbcTemplate.queryForObject(sqlBuilder.toString(), paramMap, FundsFlowPO.class);
+		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, FundsFlowPO.class);
 	}
 
 	@Override
 	public List<FundsFlowPO> findAll(String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findAll 方法").append("\n");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
-		StringBuilder sqlBuilder = new StringBuilder();
-		sqlBuilder.append("SELECT * FROM funds_flow WHERE stockholder = :stockholder ORDER BY trade_date ASC");
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM funds_flow WHERE stockholder = :stockholder ORDER BY trade_date ASC");
 		
-		log.info("执行的 sql 语句 -> " + sqlBuilder);
+		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 		
 		
-		return namedParameterJdbcTemplate.queryForList(sqlBuilder.toString(), paramMap, FundsFlowPO.class);
+		return namedParameterJdbcTemplate.queryForList(sql.toString(), paramMap, FundsFlowPO.class);
 	}
-	
 }

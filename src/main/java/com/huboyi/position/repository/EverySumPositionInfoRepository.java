@@ -5,7 +5,7 @@ import java.util.List;
 import com.huboyi.position.po.EverySumPositionInfoPO;
 
 /**
- * 每一笔持仓信息DAO。
+ * 每一笔持仓信息Repository。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
