@@ -1,5 +1,6 @@
 package com.huboyi.position.entity.po;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.springframework.data.annotation.Id;
@@ -10,11 +11,13 @@ import org.springframework.data.annotation.Id;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
  */
-public class PositionInfoPO {
-	
+public class PositionInfoPO implements Serializable {
+
+	private static final long serialVersionUID = 3146330724412870775L;
+
 	@Id
 	/** id */
-	private String id;
+	private long id;
 	
 	// --- 
 	/** 证券代码。*/
@@ -76,11 +79,11 @@ public class PositionInfoPO {
 	
 	// --- get method and set method ---
 	
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

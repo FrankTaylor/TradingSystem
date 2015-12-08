@@ -10,7 +10,8 @@ import com.huboyi.position.entity.po.FundsFlowPO;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
-public interface FundsFlowRepository {	
+public interface FundsFlowRepository {
+	
 	/**
 	 * 插入一条资金流水记录。
 	 * 
@@ -22,7 +23,14 @@ public interface FundsFlowRepository {
 	 * 删除所有的资金流水记录。
 	 */
 	public void truncate();
-
+	
+	/**
+	 * 删除持仓信息。
+	 * 
+	 * @param stockholder 股东代码
+	 */
+	public void delete(String stockholder);
+	
 	/**
 	 * 找到最后的一条资金流水记录（按照 tradeDate 降序）。
 	 * 

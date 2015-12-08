@@ -23,7 +23,14 @@ public interface OrderInfoRepository {
 	 * 删除所有的订单信息。
 	 */
 	public void truncate();
-
+	
+	/**
+	 * 删除持仓信息。
+	 * 
+	 * @param stockholder 股东代码
+	 */
+	public void delete(String stockholder);
+	
 	/**
 	 * 找到最后的一条订单信息（按照 tradeDate 降序）。
 	 * 

@@ -1,8 +1,8 @@
-package com.huboyi.position.dao;
+package com.huboyi.position.repository;
 
 import java.util.List;
 
-import com.huboyi.position.po.PositionInfoPO;
+import com.huboyi.position.entity.po.PositionInfoPO;
 
 /**
  * 持仓信息DAO。
@@ -11,13 +11,6 @@ import com.huboyi.position.po.PositionInfoPO;
  * @since 1.0
  */
 public interface PositionInfoRepository {
-
-	/**
-	 * 创建持仓信息索引。
-	 * 
-	 * @param stockCode 证券代码
-	 */
-	public void createIndex(String stockCode);
 	
 	/**
 	 * 插入持仓信息。
@@ -27,33 +20,46 @@ public interface PositionInfoRepository {
 	public void insert(PositionInfoPO po);
 	
 	/**
-	 * 查询全部的持仓信息记录。
-	 * 
-	 * @return List<PositionInfoPO>
+	 * 删除所有的持仓。
 	 */
-	public List<PositionInfoPO> findAll();
+	public void truncate();
 	
 	/**
-	 * 修改持仓信息记录。
+	 * 删除持仓信息。
+	 * 
+	 * @param stockholder 股东代码
+	 */
+	public void delete(String stockholder);
+	
+	/**
+	 * 删除持仓信息。
+	 * 
+	 * @param stockholder 股东代码
+	 * @param stockCode 证券代码
+	 */
+	public void delete(String stockholder, String stockCode);
+	
+	/**
+	 * 修改持仓信息。
 	 * 
 	 * @param po PositionInfoPO
 	 */
 	public void update(PositionInfoPO po);
 	
 	/**
-	 * 根据证券代码删除持仓信息记录。
+	 * 查询全部的持仓信息。
 	 * 
+	 * @param stockholder 股东代码
+	 * @return List<PositionInfoPO>
+	 */
+	public List<PositionInfoPO> findAll(String stockholder);
+	
+	/**
+	 * 查询其中一条持仓信息记录。
+	 * 
+	 * @param stockholder 股东代码
 	 * @param stockCode 证券代码
+	 * @return PositionInfoPO
 	 */
-	public void removeByStockCode(String stockCode);
-	
-	/**
-	 * 删除没有仓位的持仓信息记录。
-	 */
-	public void removeForNoStockNumber();
-	
-	/**
-	 * 删除持仓信息集合。
-	 */
-	public void dropCollection();
+	public PositionInfoPO findOne(String stockholder, String stockCode);
 }
