@@ -30,14 +30,15 @@ public class OrderInfoPO implements Serializable {
 	private Long tradeDate;
 	/** 买卖标志。*/
 	private String tradeFlag;
-	/**
-	 * 买入时：成交金额 ==（交易总金额 + 手续费 + 印花税 + 过户费 + 结算费）。
-	 * 卖出时：成交金额 ==（交易总金额 - 手续费 - 印花税 - 过户费 - 结算费）。
-	 */
+	/** 成交价格。*/
 	private BigDecimal tradePrice;
 	/** 成交数量。*/
 	private Long tradeNumber;
-	/** 成交金额。*/
+	/**
+	 * 成交金额。
+	 * 买入时：成交金额 ==（交易总金额 + 手续费 + 印花税 + 过户费 + 结算费）。
+	 * 卖出时：成交金额 ==（交易总金额 - 手续费 - 印花税 - 过户费 - 结算费）。
+	 */
 	private BigDecimal tradeMoney;
 	
 	// --- 

@@ -12,8 +12,8 @@ import org.springframework.data.annotation.Id;
  * @since 1.0
  */
 public class FundsFlowPO implements Serializable {
-	
-	private static final long serialVersionUID = 143727267689921094L;
+
+	private static final long serialVersionUID = -2803161677982469792L;
 	
 	/** id */
 	@Id
@@ -35,6 +35,7 @@ public class FundsFlowPO implements Serializable {
 	/** 成交数量。*/
 	private Long tradeNumber;
 	/**
+	 * 成交金额。
 	 * 买入时：成交金额 ==（交易总金额 + 手续费 + 印花税 + 过户费 + 结算费）。
 	 * 卖出时：成交金额 ==（交易总金额 - 手续费 - 印花税 - 过户费 - 结算费）。
 	 */
@@ -42,8 +43,10 @@ public class FundsFlowPO implements Serializable {
 	/** 资金余额。*/
 	private BigDecimal fundsBalance;
 	
-	// --- 
-	/** 业务名称。*/
+	// ---
+	/** 业务类型（在数据库中实际记录的值，主要用于查询）。*/
+	private int businessType;
+	/** 业务名称（不在数据库中记录该值，主要用于显示）。*/
 	private String businessName;
 	
 	// --- 
@@ -78,6 +81,7 @@ public class FundsFlowPO implements Serializable {
 		.append("    ").append("fundsBalance").append(":").append("'").append(fundsBalance).append("'").append(", \n")
 		
 		// --- 
+		.append("    ").append("businessType").append(":").append("'").append(businessType).append("'").append(", \n")
 		.append("    ").append("businessName").append(":").append("'").append(businessName).append("'").append(", \n")
 		
 		// --- 
@@ -92,6 +96,27 @@ public class FundsFlowPO implements Serializable {
 		return builder.toString();
 	}
 	
+	/** 资金流水业务类型枚举。*/
+	public enum Business {
+		ROLL_IN(0, "银行转入"),
+		ROLL_OUT(1, "资金转出"),
+		STOCK_BUY(2, "证券买入"),
+		STOCK_SELL(3, "证券卖出");
+		
+		private final int type;
+		private final String name;
+		private Business (int type, String name) {
+			this.type = type;
+			this.name = name;
+		}
+		public int getType () {
+			return type;
+		}
+		public String getName() {
+			return name;
+		}
+	}
+	
 	// --- get method and set method ---
 	
 	public long getId() {
@@ -101,7 +126,7 @@ public class FundsFlowPO implements Serializable {
 	public void setId(long id) {
 		this.id = id;
 	}
-	
+
 	public String getContractCode() {
 		return contractCode;
 	}
@@ -172,6 +197,14 @@ public class FundsFlowPO implements Serializable {
 
 	public void setFundsBalance(BigDecimal fundsBalance) {
 		this.fundsBalance = fundsBalance;
+	}
+
+	public int getBusinessType() {
+		return businessType;
+	}
+
+	public void setBusinessType(int businessType) {
+		this.businessType = businessType;
 	}
 
 	public String getBusinessName() {
