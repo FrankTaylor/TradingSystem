@@ -25,7 +25,7 @@ public interface FundsFlowRepository {
 	public void truncate();
 	
 	/**
-	 * 删除持仓信息。
+	 * 删除资金流水记录。
 	 * 
 	 * @param stockholder 股东代码
 	 */

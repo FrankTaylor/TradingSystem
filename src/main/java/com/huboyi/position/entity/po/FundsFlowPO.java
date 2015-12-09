@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import org.springframework.data.annotation.Id;
 
+import com.huboyi.position.entity.po.OrderInfoPO.Trade;
+
 /**
  * 资金流水PO。
  * 
@@ -100,6 +102,7 @@ public class FundsFlowPO implements Serializable {
 	public enum Business {
 		ROLL_IN(0, "银行转入"),
 		ROLL_OUT(1, "资金转出"),
+		
 		STOCK_BUY(2, "证券买入"),
 		STOCK_SELL(3, "证券卖出");
 		
@@ -205,6 +208,13 @@ public class FundsFlowPO implements Serializable {
 
 	public void setBusinessType(int businessType) {
 		this.businessType = businessType;
+		
+		for (Trade e : Trade.values()) {
+			if (businessType == e.getType()) {
+				setBusinessName(e.getName());
+				break;
+			}
+		}
 	}
 
 	public String getBusinessName() {

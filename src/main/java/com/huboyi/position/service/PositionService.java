@@ -3,10 +3,8 @@ package com.huboyi.position.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.position.constant.FundsFlowBusiness;
-import com.huboyi.position.po.EverySumPositionInfoPO;
-import com.huboyi.position.po.FundsFlowPO;
-import com.huboyi.position.po.OrderInfoPO;
+import com.huboyi.position.entity.po.FundsFlowPO;
+import com.huboyi.position.entity.po.OrderInfoPO;
 
 /**
  * 仓位操作服务的接口。
@@ -33,8 +31,7 @@ public interface PositionService {
 	 * 保存买入证券时的资金流水记录和仓位信息。
 	 * 执行顺序： 1、增加一条资金流水记录；
 	 *        2、增加一条买入订单信息；
-	 *        3、增加每一笔持仓信息;
-	 *        4、修改之前持仓记录的止损价格。
+	 *        3、修改持仓信息。
 	 * 
 	 * @param stockCode 证券代码
 	 * @param openSignalDate 建仓信号发出时间 （格式：yyyyMMddhhmmssSSS）

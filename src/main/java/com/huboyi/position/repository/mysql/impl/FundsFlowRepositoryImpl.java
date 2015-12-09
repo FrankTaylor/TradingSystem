@@ -43,7 +43,7 @@ public class FundsFlowRepositoryImpl implements FundsFlowRepository {
 		sql.append(" ( ");
 		sql.append("contract_code, currency, ");
 		sql.append("stock_code, stock_name, trade_date, trade_price, trade_number, trade_money, funds_balance, ");
-		sql.append("business_name, ");
+		sql.append("business_type, ");
 		sql.append("charges, stamp_duty, transfer_fee, clearing_fee, ");
 		sql.append("stockholder");
 		sql.append(" ) "); 
@@ -52,7 +52,7 @@ public class FundsFlowRepositoryImpl implements FundsFlowRepository {
 		sql.append(" ( ");
 		sql.append(":contractCode, :currency, ");
 		sql.append(":stockCode, :stockName, :tradeDate, :tradePrice, :tradeNumber, :tradeMoney, :fundsBalance, ");
-		sql.append(":businessName, ");
+		sql.append(":businessType, ");
 		sql.append(":charges, :stampDuty, :transferFee, :clearingFee, ");
 		sql.append(":stockholder");
 		sql.append(" ) "); 

@@ -40,17 +40,16 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO order_info ");
-		
 		sql.append(" ( ");
 		sql.append("contract_code, ");
-		sql.append("stock_code, stock_name, trade_date, trade_flag, trade_price, trade_number, trade_money, ");
+		sql.append("stock_code, stock_name, trade_date, trade_type, trade_price, trade_number, trade_money, ");
 		sql.append("stockholder");
 		sql.append(" ) "); 
 		
 		sql.append(" VALUES ");
 		sql.append(" ( ");
 		sql.append(":contractCode, ");
-		sql.append(":stockCode, :stockName, :tradeDate, :tradeFlag, :tradePrice, :tradeNumber, :tradeMoney, ");
+		sql.append(":stockCode, :stockName, :tradeDate, :tradeType, :tradePrice, :tradeNumber, :tradeMoney, ");
 		sql.append(":stockholder");
 		sql.append(" ) "); 
 		

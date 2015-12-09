@@ -13,7 +13,7 @@ import org.springframework.data.annotation.Id;
  */
 public class OrderInfoPO implements Serializable {
 
-	private static final long serialVersionUID = -2568952561693772857L;
+	private static final long serialVersionUID = 6544912225103249353L;
 	
 	/** id */
 	@Id
@@ -28,8 +28,10 @@ public class OrderInfoPO implements Serializable {
 	private String stockName;
 	/** 成交日期（格式：yyyyMMddhhmmssSSS）。*/
 	private Long tradeDate;
-	/** 买卖标志。*/
-	private String tradeFlag;
+	/** 买卖类型（在数据库中实际记录的值，主要用于查询）。*/
+	private int tradeType;
+	/** 买卖说明（不在数据库中记录该值，主要用于显示）。*/
+	private String tradeName;
 	/** 成交价格。*/
 	private BigDecimal tradePrice;
 	/** 成交数量。*/
@@ -56,7 +58,8 @@ public class OrderInfoPO implements Serializable {
 		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
-		.append("    ").append("tradeFlag").append(":").append("'").append(tradeFlag).append("'").append(", \n")
+		.append("    ").append("tradeType").append(":").append("'").append(tradeType).append("'").append(", \n")
+		.append("    ").append("tradeName").append(":").append("'").append(tradeName).append("'").append(", \n")
 		.append("    ").append("tradePrice").append(":").append("'").append(tradePrice).append("'").append(", \n")
 		.append("    ").append("tradeNumber").append(":").append("'").append(tradeNumber).append("'").append(", \n")
 		.append("    ").append("tradeMoney").append(":").append("'").append(tradeMoney).append("'").append(", \n")
@@ -67,6 +70,25 @@ public class OrderInfoPO implements Serializable {
 		return builder.toString();
 	}
 	
+	/** 订单信息中的买卖标志枚举类。*/
+	public enum Trade {
+		STOCK_BUY(2, "证券买入"),
+		STOCK_SELL(3, "证券卖出");
+		
+		private final int type;
+		private final String name;
+		private Trade (int type, String name) {
+			this.type = type;
+			this.name = name;
+		}
+		public int getType () {
+			return type;
+		}
+		public String getName() {
+			return name;
+		}
+	}
+
 	// --- get method and set method ---
 	
 	public long getId() {
@@ -108,13 +130,28 @@ public class OrderInfoPO implements Serializable {
 	public void setTradeDate(Long tradeDate) {
 		this.tradeDate = tradeDate;
 	}
-	
-	public String getTradeFlag() {
-		return tradeFlag;
+
+	public int getTradeType() {
+		return tradeType;
 	}
 
-	public void setTradeFlag(String tradeFlag) {
-		this.tradeFlag = tradeFlag;
+	public void setTradeType(int tradeType) {
+		this.tradeType = tradeType;
+		
+		for (Trade e : Trade.values()) {
+			if (tradeType == e.getType()) {
+				setTradeName(e.getName());
+				break;
+			}
+		}
+	}
+	
+	public String getTradeName() {
+		return tradeName;
+	}
+
+	public void setTradeName(String tradeName) {
+		this.tradeName = tradeName;
 	}
 
 	public BigDecimal getTradePrice() {
