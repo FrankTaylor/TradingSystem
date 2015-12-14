@@ -166,12 +166,91 @@ public class PositionInfoServiceImpl implements PositionInfoService {
 		// --- 
 		/* 股东代码。*/
 		orderInfoPO.setStockholder(stockholder);
-		
-		/*
+				/*
 		 * +-----------------------------------------------------------+
 		 * + 构造持仓信息 。                                                                                                                                             +
 		 * +-----------------------------------------------------------+
 		 */
+		PositionInfoPO positionInfoPO = positionInfoRepository.findOne(stockholder, stockCode);                        // 查询该证券账户下是否有该证券的持仓。
+		
+		if (positionInfoPO == null) {
+			positionInfoPO = new PositionInfoPO();
+			// --- 
+			/* 证券代码。 */
+			positionInfoPO.setStockCode(stockCode);
+			/* 证券名称。 */
+			positionInfoPO.setStockName(null);
+			/* 证券数量。*/
+			positionInfoPO.setStockNumber(tradeNumber);
+			/* 可卖数量。*/
+			positionInfoPO.setCanSellNumber(0L);
+			
+			// --- 
+			/* 成本价。*/
+			positionInfoPO.setCostPrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
+			/* 成本金额。*/
+			positionInfoPO.setCostMoney(tradeMoney.setScale(3, RoundingMode.HALF_UP));
+			
+			// --- 
+			BigDecimal newMarketValue = amountMoney;                                                                   // 最新市值。公式 = 证券价格 * 证券数量 
+			BigDecimal floatProfitAndLoss = newMarketValue.subtract(positionInfoPO.getCostMoney());                    // 浮动盈亏。公式 = 最新市值 - 建仓成本 
+			BigDecimal profitAndLossRatio =                                                                            // 盈亏比例。公式 = 浮动盈亏 / 建仓成本
+				floatProfitAndLoss.divide(positionInfoPO.getCostMoney(), 3, RoundingMode.HALF_UP);
+			
+			/* 当前价。*/
+			positionInfoPO.setNewPrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
+			/* 最新市值。*/
+			positionInfoPO.setNewMarketValue(newMarketValue.setScale(3, RoundingMode.HALF_UP));
+			/* 浮动盈亏。*/
+			positionInfoPO.setFloatProfitAndLoss(floatProfitAndLoss.setScale(3, RoundingMode.HALF_UP));
+			/* 盈亏比例。*/
+			positionInfoPO.setProfitAndLossRatio(profitAndLossRatio.setScale(3, RoundingMode.HALF_UP));
+			
+			// --- 
+			/* 今买数量。*/
+			positionInfoPO.setTodayBuyNumber(tradeNumber);
+			/* 今卖数量。*/
+			positionInfoPO.setTodaySellNumber(0L);
+			
+			/* 股东代码。*/
+			positionInfoPO.setStockholder(stockholder);
+		} else {
+			// --- 
+			/* 证券数量。*/
+			positionInfoPO.setStockNumber(positionInfoPO.getStockNumber() + tradeNumber);
+			
+			// --- 
+			BigDecimal costPrice = positionInfoPO.getCostPrice()                                                       // 成本价。公式 = (之前购买成本价 + 购买成本价) / 2
+			.add(tradePrice).divide(BigDecimal.valueOf(2), 3, RoundingMode.HALF_UP);
+			BigDecimal costMoney = positionInfoPO.getCostMoney()                                                       // 成本金额。公式 = (之前购买成本金额 + 购买成本金额) / 2
+			.add(amountMoney).divide(BigDecimal.valueOf(2), 3, RoundingMode.HALF_UP);
+			
+			/* 成本价。*/
+			positionInfoPO.setCostPrice(costPrice);
+			/* 成本金额。*/
+			positionInfoPO.setCostMoney(costMoney);
+			
+			// --- 
+			BigDecimal newMarketValue = tradePrice.multiply(new BigDecimal(positionInfoPO.getStockNumber()));          // 最新市值。公式 = 证券价格 * 证券数量 
+			BigDecimal floatProfitAndLoss = newMarketValue.subtract(positionInfoPO.getCostMoney());                    // 浮动盈亏。公式 = 最新市值 - 建仓成本 
+			BigDecimal profitAndLossRatio =                                                                            // 盈亏比例。公式 = 浮动盈亏 / 建仓成本
+				floatProfitAndLoss.divide(positionInfoPO.getCostMoney(), 3, RoundingMode.HALF_UP);
+			
+			/* 当前价。*/
+			positionInfoPO.setNewPrice(tradePrice.setScale(3, RoundingMode.HALF_UP));
+			/* 最新市值。*/
+			positionInfoPO.setNewMarketValue(newMarketValue.setScale(3, RoundingMode.HALF_UP));
+			/* 浮动盈亏。*/
+			positionInfoPO.setFloatProfitAndLoss(floatProfitAndLoss.setScale(3, RoundingMode.HALF_UP));
+			/* 盈亏比例。*/
+			positionInfoPO.setProfitAndLossRatio(profitAndLossRatio.setScale(3, RoundingMode.HALF_UP));
+			
+			// --- 
+			/* 今买数量。*/
+			positionInfoPO.setTodayBuyNumber(positionInfoPO.getTodayBuyNumber() + tradeNumber);
+		}
+		
+		
 	}
 
 	@Override
