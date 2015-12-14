@@ -19,22 +19,10 @@ public interface FundsFlowService {
 	 * @param tradeDate 成交日期（格式：yyyyMMddhhmmssSSS）
 	 * @param tradeMoney 成交金额
 	 * @param stockholder 股东代码
-	 * @return boolean true：成功；false：失败
 	 */
-	public boolean 
+	public void 
 	transferInto(Long tradeDate, BigDecimal tradeMoney, String stockholder);
-	
-	/**
-	 * 转出资金。
-	 * 
-	 * @param tradeDate 成交日期（格式：yyyyMMddhhmmssSSS）
-	 * @param tradeMoney 成交金额
-	 * @param stockholder 股东代码
-	 * @return boolean true：成功；false：失败
-	 */
-	public boolean
-	transferOut(Long tradeDate, BigDecimal tradeMoney, String stockholder);
-	
+
 	/**
 	 * 删除所有的资金流水记录。
 	 */
@@ -48,7 +36,7 @@ public interface FundsFlowService {
 	public void deleteRecords(String stockholder);
 	
 	/**
-	 * 最新的一条资金流水记录。
+	 * 得到最新的一条资金流水记录。
 	 * 
 	 * @param stockholder 股东代码
 	 * @return FundsFlowPO

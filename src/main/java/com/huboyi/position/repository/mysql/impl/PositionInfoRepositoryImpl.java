@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.huboyi.position.entity.po.PositionInfoPO;
 import com.huboyi.position.repository.PositionInfoRepository;
+import com.huboyi.position.service.PositionInfoService.SortType;
 
 /**
  * 持仓信息Repository的实现类。
