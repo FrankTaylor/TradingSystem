@@ -145,7 +145,7 @@ public class HttpClientHelper {
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
         
-        HttpGet httpGet = new HttpGet("http://zqdl:zqdl@192.168.19.110/activiti-rest/service/identity/users");  
+        HttpGet httpGet = new HttpGet("http://00001:123456@192.168.19.110/activiti-rest/service/identity/users/00002");  
         httpGet.setConfig(RequestConfig.DEFAULT);
         
         try {  
@@ -308,11 +308,11 @@ public class HttpClientHelper {
 		
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
-        HttpPost httpPost = new HttpPost("http://192.168.19.110/activiti-rest/service/runtime/tasks/4087");  
+        HttpPost httpPost = new HttpPost("http://192.168.19.110/activiti-rest/service/runtime/tasks/5019");  
         httpPost.setConfig(RequestConfig.DEFAULT);
         
         // 加入认证信息头，注意头部信息需要进行 Base64 编码。
-        String up = new String(new Base64().encode("fozzie:fozzie".getBytes()));
+        String up = new String(new Base64().encode("00001:123456".getBytes()));
         httpPost.addHeader("Authorization", "Basic " + up);
         
         // 创建变量信息实体。
@@ -349,7 +349,7 @@ public class HttpClientHelper {
             if (resposeEntity != null) {  
                 System.out.println("系统返回的内容:" + EntityUtils.toString(resposeEntity, "UTF-8"));  
             }  
-        } catch (IOException e) {  
+        } catch (IOException e) {
             e.printStackTrace();  
         } finally {
         	try {
@@ -368,7 +368,7 @@ public class HttpClientHelper {
         httpGet.setConfig(RequestConfig.DEFAULT);
         
         // 加入认证信息头，注意头部信息需要进行 Base64 编码。
-        String up = new String(new Base64().encode("fozzie:fozzie".getBytes()));
+        String up = new String(new Base64().encode("00001:123456".getBytes()));
         httpGet.addHeader("Authorization", "Basic " + up);
         
         try {  
@@ -405,12 +405,12 @@ public class HttpClientHelper {
         httpPost.setConfig(RequestConfig.DEFAULT);
         
         // 加入认证信息头，注意头部信息需要进行 Base64 编码。
-        String up = new String(new Base64().encode("fozzie:fozzie".getBytes()));
+        String up = new String(new Base64().encode("00001:123456".getBytes()));
         httpPost.addHeader("Authorization", "Basic " + up);
         
         // 创建变量信息实体。
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("name", "中企财务部面试人");
+        map.put("name", "process");
         map.put("owner", "");
         String json = "";
 		try {
@@ -444,17 +444,17 @@ public class HttpClientHelper {
 		
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
-        HttpPost httpPost = new HttpPost("http://192.168.19.110/activiti-rest/service/runtime/tasks/5008");  
+        HttpPost httpPost = new HttpPost("http://192.168.19.110/activiti-rest/service/runtime/tasks/5019");  
         httpPost.setConfig(RequestConfig.DEFAULT);
         
         // 加入认证信息头，注意头部信息需要进行 Base64 编码。
-        String up = new String(new Base64().encode("fozzie:fozzie".getBytes()));
+        String up = new String(new Base64().encode("00001:123456".getBytes()));
         httpPost.addHeader("Authorization", "Basic " + up);
         
         // 创建变量信息实体。
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("action", "claim");
-        map.put("assignee", "zqdl");
+        map.put("assignee", "00006");
         
         String json = "";
 		try {
@@ -487,7 +487,7 @@ public class HttpClientHelper {
 	}
 	
 	public static void main(String[] args) throws IOException {
-//		claimTask();
+		new HttpClientHelper().getUsers();
 	}
 	
 	/**

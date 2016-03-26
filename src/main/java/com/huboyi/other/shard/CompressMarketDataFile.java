@@ -46,6 +46,12 @@ public class CompressMarketDataFile {
 	/** 股票行情压缩文件名前缀。*/
 	private String compressFilePrefix;
 	
+	public static void main(String[] args) {
+		for (;;) {
+			System.out.println("1");
+		}
+	}
+	
 	/**
 	 * 把股票行情归档文件TAR压缩成GZIP文件。
 	 * 
@@ -301,7 +307,7 @@ public class CompressMarketDataFile {
 		
 		return marketDataListArray;
 	}
-
+	
 	// --- spring inject method ---
 	
 	public void setStockDataDir(String stockDataDir) {
@@ -319,5 +325,4 @@ public class CompressMarketDataFile {
 	public void setCompressFilePrefix(String compressFilePrefix) {
 		this.compressFilePrefix = compressFilePrefix;
 	}
-	
 }
