@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
@@ -24,8 +25,10 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NoHttpResponseException;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -45,6 +48,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
@@ -52,6 +56,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -486,8 +494,197 @@ public class HttpClientHelper {
         
 	}
 	
-	public static void main(String[] args) throws IOException {
-		new HttpClientHelper().getUsers();
+	/**
+	 * 登录北京市预约挂号统一平台。
+	 * 
+	 * @param client CloseableHttpClient
+	 * @param mobile 手机号
+	 * @param password 密码
+	 * @return boolean
+	 */
+	private static boolean loginBeiJingYYGHPT(CloseableHttpClient client, String mobile, String password) {
+		
+        HttpPost httpPost = new HttpPost("http://www.bjguahao.gov.cn/quicklogin.htm"); 
+        
+        try {
+        	
+        	// 模拟浏览器提交登录请求，虽然这不是必须的，但是为了防止被屏蔽，还是加上好了。
+        	httpPost.addHeader("Host", "www.bjguahao.gov.cn");
+            httpPost.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0");
+            httpPost.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
+            httpPost.addHeader("Accept-Encoding", "gzip, deflate");
+            httpPost.addHeader("X-Requested-With", "XMLHttpRequest");
+            httpPost.addHeader("Referer", "http://www.bjguahao.gov.cn/index.htm");
+            httpPost.addHeader("Connection", "keep-alive");
+            httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            
+            // 模拟提交表单。
+        	List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        	params.add(new BasicNameValuePair("mobileNo", mobile));
+        	params.add(new BasicNameValuePair("password", password));
+        	params.add(new BasicNameValuePair("yzm", ""));
+        	params.add(new BasicNameValuePair("isAjax", "true"));
+        	UrlEncodedFormEntity entity = new UrlEncodedFormEntity(params, "UTF-8");
+        	httpPost.setEntity(entity);
+        	
+            // 执行 post 请求。  
+            HttpResponse httpResponse = client.execute(httpPost);
+            
+            // 得到请求响应状态。
+            StatusLine statusLine = httpResponse.getStatusLine();
+            // 获取响应消息实体。
+            HttpEntity resposeEntity = httpResponse.getEntity();
+            
+            if (statusLine != null && statusLine.getStatusCode() == 200) {
+            	return true;
+            } else {
+            	System.out.println("系统返回状态码:" + statusLine.getStatusCode()); 
+            	if (resposeEntity != null) {  
+                    System.out.println("系统返回的内容:" + EntityUtils.toString(resposeEntity, "UTF-8"));  
+                }  
+            }
+            
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        } 
+        
+        return false;
+	}
+	
+	/**
+	 * 得到某医院全部的科室信息。
+	 * 
+	 * @param client CloseableHttpClient 
+	 * @param idOfHospital 医院 ID。
+	 */
+	public static Map<String, Map<String, String>> getDepIdsOfHospital(CloseableHttpClient client, String idOfHospital) {
+		
+		Map<String, Map<String, String>> depMap = new HashMap<String, Map<String, String>>();
+		
+        HttpGet httpGet = new HttpGet("http://www.bjguahao.gov.cn/hp/appoint/" + idOfHospital + ".htm");  
+        httpGet.setConfig(RequestConfig.DEFAULT);
+        try {  
+            // 执行 get 请求。  
+            HttpResponse httpResponse = client.execute(httpGet);  
+            
+            // 得到请求响应状态。
+            StatusLine statusLine = httpResponse.getStatusLine();
+            // 获取响应消息实体。
+            HttpEntity resposeEntity = httpResponse.getEntity();
+            
+            if (statusLine != null && statusLine.getStatusCode() == 200) {
+            	String html = EntityUtils.toString(resposeEntity, "UTF-8");
+            	Document doc = Jsoup.parse(html);
+            	
+            	// 得到一级分类。
+            	Elements firstLevels = doc.select("div.kfyuks_yyksbox");
+            	for (Element first : firstLevels) {
+            		
+            		Map<String, String> secondMap = new HashMap<String, String>();
+            		for (Element a : first.select("a.kfyuks_islogin")) {
+            			secondMap.put(a.text(), a.attr("href"));
+            		}
+            		
+            		depMap.put(first.select("div.kfyuks_yyksdl").first().text(), secondMap);
+            	}
+            	
+            }
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }
+        
+        return depMap;
+	}
+	
+	/**
+	 * 得到某医院全部的科室信息。
+	 * 
+	 * @param client CloseableHttpClient 
+	 * @param idOfDep 科室 ID
+	 * @param week 周数
+	 */
+	public static Map<String, String> getTicketsOfDep(CloseableHttpClient client, String idOfDep, int week) {
+		
+		if (week <= 0 ) { week = 1; }
+		
+		
+		Map<String, String> ticketMap = new HashMap<String, String>();
+		
+        HttpGet httpGet = new HttpGet("http://www.bjguahao.gov.cn/dpt/appoint/" + idOfDep + ".htm?week=" + week);  
+        httpGet.setConfig(RequestConfig.DEFAULT);
+        try {  
+            // 执行 get 请求。  
+            HttpResponse httpResponse = client.execute(httpGet);  
+            
+            // 得到请求响应状态。
+            StatusLine statusLine = httpResponse.getStatusLine();
+            // 获取响应消息实体。
+            HttpEntity resposeEntity = httpResponse.getEntity();
+            
+            if (statusLine != null && statusLine.getStatusCode() == 200) {
+            	String html = EntityUtils.toString(resposeEntity, "UTF-8");
+            	Document doc = Jsoup.parse(html);
+            	
+            	Element table = doc.select("div.ksorder_cen_l_t_c").first();
+            	Elements trs = table.select("tr");
+            	for (int i = 1; i < trs.size(); i++) {
+            		Element tr = trs.get(i);
+            		for (Element td : tr.select("td.ksorder_kyy")) {
+            			String tdText = td.text().trim();
+            			if (tdText.startsWith("预约")) {
+            				String inputValue = td.select("input").first().attr("value");
+            				String date = inputValue.substring(inputValue.lastIndexOf("_") + 1, inputValue.length());
+            				
+            				if (i == 1) {
+            					ticketMap.put(date + "(上午)", tdText);
+            				}
+            				
+            				if (i == 2) {
+            					ticketMap.put(date + "(下午)", tdText);
+            				}
+            				
+            				if (i == 3) {
+            					ticketMap.put(date + "(晚上)", tdText);
+            				}
+            			}
+            		}
+            	}
+            	
+            	
+            }
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        }
+        
+        return ticketMap;
+	}
+	
+//	http://www.bjguahao.gov.cn/dpt/appoint/102-200000464.htm
+		
+	public static void main(String[] args) {
+		
+		while (true) {
+			HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
+			CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
+			try {
+				Map<String, String> ticketMap = getTicketsOfDep(closeableHttpClient, "102-200000464", 1);
+				for (Map.Entry<String, String> m : ticketMap.entrySet()) {
+					System.out.println(m.getKey() + ", " + m.getValue());
+				}
+				
+				TimeUnit.SECONDS.sleep(1);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (closeableHttpClient != null) {
+					try {
+						closeableHttpClient.close();
+					} catch (IOException e) {}
+				}
+			}
+		}
+		
+		
 	}
 	
 	/**

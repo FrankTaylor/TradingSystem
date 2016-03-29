@@ -201,6 +201,13 @@
       <version>3.13-beta1</version>
 	</dependency>
 	
+	<!-- html 解析 -->
+	<dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.8.3</version>
+	</dependency>
+	
 	<!-- 内置服务器框架（目的是为了使用其提供的 servlet 相关jar） -->
 	<dependency>
       <groupId>org.mortbay.jetty</groupId>
