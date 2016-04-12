@@ -9,10 +9,12 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
@@ -63,6 +65,7 @@ import org.jsoup.select.Elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thoughtworks.xstream.tools.benchmark.targets.Person;
 
 /**
  * Apache HttpClient框架使用快捷帮助类。
@@ -659,33 +662,53 @@ public class HttpClientHelper {
         return ticketMap;
 	}
 	
+	
 //	http://www.bjguahao.gov.cn/dpt/appoint/102-200000464.htm
-		
+
 	public static void main(String[] args) {
+
+//		while (true) {
+//			HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
+//			CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
+//			try {
+//				Map<String, String> ticketMap = getTicketsOfDep(closeableHttpClient, "102-200000464", 1);
+//				for (Map.Entry<String, String> m : ticketMap.entrySet()) {
+//					System.out.println(m.getKey() + ", " + m.getValue());
+//				}
+//				
+//				TimeUnit.SECONDS.sleep(1);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			} finally {
+//				if (closeableHttpClient != null) {
+//					try {
+//						closeableHttpClient.close();
+//					} catch (IOException e) {}
+//				}
+//			}
+//		}
 		
-		while (true) {
-			HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();  
-			CloseableHttpClient closeableHttpClient = httpClientBuilder.build();  
-			try {
-				Map<String, String> ticketMap = getTicketsOfDep(closeableHttpClient, "102-200000464", 1);
-				for (Map.Entry<String, String> m : ticketMap.entrySet()) {
-					System.out.println(m.getKey() + ", " + m.getValue());
-				}
-				
-				TimeUnit.SECONDS.sleep(1);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (closeableHttpClient != null) {
-					try {
-						closeableHttpClient.close();
-					} catch (IOException e) {}
-				}
-			}
+		int[] a = {3, 2, 4};
+		int target = 6;
+		
+		for (int aa : twoSum(a, target)) {
+			System.out.println("aa = " + aa);
 		}
-		
-		
 	}
+	
+	public static int[] twoSum(int[] nums, int target) {
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+	    int[] ret = new int[2];
+	    for (int i = 0; i< nums.length; i++) {
+	        if (map.containsKey(target-nums[i])) {
+	            ret[0] = map.get(target-nums[i]);
+	            ret[1] = i;
+	            break;
+	        }
+	        map.put(nums[i], i);
+	    }
+	    return ret;
+    }
 	
 	/**
 	 * 创建访问http协议的HttpClient对象。
