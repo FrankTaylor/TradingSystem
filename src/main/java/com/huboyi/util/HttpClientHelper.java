@@ -9,12 +9,9 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
@@ -65,7 +62,6 @@ import org.jsoup.select.Elements;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.xstream.tools.benchmark.targets.Person;
 
 /**
  * Apache HttpClient框架使用快捷帮助类。
@@ -687,15 +683,48 @@ public class HttpClientHelper {
 //				}
 //			}
 //		}
+//		P A H
+//		APLSI
+//		Y I G
 		
-		int[] a = {3, 2, 4};
-		int target = 6;
-		
-		for (int aa : twoSum(a, target)) {
-			System.out.println("aa = " + aa);
-		}
+		System.out.println(convert("PAYPALISHIG", 3));
 	}
 	
+	public static String convert(String s, int numRows) {
+        
+		if (s == null || s.length() <= 0) { return ""; }
+		if (numRows <= 0) { return ""; }
+		if (s.length() == 1 || numRows == 1) { return s; }
+		
+		int segment = s.length() / (numRows + 1);
+		if (numRows * segment < s.length()) { segment++; }
+		if (segment == 0) { return s; }
+		
+		@SuppressWarnings("unchecked")
+		List<String>[] lists = new ArrayList[segment];
+        for (int i = 0; i < lists.length; i++) {
+        	lists[i] = new ArrayList<String>();
+        }
+        int sOffset = 0;
+        for (int out = 0; out < segment; out++) {
+        	for (int in = 0; in < numRows; in++) {
+        		if (sOffset >= s.length() - 1) { break; }
+        		lists[in].add(String.valueOf(s.charAt(sOffset++)));
+        		if (sOffset >= s.length() - 1) { break; }
+        	}
+        	lists[(segment - 1) / 2].add(String.valueOf(s.charAt(sOffset++)));
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (List<String> l : lists) {
+        	for (String sss : l) {
+        		sb.append(sss);
+        	}
+        }
+        
+        return sb.toString();
+    }
+
 	public static int[] twoSum(int[] nums, int target) {
 		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 	    int[] ret = new int[2];
