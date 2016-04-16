@@ -23,7 +23,6 @@
     <!-- 服务器上装载股票数据的引擎类  -->
     <bean id="dataLoadEngine" class="com.huboyi.data.load.DataLoadEngine"
         p:marketDataFilepath="F:/BondData/Stock"
-        p:loadDataThreadNums="20"
         p:loadDataTimeout="30"
         p:startMonitorTask="true"
         p:monitoringInterval="5000" />

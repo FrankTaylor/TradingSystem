@@ -53,15 +53,20 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	/** 当前已经载入的股票行情数据的个数。*/
 	private AtomicInteger currentReadMarketDataNum;
 	
+	/** 装载股票数据的集合尺寸，避免出现容器扩容所引起的不必要代价。*/
+	private final int MAP_CAPACITY;
+	
 	/**
 	 * 构造函数。
 	 * 
 	 * @param marketDataFilepathMap 行情数据文件路径集合
 	 * @param currentReadMarketDataNum 当前已经载入的股票行情数据的个数
 	 */
-	public DataLoadTask (Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
+	public DataLoadTask(Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
 		this.marketDataFilepathMap = marketDataFilepathMap;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
+		
+		this.MAP_CAPACITY = marketDataFilepathMap.size();
 	}
 	
 	/**
@@ -70,11 +75,11 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 * @return Map<String, List<StockDataBean>>
 	 */
 	@Override
-	public Map<String, List<StockDataBean>> call () throws Exception {
+	public Map<String, List<StockDataBean>> call() throws Exception {
 		Thread current = Thread.currentThread();
 		long id = current.getId();
 		String name = current.getName();
-		Map<String, List<StockDataBean>> dataMap = new ConcurrentHashMap<String, List<StockDataBean>>();
+		Map<String, List<StockDataBean>> dataMap = new ConcurrentHashMap<String, List<StockDataBean>>(MAP_CAPACITY);
 		try {
 			for (Map.Entry<String, String> entry : marketDataFilepathMap.entrySet()) {
 				// 股票代码。
@@ -102,7 +107,7 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 * @param separator 数据之间的分隔符
 	 * @return List<StockDataBean>
 	 */
-	private List<StockDataBean> loadDataIntoStockDataBean (final String marketDataFilepath, final String separator) {
+	private List<StockDataBean> loadDataIntoStockDataBean(final String marketDataFilepath, final String separator) {
 		// 装载读取行情数据Bean的集合。
 		List<StockDataBean> beanList = new CopyOnWriteArrayList<StockDataBean>();
 		
@@ -222,7 +227,7 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 */
 	@SuppressWarnings("unused")
 	@Deprecated
-	private List<StockDataBean> loadDataIntoStockDataBeanWithWin32 (final String marketDataFilepath) {
+	private List<StockDataBean> loadDataIntoStockDataBeanWithWin32(final String marketDataFilepath) {
 		// 装载读取行情数据Bean的集合。
 		List<StockDataBean> beanList = new CopyOnWriteArrayList<StockDataBean>();
 		

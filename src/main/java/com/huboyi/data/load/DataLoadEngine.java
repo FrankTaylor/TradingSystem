@@ -40,10 +40,13 @@ public class DataLoadEngine {
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(DataLoadEngine.class);
 	
+	/** 得到服务器的 CPU 核心数。*/
+	private int coreNums = Runtime.getRuntime().availableProcessors();
+	
 	/** 市场行情数据文件读取文件的线程数路径。*/
 	private String marketDataFilepath;
-	/** 装载市场行情数据的线程数。*/
-	private int loadDataThreadNums = 2;
+	/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.8。*/
+	private int loadDataThreadNums = (int)(coreNums / (1 - 0.8));
 	/** 装载市场行情数据的超时时长（单位：分钟）*/
 	private int loadDataTimeout = 10;
 	
@@ -57,7 +60,7 @@ public class DataLoadEngine {
 	 * 
 	 * @return Map<String, List<StockDataBean>>
 	 */
-	public Map<String, List<StockDataBean>> getStockData () {
+	public Map<String, List<StockDataBean>> getStockData() {
 		log.info("准备读取上交所和深交所的股票数据！");
 		
 		// --- 参数验证 ---
@@ -66,18 +69,18 @@ public class DataLoadEngine {
 		}
 		
 		if (loadDataThreadNums <= 0) {
-			loadDataThreadNums = 2;
-			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 2");
+			loadDataThreadNums = (int)(coreNums / (1 - 0.8));
+			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataThreadNums);
 		}
 		
 		if (loadDataTimeout <= 0) {
 			loadDataTimeout = 10;
-			log.warn("装载市场行情数据的超时时长必须大于 0 [" + loadDataTimeout + "]，当不满足该条件时，系统将自动调整该参数为 10");
+			log.warn("装载市场行情数据的超时时长必须大于 0 [" + loadDataTimeout + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataTimeout);
 		}
 		
 		if (monitoringInterval < 1000) {
 			monitoringInterval = 1000;
-			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 1000");
+			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 " + monitoringInterval);
 		}
 		
 		// --- 具体业务 ---
@@ -150,7 +153,7 @@ public class DataLoadEngine {
 	 * @throws UnsupportedEncodingException
 	 */
 	private Map<String, String> 
-	getMarketDataFilepath (final String marketDataFilepath) throws FileNotFoundException, UnsupportedEncodingException {
+	getMarketDataFilepath(final String marketDataFilepath) throws FileNotFoundException, UnsupportedEncodingException {
 		log.info("读取装载行情数据的文件路径。");
 		File marketDataFile = new File(marketDataFilepath);
 		if (!marketDataFile.exists()) {
@@ -180,7 +183,7 @@ public class DataLoadEngine {
 	 * @return List<Map<String, String>> 
 	 */
 	private List<Map<String, String>> 
-	splitMarketDataFilepathMap (Map<String, String> marketDataFilepathMap, int unit) {
+	splitMarketDataFilepathMap(Map<String, String> marketDataFilepathMap, int unit) {
 		log.info("把装载行情数据路径的大集合，分割成若干个小集合。");
 		// 装载分割好的股票行情数据路径。
 		List<Map<String, String>> loadSplitMapList = new LinkedList<Map<String, String>>();
@@ -226,7 +229,7 @@ public class DataLoadEngine {
 	 * @throws TimeoutException
 	 */
 	private List<Map<String, List<StockDataBean>>> 
-	readMarketDataToBean (
+	readMarketDataToBean(
 			ExecutorService moniter, ExecutorService worker,
 			List<Map<String, String>> marketDataFilepathMapList, 
 			AtomicInteger currentReadMarketDataNum, int loadDataTimeout) 
@@ -280,7 +283,7 @@ public class DataLoadEngine {
 	 */
 	private ExecutorService getMonitorLoadMarketDataThreadPool() {
 		log.info("得到监控装载股票行情数据进度的线程池。");
-		ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactory () {
+		ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
@@ -298,9 +301,9 @@ public class DataLoadEngine {
 	 * @param num 池中线程的数量
 	 * @return ExecutorService
 	 */
-	private ExecutorService getLoadMarketDataThreadPool (int num) {
+	private ExecutorService getLoadMarketDataThreadPool(int num) {
 		log.info("得到处理装载股票行情数据的线程池。");
-		ExecutorService es = Executors.newFixedThreadPool(num, new ThreadFactory () {
+		ExecutorService es = Executors.newFixedThreadPool(num, new ThreadFactory() {
 			
 			int threadNum = 1;
 			

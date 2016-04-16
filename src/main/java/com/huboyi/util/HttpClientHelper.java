@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
@@ -687,7 +689,8 @@ public class HttpClientHelper {
 //		APLSI
 //		Y I G
 		
-		System.out.println(convert("PAYPALISHIG", 3));
+//		System.out.println(convert("PAYPALISHIG", 3));
+		
 	}
 	
 	public static String convert(String s, int numRows) {
