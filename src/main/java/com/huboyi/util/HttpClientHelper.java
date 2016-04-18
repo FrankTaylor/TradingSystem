@@ -689,9 +689,31 @@ public class HttpClientHelper {
 //		APLSI
 //		Y I G
 		
-//		System.out.println(convert("PAYPALISHIG", 3));
+
+		System.out.println(isPowerOfThree(45));
 		
+		// 326. Power of Three
 	}
+	
+	public static boolean isPowerOfThree(int n) {
+        if (n <= 0) { return false; }
+        
+        if ((n % 3) == 0) {
+        	double num = Math.log(n) / Math.log(3);
+            if ((num % 1) == 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        return false;
+        
+		
+//		System.out.println(n % 3);
+		
+//		return false;
+    }
 	
 	public static String convert(String s, int numRows) {
         

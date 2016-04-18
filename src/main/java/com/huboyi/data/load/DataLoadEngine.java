@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URLEncoder;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NotDirectoryException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -101,6 +102,8 @@ public class DataLoadEngine {
 			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(this.marketDataFilepath);
 
 			// 2、对装载市场行情数据文件路径的集合进行分割。
+			int splitNum = marketDataFilepathMap.size() / loadDataThreadNums;
+			splitNum = (splitNum % 1 == 0) ? splitNum : (splitNum + 1);
 			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, 10);
 			
 			// 3、启用一根线程对处理进度进行监控。
@@ -151,13 +154,19 @@ public class DataLoadEngine {
 	 * @return Map<String, String>
 	 * @throws FileAlreadyExistsException
 	 * @throws UnsupportedEncodingException
+	 * @throws NotDirectoryException 
 	 */
 	private Map<String, String> 
-	getMarketDataFilepath(final String marketDataFilepath) throws FileNotFoundException, UnsupportedEncodingException {
+	getMarketDataFilepath(final String marketDataFilepath) 
+	throws FileNotFoundException, UnsupportedEncodingException, NotDirectoryException {
 		log.info("读取装载行情数据的文件路径。");
 		File marketDataFile = new File(marketDataFilepath);
 		if (!marketDataFile.exists()) {
 			throw new FileNotFoundException("该路径[" + marketDataFilepath + "]在计算机中不存在！");
+		}
+		
+		if (!marketDataFile.isDirectory()) {
+			throw new NotDirectoryException("该路径[" + marketDataFilepath + "]在计算机中不是目录！");
 		}
 		
 		// 2、得到上交所或深交所的股票行情数据并装载到集合中。
@@ -289,6 +298,13 @@ public class DataLoadEngine {
 				Thread t = new Thread(r);
 				t.setName("监控载入股票行情数据线程");
 				t.setPriority(Thread.MAX_PRIORITY);
+				
+				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler () {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						log.error("监控载入股票行情数据线程在执行过程中出现错误！" + e);
+					}
+				});
 				return t;
 			}
 		});
@@ -310,7 +326,7 @@ public class DataLoadEngine {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
-				t.setName("执行载入股票行情数据的线程" + threadNum++);
+				t.setName("执行载入股票行情数据的线程 " + threadNum++);
 				
 				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler () {
 					@Override
