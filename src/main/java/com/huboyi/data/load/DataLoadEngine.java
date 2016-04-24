@@ -16,7 +16,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,8 +42,8 @@ public class DataLoadEngine {
 	/** 日志。*/
 	private static final Logger log = LogManager.getLogger(DataLoadEngine.class);
 	
-	/** 市场行情数据文件读取文件的线程数路径。*/
-	private String marketDataFilepath;
+	/** 市场行情数据文件夹路径。*/
+	private String marketDataFolderpath;
 	/** 装载市场行情数据的线程数。*/
 	private int loadDataThreadNums = 2;
 	/** 装载市场行情数据的超时时长（单位：分钟）*/
@@ -51,7 +53,7 @@ public class DataLoadEngine {
 	private boolean startMonitorTask = true;
 	/** 监听任务的监控间隔时间（单位毫秒）。*/
 	private long monitoringInterval = 1000;
-
+	
 	/**
 	 * 读取全部的行情数据。
 	 * 
@@ -88,12 +90,20 @@ public class DataLoadEngine {
 		// 装载股票行情数据的Bean类集合。
 		Map<String, List<StockDataBean>> beanMap = new ConcurrentHashMap<String, List<StockDataBean>>();
 		
-		// 得到监控装载行情数据进度的线程池。
-		ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
-		// 得到处理装载行情数据的线程池。
-		ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
-		
 		try {
+			
+			File marketDataFolder = new File(this.marketDataFilepath);
+			if (!marketDataFolder.exists()) {
+				throw new FileNotFoundException("该路径[" + marketDataFilepath + "]在计算机中不存在！");
+			}
+			
+			File[] marketDataFiles = marketDataFolder.listFiles();
+			
+			// 得到监控装载行情数据进度的线程池。
+			ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
+			// 得到处理装载行情数据的线程池。
+			ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
+			
 			// 1、读取市场行情数据文件路径集合。
 			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(this.marketDataFilepath);
 
@@ -251,6 +261,10 @@ public class DataLoadEngine {
 		moniter.shutdownNow();
 		
 		return stockDataBeanLML;
+	}
+	
+	public static void main(String[] args) throws InterruptedException {
+		System.out.println(Runtime.getRuntime().availableProcessors());
 	}
 	
 	/**
