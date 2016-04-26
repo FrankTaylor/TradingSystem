@@ -5,7 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URLEncoder;
-import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.NotDirectoryException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,9 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,8 +43,12 @@ public class DataLoadEngine {
 	
 	/** 市场行情数据文件夹路径。*/
 	private String marketDataFolderpath;
-	/** 装载市场行情数据的线程数。*/
-	private int loadDataThreadNums = 2;
+
+	/** 得到服务器的 CPU 核心数。*/
+	private int coreNums = Runtime.getRuntime().availableProcessors();
+	/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.6。*/
+	private int loadDataThreadNums = (int)(coreNums / (1 - 0.6));
+	
 	/** 装载市场行情数据的超时时长（单位：分钟）*/
 	private int loadDataTimeout = 10;
 	
@@ -59,27 +62,27 @@ public class DataLoadEngine {
 	 * 
 	 * @return Map<String, List<StockDataBean>>
 	 */
-	public Map<String, List<StockDataBean>> getStockData () {
+	public Map<String, List<StockDataBean>> getStockData() {
 		log.info("准备读取上交所和深交所的股票数据！");
 		
 		// --- 参数验证 ---
-		if (StringUtils.isBlank(marketDataFilepath)) {
-			throw new IllegalArgumentException("市场行情数据文件夹路径不能为空 [" + marketDataFilepath + "]！");
+		if (StringUtils.isBlank(marketDataFolderpath)) {
+			throw new IllegalArgumentException("市场行情数据文件夹路径不能为空 [" + marketDataFolderpath + "]！");
 		}
 		
 		if (loadDataThreadNums <= 0) {
-			loadDataThreadNums = 2;
-			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 2");
+			loadDataThreadNums = (int)(coreNums / (1 - 0.8));
+			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataThreadNums);
 		}
 		
 		if (loadDataTimeout <= 0) {
 			loadDataTimeout = 10;
-			log.warn("装载市场行情数据的超时时长必须大于 0 [" + loadDataTimeout + "]，当不满足该条件时，系统将自动调整该参数为 10");
+			log.warn("装载市场行情数据的超时时长必须大于 0 [" + loadDataTimeout + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataTimeout);
 		}
 		
 		if (monitoringInterval < 1000) {
 			monitoringInterval = 1000;
-			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 1000");
+			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 " + monitoringInterval);
 		}
 		
 		// --- 具体业务 ---
@@ -87,29 +90,26 @@ public class DataLoadEngine {
 		// 开始时间。
 		long startTime = System.nanoTime();
 		
-		// 装载股票行情数据的Bean类集合。
-		Map<String, List<StockDataBean>> beanMap = new ConcurrentHashMap<String, List<StockDataBean>>();
+		// 初始装载股票行情数据的Bean类集合。
+		Map<String, List<StockDataBean>> beanMap = new ConcurrentHashMap<String, List<StockDataBean>>(0);
 		
 		try {
 			
-			File marketDataFolder = new File(this.marketDataFilepath);
-			if (!marketDataFolder.exists()) {
-				throw new FileNotFoundException("该路径[" + marketDataFilepath + "]在计算机中不存在！");
-			}
+			// 1、得到市场行情文件，重新初始装载股票行情数据的Bean类集合，避免重新 Hash 的开销。
+			File[] marketDataFiles = getMarketDataFiles(this.marketDataFolderpath);
+			if (marketDataFiles == null || marketDataFiles.length == 0) { return beanMap; }
+			beanMap = new ConcurrentHashMap<String, List<StockDataBean>>(marketDataFiles.length);
 			
-			File[] marketDataFiles = marketDataFolder.listFiles();
+			// 2、读取市场行情数据文件路径集合。
+			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(marketDataFiles);
+
+			// 2、对装载市场行情数据文件路径的集合进行分割。
+			int splitNum = marketDataFilepathMap.size() / loadDataThreadNums;
+			splitNum = (splitNum % 1 == 0) ? splitNum : (splitNum + 1);
+			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, 10);
 			
 			// 得到监控装载行情数据进度的线程池。
 			ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
-			// 得到处理装载行情数据的线程池。
-			ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
-			
-			// 1、读取市场行情数据文件路径集合。
-			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(this.marketDataFilepath);
-
-			// 2、对装载市场行情数据文件路径的集合进行分割。
-			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, 10);
-			
 			// 3、启用一根线程对处理进度进行监控。
 			AtomicInteger currentReadMarketDataNum = new AtomicInteger(0);
 			DataLoadMonitorTask dataLoadMonitorTask = null;
@@ -119,6 +119,8 @@ public class DataLoadEngine {
 				moniterExec.shutdown();
 			}
 			
+			// 得到处理装载行情数据的线程池。
+			ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
 			// 4、多线程读取沪深A股和沪深指数的行情数据。
 			List<Map<String, List<StockDataBean>>> stockDataBeanLML = 
 				readMarketDataToBean(
@@ -149,27 +151,63 @@ public class DataLoadEngine {
 		return beanMap;
 	}
 	
+
+	public static void main(String[] args) throws InterruptedException {
+		/** 得到服务器的 CPU 核心数。*/
+		int coreNums = Runtime.getRuntime().availableProcessors();
+		/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.8。*/
+		int loadDataThreadNums = (int)(coreNums / (1 - 0.7));
+		
+		System.out.println("coreNums = " + coreNums);
+		System.out.println("loadDataThreadNums = " + loadDataThreadNums);
+		
+		int splitNum = 2809 / loadDataThreadNums;
+		System.out.println("splitNum = " + splitNum);
+		splitNum = (2809 % splitNum == 0) ? splitNum : (splitNum + 1);
+		System.out.println("splitNum = " + splitNum);
+		
+		
+	}
+	
 	// --- private method ---
+	
+	/**
+	 * 读取得到市场行情文件。
+	 * 
+	 * @param marketDataFolderpath 市场行情数据文件夹路径
+	 * @return File[] 
+	 * @throws FileNotFoundException 
+	 * @throws NotDirectoryException 
+	 */
+	private File[] 
+	getMarketDataFiles(final String marketDataFolderpath) 
+	throws FileNotFoundException, NotDirectoryException {
+		// 得到市场行情文件，重新初始装载股票行情数据的Bean类集合。
+		File marketDataFolder = new File(this.marketDataFolderpath);
+		if (!marketDataFolder.exists()) {
+			throw new FileNotFoundException("该路径[" + marketDataFolderpath + "]在计算机中不存在！");
+		}
+		if (!marketDataFolder.isDirectory()) {
+			throw new NotDirectoryException("该路径[" + marketDataFolder + "]在计算机中不是目录！");
+		}
+		return marketDataFolder.listFiles();
+	}
 	
 	/**
 	 * 读取装载行情数据的文件路径。
 	 * 
-	 * @param marketDataFilepath 装载股票行情数据的文件夹名称
+	 * @param marketDataFiles 股票行情数据文件数组
 	 * @return Map<String, String>
-	 * @throws FileAlreadyExistsException
 	 * @throws UnsupportedEncodingException
 	 */
 	private Map<String, String> 
-	getMarketDataFilepath (final String marketDataFilepath) throws FileNotFoundException, UnsupportedEncodingException {
+	getMarketDataFilepath(final File[] marketDataFiles) 
+	throws UnsupportedEncodingException {
 		log.info("读取装载行情数据的文件路径。");
-		File marketDataFile = new File(marketDataFilepath);
-		if (!marketDataFile.exists()) {
-			throw new FileNotFoundException("该路径[" + marketDataFilepath + "]在计算机中不存在！");
-		}
 		
-		// 2、得到上交所或深交所的股票行情数据并装载到集合中。
-		Map<String, String> marketDataMap = new HashMap<String, String>();
-		for (File f : marketDataFile.listFiles()) {
+		// 得到上交所或深交所的股票行情数据，并装载到集合中。
+		Map<String, String> marketDataMap = new HashMap<String, String>(marketDataFiles.length);
+		for (File f : marketDataFiles) {
 			if (f.isFile()) {
 				// 通过截取文件得到股票的代码。
 				String name = f.getName().substring(0, f.getName().indexOf("."));
@@ -190,7 +228,7 @@ public class DataLoadEngine {
 	 * @return List<Map<String, String>> 
 	 */
 	private List<Map<String, String>> 
-	splitMarketDataFilepathMap (Map<String, String> marketDataFilepathMap, int unit) {
+	splitMarketDataFilepathMap(Map<String, String> marketDataFilepathMap, int unit) {
 		log.info("把装载行情数据路径的大集合，分割成若干个小集合。");
 		// 装载分割好的股票行情数据路径。
 		List<Map<String, String>> loadSplitMapList = new LinkedList<Map<String, String>>();
@@ -236,7 +274,7 @@ public class DataLoadEngine {
 	 * @throws TimeoutException
 	 */
 	private List<Map<String, List<StockDataBean>>> 
-	readMarketDataToBean (
+	readMarketDataToBean(
 			ExecutorService moniter, ExecutorService worker,
 			List<Map<String, String>> marketDataFilepathMapList, 
 			AtomicInteger currentReadMarketDataNum, int loadDataTimeout) 
@@ -261,10 +299,6 @@ public class DataLoadEngine {
 		moniter.shutdownNow();
 		
 		return stockDataBeanLML;
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		System.out.println(Runtime.getRuntime().availableProcessors());
 	}
 	
 	/**
@@ -294,12 +328,19 @@ public class DataLoadEngine {
 	 */
 	private ExecutorService getMonitorLoadMarketDataThreadPool() {
 		log.info("得到监控装载股票行情数据进度的线程池。");
-		ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactory () {
+		ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
 				t.setName("监控载入股票行情数据线程");
 				t.setPriority(Thread.MAX_PRIORITY);
+				
+				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler () {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						log.error("监控载入股票行情数据线程在执行过程中出现错误！" + e);
+					}
+				});
 				return t;
 			}
 		});
@@ -312,16 +353,16 @@ public class DataLoadEngine {
 	 * @param num 池中线程的数量
 	 * @return ExecutorService
 	 */
-	private ExecutorService getLoadMarketDataThreadPool (int num) {
+	private ExecutorService getLoadMarketDataThreadPool(int num) {
 		log.info("得到处理装载股票行情数据的线程池。");
-		ExecutorService es = Executors.newFixedThreadPool(num, new ThreadFactory () {
+		ExecutorService es = Executors.newFixedThreadPool(num, new ThreadFactory() {
 			
 			int threadNum = 1;
 			
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
-				t.setName("执行载入股票行情数据的线程" + threadNum++);
+				t.setName("执行载入股票行情数据的线程 " + threadNum++);
 				
 				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler () {
 					@Override
@@ -337,8 +378,8 @@ public class DataLoadEngine {
 	
 	// --- get and set method ---
 	
-	public DataLoadEngine setMarketDataFilepath(String marketDataFilepath) {
-		this.marketDataFilepath = marketDataFilepath;
+	public DataLoadEngine setMarketDataFolderpath(String marketDataFolderpath) {
+		this.marketDataFolderpath = marketDataFolderpath;
 		return this;
 	}
 
