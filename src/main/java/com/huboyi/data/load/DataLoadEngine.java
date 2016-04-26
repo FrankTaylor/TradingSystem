@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.file.NotDirectoryException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,8 +19,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,10 +47,7 @@ public class DataLoadEngine {
 	private int coreNums = Runtime.getRuntime().availableProcessors();
 	/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.6。*/
 	private int loadDataThreadNums = (int)(coreNums / (1 - 0.6));
-	
-	/** 装载市场行情数据的超时时长（单位：分钟）*/
-	private int loadDataTimeout = 10;
-	
+
 	/** 是否启动监听线程。*/
 	private boolean startMonitorTask = true;
 	/** 监听任务的监控间隔时间（单位毫秒）。*/
@@ -74,12 +70,7 @@ public class DataLoadEngine {
 			loadDataThreadNums = (int)(coreNums / (1 - 0.8));
 			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataThreadNums);
 		}
-		
-		if (loadDataTimeout <= 0) {
-			loadDataTimeout = 10;
-			log.warn("装载市场行情数据的超时时长必须大于 0 [" + loadDataTimeout + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataTimeout);
-		}
-		
+
 		if (monitoringInterval < 1000) {
 			monitoringInterval = 1000;
 			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 " + monitoringInterval);
@@ -95,22 +86,29 @@ public class DataLoadEngine {
 		
 		try {
 			
-			// 1、得到市场行情文件，重新初始装载股票行情数据的Bean类集合，避免重新 Hash 的开销。
+			/*
+			 * 1、得到市场行情文件，重新初始装载股票行情数据的Bean类集合，避免重新 Hash 的开销。 
+			 */
 			File[] marketDataFiles = getMarketDataFiles(this.marketDataFolderpath);
 			if (marketDataFiles == null || marketDataFiles.length == 0) { return beanMap; }
 			beanMap = new ConcurrentHashMap<String, List<StockDataBean>>(marketDataFiles.length);
 			
-			// 2、读取市场行情数据文件路径集合。
+			/*
+			 * 2、读取市场行情数据文件路径集合。
+			 */
 			Map<String, String> marketDataFilepathMap = getMarketDataFilepath(marketDataFiles);
 
-			// 2、对装载市场行情数据文件路径的集合进行分割。
-			int splitNum = marketDataFilepathMap.size() / loadDataThreadNums;
-			splitNum = (splitNum % 1 == 0) ? splitNum : (splitNum + 1);
-			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, 10);
+			/*
+			 * 3、根据 “数据文件数量” 和 “线程数” 计算分隔系数，对装载市场行情数据文件路径的集合进行分割。
+			 */
+			BigDecimal numberOfFiles = BigDecimal.valueOf(marketDataFilepathMap.size());
+			BigDecimal splitNum = numberOfFiles.divide(BigDecimal.valueOf(loadDataThreadNums), 0, RoundingMode.UP).multiply(BigDecimal.valueOf(0.3));
+			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, splitNum.intValue());
 			
-			// 得到监控装载行情数据进度的线程池。
+			/*
+			 * 4、启用一根线程对处理进度进行监控。
+			 */
 			ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
-			// 3、启用一根线程对处理进度进行监控。
 			AtomicInteger currentReadMarketDataNum = new AtomicInteger(0);
 			DataLoadMonitorTask dataLoadMonitorTask = null;
 			if (this.startMonitorTask) {
@@ -119,21 +117,19 @@ public class DataLoadEngine {
 				moniterExec.shutdown();
 			}
 			
-			// 得到处理装载行情数据的线程池。
+			/*
+			 * 5、多线程读取沪深A股和沪深指数的行情数据。
+			 */
 			ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
-			// 4、多线程读取沪深A股和沪深指数的行情数据。
-			List<Map<String, List<StockDataBean>>> stockDataBeanLML = 
-				readMarketDataToBean(
-						moniterExec, 
-						workerExec, 
-						marketDataFilepathMapList, 
-						currentReadMarketDataNum, this.loadDataTimeout);
+			List<Map<String, List<StockDataBean>>> stockDataBeanLML = readMarketDataToBean(workerExec, marketDataFilepathMapList, currentReadMarketDataNum);
 			// 关闭监听线程。
 			if (this.startMonitorTask && dataLoadMonitorTask != null) {
 				dataLoadMonitorTask.shutdown();
 			}
 			
-			// 5、把多线程分批次返回的行情数据整合到一个集合类中。
+			/*
+			 * 6、把多线程分批次返回的行情数据整合到一个集合类中。
+			 */
 			for (Map<String, List<StockDataBean>> batchMap : stockDataBeanLML) {
 				for (String code : batchMap.keySet()) {
 					beanMap.put(code, batchMap.get(code));
@@ -153,20 +149,7 @@ public class DataLoadEngine {
 	
 
 	public static void main(String[] args) throws InterruptedException {
-		/** 得到服务器的 CPU 核心数。*/
-		int coreNums = Runtime.getRuntime().availableProcessors();
-		/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.8。*/
-		int loadDataThreadNums = (int)(coreNums / (1 - 0.7));
-		
-		System.out.println("coreNums = " + coreNums);
-		System.out.println("loadDataThreadNums = " + loadDataThreadNums);
-		
-		int splitNum = 2809 / loadDataThreadNums;
-		System.out.println("splitNum = " + splitNum);
-		splitNum = (2809 % splitNum == 0) ? splitNum : (splitNum + 1);
-		System.out.println("splitNum = " + splitNum);
-		
-		
+
 	}
 	
 	// --- private method ---
@@ -230,15 +213,17 @@ public class DataLoadEngine {
 	private List<Map<String, String>> 
 	splitMarketDataFilepathMap(Map<String, String> marketDataFilepathMap, int unit) {
 		log.info("把装载行情数据路径的大集合，分割成若干个小集合。");
-		// 装载分割好的股票行情数据路径。
-		List<Map<String, String>> loadSplitMapList = new LinkedList<Map<String, String>>();
+		
 		if (null == marketDataFilepathMap || marketDataFilepathMap.isEmpty()) {
 			log.warn("实参（装载行情数据路径的大集合）中没有数据！");
-			return loadSplitMapList;
+			return new ArrayList<Map<String, String>>(0);
 		}
 		
+		// 装载分割好的股票行情数据路径。
+		int initialCapacity = BigDecimal.valueOf(marketDataFilepathMap.size()).divide(BigDecimal.valueOf(unit), 0, RoundingMode.UP).intValue();
+		List<Map<String, String>> loadSplitMapList = new ArrayList<Map<String, String>>(initialCapacity);
 		// 对以读取到的股票行情数据路径集合进行分割。
-		Map<String, String> splitMap = new ConcurrentHashMap<String, String>();
+		Map<String, String> splitMap = new ConcurrentHashMap<String, String>(unit);
 		String[] keyArray = marketDataFilepathMap.keySet().toArray(new String[0]);
 		int length = keyArray.length;
 		for (int i = 0; i < length; i++) {
@@ -248,7 +233,7 @@ public class DataLoadEngine {
 			
 			if ((i + 1) % unit == 0) {
 				loadSplitMapList.add(splitMap);
-				splitMap = new ConcurrentHashMap<String, String>();
+				splitMap = new ConcurrentHashMap<String, String>(unit);
 				continue;
 			} else {
 				if (i == length - 1) {
@@ -263,7 +248,6 @@ public class DataLoadEngine {
 	/**
 	 * 读取行情数据到Bean中。
 	 * 
-	 * @param moniter 驱动监控任务的线程池
 	 * @param worker 驱动工作任务的线程池
 	 * @param marketDataFilepathMapList 装载市场行情数据文件路径的分割集合
 	 * @param currentReadMarketDataNum 当前已经载入的股票行情数据的个数
@@ -271,15 +255,12 @@ public class DataLoadEngine {
 	 * @return List<Map<String, List<StockDataBean>>>
 	 * @throws InterruptedException
 	 * @throws ExecutionException
-	 * @throws TimeoutException
 	 */
 	private List<Map<String, List<StockDataBean>>> 
 	readMarketDataToBean(
-			ExecutorService moniter, ExecutorService worker,
-			List<Map<String, String>> marketDataFilepathMapList, 
-			AtomicInteger currentReadMarketDataNum, int loadDataTimeout) 
-			throws InterruptedException, ExecutionException, TimeoutException {
-		
+			ExecutorService worker, List<Map<String, String>> marketDataFilepathMapList, 
+			AtomicInteger currentReadMarketDataNum) 
+			throws InterruptedException, ExecutionException {
 		List<Map<String, List<StockDataBean>>> stockDataBeanLML = new CopyOnWriteArrayList<Map<String, List<StockDataBean>>>();
 		
 		// 根据装载市场数据文件路径集合的尺寸，创建同样多个装载数据的任务类。
@@ -291,13 +272,10 @@ public class DataLoadEngine {
 		
 		if (null != stockFutureList && !stockFutureList.isEmpty()) {
 			for (Future<Map<String, List<StockDataBean>>> future : stockFutureList) {
-				stockDataBeanLML.add(future.get(loadDataTimeout, TimeUnit.MINUTES));
+				stockDataBeanLML.add(future.get());
 			}
 		}
 
-		// 关闭监控线程池。
-		moniter.shutdownNow();
-		
 		return stockDataBeanLML;
 	}
 	
@@ -309,7 +287,7 @@ public class DataLoadEngine {
 	 */
 	private List<DataLoadTask> 
 	getDataLoadTaskList(List<Map<String, String>> marketDataFilepathMapList, AtomicInteger currentReadMarketDataNum) {
-		List<DataLoadTask> workerList = new LinkedList<DataLoadTask>();
+		List<DataLoadTask> workerList = new ArrayList<DataLoadTask>(marketDataFilepathMapList.size());
 		if (null == marketDataFilepathMapList || marketDataFilepathMapList.isEmpty()) {
 			log.warn("装载股票行情数据文件路径的集合类中没有任何信息！");
 			return workerList;
@@ -385,11 +363,6 @@ public class DataLoadEngine {
 
 	public DataLoadEngine setLoadDataThreadNums(int loadDataThreadNums) {
 		this.loadDataThreadNums = loadDataThreadNums;
-		return this;
-	}
-
-	public DataLoadEngine setLoadDataTimeout(int loadDataTimeout) {
-		this.loadDataTimeout = loadDataTimeout;
 		return this;
 	}
 
