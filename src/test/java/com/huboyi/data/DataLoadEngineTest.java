@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.data.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.data.load.DataLoadEngine;
 
 /**
@@ -35,6 +35,8 @@ public class DataLoadEngineTest {
 	@Test
 	public void getStockData() {
 		Map<String, List<StockDataBean>> map = dataLoadEngine.getStockData();
+		
+		log.info("共读取证券数据文件 = " + map.size() + " 个 \n\n\n");
 		
 		for (Map.Entry<String, List<StockDataBean>> entry : map.entrySet()) {
 			String key = entry.getKey();

@@ -51,10 +51,7 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	private final Map<String, String> marketDataFilepathMap;
 	
 	/** 当前已经载入的股票行情数据的个数。*/
-	private AtomicInteger currentReadMarketDataNum;
-	
-	/** 装载股票数据的集合尺寸，避免出现容器扩容所引起的不必要代价。*/
-	private final int MAP_CAPACITY;
+	private final AtomicInteger currentReadMarketDataNum;
 	
 	/**
 	 * 构造函数。
@@ -65,8 +62,6 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	public DataLoadTask(Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
 		this.marketDataFilepathMap = marketDataFilepathMap;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
-		
-		this.MAP_CAPACITY = marketDataFilepathMap.size();
 	}
 	
 	/**
@@ -76,10 +71,15 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 */
 	@Override
 	public Map<String, List<StockDataBean>> call() throws Exception {
+		
 		Thread current = Thread.currentThread();
 		long id = current.getId();
 		String name = current.getName();
+		
+		// 装载股票数据的集合尺寸，避免出现容器扩容所引起的不必要代价。
+		final int MAP_CAPACITY = marketDataFilepathMap.size() * 2;
 		Map<String, List<StockDataBean>> dataMap = new ConcurrentHashMap<String, List<StockDataBean>>(MAP_CAPACITY);
+		
 		try {
 			for (Map.Entry<String, String> entry : marketDataFilepathMap.entrySet()) {
 				// 股票代码。
@@ -88,15 +88,18 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 				String marketDataFilepath = URLDecoder.decode(entry.getValue(), "UTF-8");
 				
 				log.debug("当前线程[name = " + name + "]正在读取[证券代码：" + code + "]的行情数据。");
+				
 				// 把股票的行情数据载入缓存。
 				dataMap.put(code, loadDataIntoStockDataBean(marketDataFilepath, ","));
 				// 把当前完成读取的股票数量加一。
 				currentReadMarketDataNum.addAndGet(1);
+				
 				log.debug("当前线程[name = " + name + "]完成读取[证券代码：" + code + "]的股票行情数据。");
 			}
 		} catch (Exception e) {
 			log.error("当前线程[id = " + id + ", name = " + name + "]在读取股票行情数据的过程中出现错误！", e);
 		}
+		
 		return dataMap;
 	}
 
@@ -195,7 +198,7 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 							bean.setVolume(BigDecimal.valueOf(Float.valueOf(volume)).setScale(2, RoundingMode.HALF_UP));        // 成交量。
 							bean.setAmount(BigDecimal.valueOf(Float.valueOf(amount)).setScale(3, RoundingMode.HALF_UP));        // 成交额。
 							
-							// --- 其他信息 ---
+							// --- 构造链表 ---
 							if (beanList.size() > 0) {
 		                    	StockDataBean prev = beanList.get(beanList.size() - 1);
 		                    	if (null != prev) {

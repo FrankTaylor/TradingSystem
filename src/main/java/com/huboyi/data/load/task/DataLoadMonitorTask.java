@@ -65,6 +65,11 @@ public class DataLoadMonitorTask implements Runnable {
 				}
 				
 				log.info("当前载入行情数据的进度为：" + rate.floatValue() + "%");
+				
+				if (rate.floatValue() >= 100) {
+					shutdown();
+				}
+				
 				TimeUnit.MILLISECONDS.sleep(monitoringInterval);
 			}
 		} catch (Exception e) {

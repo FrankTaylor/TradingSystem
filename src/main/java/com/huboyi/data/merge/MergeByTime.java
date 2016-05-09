@@ -44,7 +44,8 @@ public class MergeByTime {
 	public Map<String, List<StockDataBean>> 
 	merge(Map<String, List<StockDataBean>> stockDataListMap, MergeTimeType type) {
 		
-		Map<String, List<StockDataBean>> mergeStockDataListMap = new HashMap<String, List<StockDataBean>>();   // 装载合并以后的行情数据。
+		Map<String, List<StockDataBean>> mergeStockDataListMap = 
+			new HashMap<String, List<StockDataBean>>(stockDataListMap.size());                                         // 装载合并以后的行情数据。
 		
 		if (
 				type == MergeTimeType.MINUTE_1 || type == MergeTimeType.MINUTE_5 || 
@@ -62,11 +63,11 @@ public class MergeByTime {
 			int pmCloseHour = Integer.valueOf(PM_CLOSE_TIME.split(":")[0]);
 			
 			for (Map.Entry<String, List<StockDataBean>> entrySet : stockDataListMap.entrySet()) {
-				String stockCode = entrySet.getKey();                                                              // 证券编码。
-				List<StockDataBean> originalStockDataList = entrySet.getValue();                                   // 合并之前的原始行情数据集合。
+				String stockCode = entrySet.getKey();                                                                  // 证券编码。
+				List<StockDataBean> originalStockDataList = entrySet.getValue();                                       // 合并之前的原始行情数据集合。
 				
-				StockDataBean mergeStockData = new StockDataBean();                                                // 用于合并行情数据的 StockDataBean 对象。
-				List<StockDataBean> mergeStockDataList = new ArrayList<StockDataBean>();                           // 用于装载合并行情数据的 StockDataBean 对象的集合。
+				StockDataBean mergeStockData = new StockDataBean();                                                    // 用于合并行情数据的 StockDataBean 对象。
+				List<StockDataBean> mergeStockDataList = new ArrayList<StockDataBean>(originalStockDataList.size());   // 用于装载合并行情数据的 StockDataBean 对象的集合。
 				
 				for (int i = 0; i < originalStockDataList.size(); i++) {
 					

@@ -45,8 +45,8 @@ public class DataLoadEngine {
 
 	/** 得到服务器的 CPU 核心数。*/
 	private int coreNums = Runtime.getRuntime().availableProcessors();
-	/** 装载市场行情数据的线程数，由于此操作属于 I/O 密集型操作，阻塞系数设为 0.6。*/
-	private int loadDataThreadNums = (int)(coreNums / (1 - 0.6));
+	/** 装载市场行情数据的线程数。*/
+	private int loadDataThreadNums;
 
 	/** 是否启动监听线程。*/
 	private boolean startMonitorTask = true;
@@ -67,13 +67,14 @@ public class DataLoadEngine {
 		}
 		
 		if (loadDataThreadNums <= 0) {
-			loadDataThreadNums = (int)(coreNums / (1 - 0.8));
-			log.warn("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataThreadNums);
+			// 由于此操作属于 I/O 密集型操作，阻塞系数设为 0.6。
+			loadDataThreadNums = (int)(coreNums / (1 - 0.6));
+			log.debug("读取文件的线程数必须大于 0 [" + loadDataThreadNums + "]，当不满足该条件时，系统将自动调整该参数为 " + loadDataThreadNums);
 		}
 
 		if (monitoringInterval < 1000) {
 			monitoringInterval = 1000;
-			log.warn("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 " + monitoringInterval);
+			log.debug("监听任务的监控间隔时间必须大于等于 1000 [" + monitoringInterval + "]，当不满足该条件时，系统将自动调整该参数为 " + monitoringInterval);
 		}
 		
 		// --- 具体业务 ---
@@ -91,7 +92,7 @@ public class DataLoadEngine {
 			 */
 			File[] marketDataFiles = getMarketDataFiles(this.marketDataFolderpath);
 			if (marketDataFiles == null || marketDataFiles.length == 0) { return beanMap; }
-			beanMap = new ConcurrentHashMap<String, List<StockDataBean>>(marketDataFiles.length);
+			beanMap = new ConcurrentHashMap<String, List<StockDataBean>>(marketDataFiles.length * 2);
 			
 			/*
 			 * 2、读取市场行情数据文件路径集合。
@@ -122,7 +123,6 @@ public class DataLoadEngine {
 			 */
 			ExecutorService workerExec = getLoadMarketDataThreadPool(this.loadDataThreadNums);
 			List<Map<String, List<StockDataBean>>> stockDataBeanLML = readMarketDataToBean(workerExec, marketDataFilepathMapList, currentReadMarketDataNum);
-			// 关闭监听线程。
 			if (this.startMonitorTask && dataLoadMonitorTask != null) {
 				dataLoadMonitorTask.shutdown();
 			}
@@ -145,11 +145,6 @@ public class DataLoadEngine {
 		log.info("此次载入原始行情数据共花费：" + (endTime - startTime) / 1000000000 + "秒");
 		
 		return beanMap;
-	}
-	
-
-	public static void main(String[] args) throws InterruptedException {
-
 	}
 	
 	// --- private method ---
@@ -189,7 +184,7 @@ public class DataLoadEngine {
 		log.info("读取装载行情数据的文件路径。");
 		
 		// 得到上交所或深交所的股票行情数据，并装载到集合中。
-		Map<String, String> marketDataMap = new HashMap<String, String>(marketDataFiles.length);
+		Map<String, String> marketDataMap = new HashMap<String, String>(marketDataFiles.length * 2);
 		for (File f : marketDataFiles) {
 			if (f.isFile()) {
 				// 通过截取文件得到股票的代码。
@@ -221,9 +216,9 @@ public class DataLoadEngine {
 		
 		// 装载分割好的股票行情数据路径。
 		int initialCapacity = BigDecimal.valueOf(marketDataFilepathMap.size()).divide(BigDecimal.valueOf(unit), 0, RoundingMode.UP).intValue();
-		List<Map<String, String>> loadSplitMapList = new ArrayList<Map<String, String>>(initialCapacity);
+		List<Map<String, String>> loadSplitMapList = new ArrayList<Map<String, String>>(initialCapacity * 2);
 		// 对以读取到的股票行情数据路径集合进行分割。
-		Map<String, String> splitMap = new ConcurrentHashMap<String, String>(unit);
+		Map<String, String> splitMap = new ConcurrentHashMap<String, String>(unit * 2);
 		String[] keyArray = marketDataFilepathMap.keySet().toArray(new String[0]);
 		int length = keyArray.length;
 		for (int i = 0; i < length; i++) {
@@ -233,7 +228,7 @@ public class DataLoadEngine {
 			
 			if ((i + 1) % unit == 0) {
 				loadSplitMapList.add(splitMap);
-				splitMap = new ConcurrentHashMap<String, String>(unit);
+				splitMap = new ConcurrentHashMap<String, String>(unit * 2);
 				continue;
 			} else {
 				if (i == length - 1) {
