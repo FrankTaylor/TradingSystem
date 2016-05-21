@@ -11,10 +11,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,6 +22,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.util.StringUtils;
 
+import com.huboyi.data.entity.MarketDataBean;
 import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.data.load.DataLoadEngine;
 
@@ -37,9 +38,9 @@ import com.huboyi.data.load.DataLoadEngine;
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @see DataLoadEngine
- * @since 1.0
+ * @since 1.5
  */
-public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> {
+public class DataLoadTask implements Callable<List<MarketDataBean>> {
 
 	/** 日志。*/
 	private final Logger log = LogManager.getLogger(DataLoadTask.class);
@@ -50,6 +51,8 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	/** 行情数据文件路径集合。*/
 	private final Map<String, String> marketDataFilepathMap;
 	
+	/** 是否启动监听线程。*/
+	private final boolean startMonitorTask;
 	/** 当前已经载入的股票行情数据的个数。*/
 	private final AtomicInteger currentReadMarketDataNum;
 	
@@ -59,26 +62,25 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 * @param marketDataFilepathMap 行情数据文件路径集合
 	 * @param currentReadMarketDataNum 当前已经载入的股票行情数据的个数
 	 */
-	public DataLoadTask(Map<String, String> marketDataFilepathMap, AtomicInteger currentReadMarketDataNum) {
+	public DataLoadTask(Map<String, String> marketDataFilepathMap, boolean startMonitorTask, AtomicInteger currentReadMarketDataNum) {
 		this.marketDataFilepathMap = marketDataFilepathMap;
+		this.startMonitorTask = startMonitorTask;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
 	}
 	
 	/**
 	 * 返回已读取的行情数据集合。
 	 * 
-	 * @return Map<String, List<StockDataBean>>
+	 * @return List<MarketDataBean>
 	 */
 	@Override
-	public Map<String, List<StockDataBean>> call() throws Exception {
+	public List<MarketDataBean> call() throws Exception {
 		
 		Thread current = Thread.currentThread();
 		long id = current.getId();
 		String name = current.getName();
 		
-		// 装载股票数据的集合尺寸，避免出现容器扩容所引起的不必要代价。
-		final int MAP_CAPACITY = marketDataFilepathMap.size() * 2;
-		Map<String, List<StockDataBean>> dataMap = new ConcurrentHashMap<String, List<StockDataBean>>(MAP_CAPACITY);
+		List<MarketDataBean> marketDataList = new ArrayList<MarketDataBean>(marketDataFilepathMap.size() * 2);
 		
 		try {
 			for (Map.Entry<String, String> entry : marketDataFilepathMap.entrySet()) {
@@ -89,18 +91,28 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 				
 				log.debug("当前线程[name = " + name + "]正在读取[证券代码：" + code + "]的行情数据。");
 				
-				// 把股票的行情数据载入缓存。
-				dataMap.put(code, loadDataIntoStockDataBean(marketDataFilepath, ","));
-				// 把当前完成读取的股票数量加一。
-				currentReadMarketDataNum.addAndGet(1);
+				// 把市场行情数据载入集合。
+				MarketDataBean marketData = new MarketDataBean();
+				marketData.setCode(code);
+				marketData.setName("");
+				marketData.setDataPath(marketDataFilepath);
+				marketData.setStockDataList(loadDataIntoStockDataBean(marketDataFilepath, ","));
 				
-				log.debug("当前线程[name = " + name + "]完成读取[证券代码：" + code + "]的股票行情数据。");
+				marketDataList.add(marketData);
+				
+				// 由于 CAS 在多线程竞争时有性能消耗，如果不需要监控，则可以避免消耗，从而加快读取速度。
+				if (startMonitorTask) {
+					// 把当前完成读取的股票数量加一。
+					currentReadMarketDataNum.addAndGet(1);
+					log.debug("当前线程[name = " + name + "]完成读取[证券代码：" + code + "]的股票行情数据。");
+				}
+				
 			}
 		} catch (Exception e) {
 			log.error("当前线程[id = " + id + ", name = " + name + "]在读取股票行情数据的过程中出现错误！", e);
 		}
 		
-		return dataMap;
+		return marketDataList;
 	}
 
 	/**
@@ -108,7 +120,7 @@ public class DataLoadTask implements Callable<Map<String, List<StockDataBean>>> 
 	 * 
 	 * @param marketDataFilepath 行情数据的文件路径
 	 * @param separator 数据之间的分隔符
-	 * @return List<StockDataBean>
+	 * @return MarketDataBean
 	 */
 	private List<StockDataBean> loadDataIntoStockDataBean(final String marketDataFilepath, final String separator) {
 		// 装载读取行情数据Bean的集合。

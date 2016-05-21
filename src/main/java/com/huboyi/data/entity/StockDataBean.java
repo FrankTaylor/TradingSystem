@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 2014/10/16
- * @version 1.0
+ * @since 1.2
  */
 @JsonPropertyOrder(value = {"year", "month", "day", "hour", "minute", "second", "millisecond", "date", "time", "open", "high", "low", "close", "volume", "amount"}, alphabetic = false)
 public class StockDataBean implements Serializable, Cloneable {

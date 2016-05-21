@@ -5,9 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.huboyi.data.entity.StockDataBean;
@@ -37,15 +35,15 @@ public class MergeByTime {
 	/**
 	 * 把小时间单位的行情数据合并成大时间单位的行情数据。
 	 * 
-	 * @param stockDataListMap 小时间单位的行情数据
+	 * @param originalStockDataList 小时间单位的行情数据
 	 * @param type 合并K线的时间类型枚举
-	 * @return Map<String, List<StockDataBean>>
+	 * @return List<StockDataBean>
 	 */
-	public Map<String, List<StockDataBean>> 
-	merge(Map<String, List<StockDataBean>> stockDataListMap, MergeTimeType type) {
+	public List<StockDataBean>
+	merge(List<StockDataBean> originalStockDataList, MergeTimeType type) {
 		
-		Map<String, List<StockDataBean>> mergeStockDataListMap = 
-			new HashMap<String, List<StockDataBean>>(stockDataListMap.size());                                         // 装载合并以后的行情数据。
+		// 用于装载合并行情数据的 StockDataBean 对象的集合。
+		List<StockDataBean> mergeStockDataList = new ArrayList<StockDataBean>(originalStockDataList.size());
 		
 		if (
 				type == MergeTimeType.MINUTE_1 || type == MergeTimeType.MINUTE_5 || 
@@ -62,92 +60,84 @@ public class MergeByTime {
 			int amOpenHour = Integer.valueOf(AM_OPEN_TIME.split(":")[0]);
 			int pmCloseHour = Integer.valueOf(PM_CLOSE_TIME.split(":")[0]);
 			
-			for (Map.Entry<String, List<StockDataBean>> entrySet : stockDataListMap.entrySet()) {
-				String stockCode = entrySet.getKey();                                                                  // 证券编码。
-				List<StockDataBean> originalStockDataList = entrySet.getValue();                                       // 合并之前的原始行情数据集合。
+			// 用于合并行情数据的 StockDataBean 对象。
+			StockDataBean mergeStockData = new StockDataBean();
+			
+			for (int i = 0; i < originalStockDataList.size(); i++) {
 				
-				StockDataBean mergeStockData = new StockDataBean();                                                    // 用于合并行情数据的 StockDataBean 对象。
-				List<StockDataBean> mergeStockDataList = new ArrayList<StockDataBean>(originalStockDataList.size());   // 用于装载合并行情数据的 StockDataBean 对象的集合。
-				
-				for (int i = 0; i < originalStockDataList.size(); i++) {
+				StockDataBean originalStockData = originalStockDataList.get(i);
+				int hour = originalStockData.getHour(), minute = originalStockData.getMinute();
+
+				// 如果下一根K线的时间范围大于当前给定的范围，就说明当前时间范围的合并告一段落，可以开始下一阶段合并了。
+				if (
+						(hour > range.getHour() || (hour == range.getHour() && minute > range.getMinute())) 
+						||
+						(hour == amOpenHour && (range.getHour() >= pmCloseHour))
+				) {
 					
-					StockDataBean originalStockData = originalStockDataList.get(i);
-					int hour = originalStockData.getHour(), minute = originalStockData.getMinute();
+					i--;
+					
+					// --- 设置当前 StockDataBean 的时间信息 ---
+					StockDataBean originalPrevStockData = originalStockDataList.get(i);
+					
+					mergeStockData.setYear(originalPrevStockData.getYear());
+					mergeStockData.setMonth(originalPrevStockData.getMonth());
+					mergeStockData.setDay(originalPrevStockData.getDay());
+					mergeStockData.setHour(range.getHour());
+					mergeStockData.setMinute(range.getMinute());
+					mergeStockData.setSecond(0);
+					mergeStockData.setMillisecond(0);
 
-					// 如果下一根K线的时间范围大于当前给定的范围，就说明当前时间范围的合并告一段落，可以开始下一阶段合并了。
-					if (
-							(hour > range.getHour() || (hour == range.getHour() && minute > range.getMinute())) 
-							||
-							(hour == amOpenHour && (range.getHour() >= pmCloseHour))
-					) {
-						
-						i--;
-						
-						// --- 设置当前 StockDataBean 的时间信息 ---
-						StockDataBean originalPrevStockData = originalStockDataList.get(i);
-						
-						mergeStockData.setYear(originalPrevStockData.getYear());
-						mergeStockData.setMonth(originalPrevStockData.getMonth());
-						mergeStockData.setDay(originalPrevStockData.getDay());
-						mergeStockData.setHour(range.getHour());
-						mergeStockData.setMinute(range.getMinute());
-						mergeStockData.setSecond(0);
-						mergeStockData.setMillisecond(0);
+					// Calendar的月份从 0 开始计数，所以当前的月份要减1了。
+					Calendar date = Calendar.getInstance();
+					date.set(originalPrevStockData.getYear(), (originalPrevStockData.getMonth() - 1), originalPrevStockData.getDay(), range.getHour(), range.getMinute(), 0);
+					date.set(Calendar.MILLISECOND, 0);
+					
+					mergeStockData.setDate(Long.valueOf(dataFormat.format(date.getTime())));
+					mergeStockData.setTime(date.getTime().getTime());
 
-						// Calendar的月份从 0 开始计数，所以当前的月份要减1了。
-						Calendar date = Calendar.getInstance();
-						date.set(originalPrevStockData.getYear(), (originalPrevStockData.getMonth() - 1), originalPrevStockData.getDay(), range.getHour(), range.getMinute(), 0);
-						date.set(Calendar.MILLISECOND, 0);
-						
-						mergeStockData.setDate(Long.valueOf(dataFormat.format(date.getTime())));
-						mergeStockData.setTime(date.getTime().getTime());
-
-						// --- 给当前 StockDataBean 对象设置前后关联的 StockDataBean 对象---
-						if (!mergeStockDataList.isEmpty()) {
-							StockDataBean prev = mergeStockDataList.get(mergeStockDataList.size() - 1);
-							prev.setNext(mergeStockData);
-							mergeStockData.setPrev(prev);
-						}
-
-						// --- 把当前 StockDataBean 对象放入集合中 ---
-						mergeStockDataList.add(mergeStockData);
-						
-						// --- 重置，为下一个合并做准备 ---
-						mergeStockData = new StockDataBean();
-						range = range.next;
-						continue;
+					// --- 给当前 StockDataBean 对象设置前后关联的 StockDataBean 对象---
+					if (!mergeStockDataList.isEmpty()) {
+						StockDataBean prev = mergeStockDataList.get(mergeStockDataList.size() - 1);
+						prev.setNext(mergeStockData);
+						mergeStockData.setPrev(prev);
 					}
-					
-					// --- 把行情数据合并到 StockDataBean 对象中 ---
-					combineStockData(
-							mergeStockData, 
-							originalStockData.getOpen(), originalStockData.getHigh(), originalStockData.getLow(), originalStockData.getClose(), 
-							originalStockData.getVolume(), originalStockData.getAmount());
-				}
 
-				// --- 给合并后的 StockDataBean 对象设置前后关联关系 ---
-				for (int i = 0; i < mergeStockDataList.size(); i++) {
-					StockDataBean current = mergeStockDataList.get(i);
-					StockDataBean prev = (i > 0) ? mergeStockDataList.get(i - 1) : null;
-					StockDataBean next = (i < mergeStockDataList.size() - 1) ? mergeStockDataList.get(i + 1) : null;
+					// --- 把当前 StockDataBean 对象放入集合中 ---
+					mergeStockDataList.add(mergeStockData);
 					
-					if (prev != null) {
-						prev.setNext(current);
-						current.setPrev(prev);
-					}
-					 
-					if (next == null) { break; }
-					
-					current.setNext(next);
-					next.setPrev(current);
+					// --- 重置，为下一个合并做准备 ---
+					mergeStockData = new StockDataBean();
+					range = range.next;
+					continue;
 				}
 				
-				// --- 把合并后的 StockDataBean 对象集合放入 Map 中。
-				mergeStockDataListMap.put(stockCode, mergeStockDataList);
+				// --- 把行情数据合并到 StockDataBean 对象中 ---
+				combineStockData(
+						mergeStockData, 
+						originalStockData.getOpen(), originalStockData.getHigh(), originalStockData.getLow(), originalStockData.getClose(), 
+						originalStockData.getVolume(), originalStockData.getAmount());
+			}
+
+			// --- 给合并后的 StockDataBean 对象设置前后关联关系 ---
+			for (int i = 0; i < mergeStockDataList.size(); i++) {
+				StockDataBean current = mergeStockDataList.get(i);
+				StockDataBean prev = (i > 0) ? mergeStockDataList.get(i - 1) : null;
+				StockDataBean next = (i < mergeStockDataList.size() - 1) ? mergeStockDataList.get(i + 1) : null;
+				
+				if (prev != null) {
+					prev.setNext(current);
+					current.setPrev(prev);
+				}
+				 
+				if (next == null) { break; }
+				
+				current.setNext(next);
+				next.setPrev(current);
 			}
 		}
 		
-		return mergeStockDataListMap;
+		return mergeStockDataList;
 	}
 
 	/**

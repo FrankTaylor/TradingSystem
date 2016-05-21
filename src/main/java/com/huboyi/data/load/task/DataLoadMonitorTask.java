@@ -15,7 +15,7 @@ import com.huboyi.data.load.DataLoadEngine;
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @see DataLoadEngine
- * @since 1.0
+ * @since 1.5
  */
 public class DataLoadMonitorTask implements Runnable {
 	

@@ -1,19 +1,20 @@
 package com.huboyi.engine.merge;
 
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.engine.constant.MergeTimeType;
-import com.huboyi.engine.load.LoadEngine;
+import com.huboyi.data.entity.MarketDataBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.data.load.DataLoadEngine;
+import com.huboyi.data.merge.MergeByTime;
+import com.huboyi.data.merge.constant.MergeTimeType;
 /**
  * 对{@link MergeByTime}的测试。
  * 
@@ -28,25 +29,30 @@ public class TestMergeByTime {
 	/** 日志。*/
 	private final Logger log = Logger.getLogger(TestMergeByTime.class);
 	
-	@Resource(name = "winLoadEngine")
-	private LoadEngine load;
-	@Resource
+	@Autowired
+	@Qualifier("dataLoadEngine")
+	private DataLoadEngine dataLoadEngine;
+	
+	@Autowired
+	@Qualifier("mergeByTime")
 	private MergeByTime mergeByTime;
 	
 	@Test
 	public void testMerge() {
-		Map<String, List<StockDataBean>> mergeStockDataListMap = mergeByTime.merge(load.getStockData(), MergeTimeType.MINUTE_30);
 		
-		for (Map.Entry<String, List<StockDataBean>> entrySet : mergeStockDataListMap.entrySet()) {
-			String stockCode = entrySet.getKey();
-			List<StockDataBean> stockDataList = entrySet.getValue();
+		List<MarketDataBean> marketDataList = dataLoadEngine.loadMarketData();
+		
+		for (MarketDataBean marketData : marketDataList) {
+			String code = marketData.getCode();
+			List<StockDataBean> originalStockDataList = marketData.getStockDataList();
 			
-			System.out.println("stockDataList.size() = " + stockDataList.size());
-			for (StockDataBean stockData : stockDataList) {
+			List<StockDataBean> mergeStockDataList = mergeByTime.merge(originalStockDataList, MergeTimeType.MINUTE_30);
+			
+			for (StockDataBean stockData : mergeStockDataList) {
 				StringBuilder builder = new StringBuilder();
 				builder
 				.append("[")
-				.append("stockCode = ").append(stockCode).append(",")
+				.append("stockCode = ").append(code).append(",")
 				.append("date = ").append(stockData.getDate()).append(",")
 				.append("open = ").append(stockData.getOpen()).append(",")
 				.append("high = ").append(stockData.getHigh()).append(",")
@@ -56,7 +62,7 @@ public class TestMergeByTime {
 				.append("amount = ").append(stockData.getAmount())
 				.append("]");
 				
-				System.out.println(builder.toString());
+				log.info(builder.toString());
 			}
 		}
 	}
