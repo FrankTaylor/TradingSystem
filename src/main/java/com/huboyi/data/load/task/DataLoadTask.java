@@ -106,7 +106,6 @@ public class DataLoadTask implements Callable<List<MarketDataBean>> {
 					currentReadMarketDataNum.addAndGet(1);
 					log.debug("当前线程[name = " + name + "]完成读取[证券代码：" + code + "]的股票行情数据。");
 				}
-				
 			}
 		} catch (Exception e) {
 			log.error("当前线程[id = " + id + ", name = " + name + "]在读取股票行情数据的过程中出现错误！", e);

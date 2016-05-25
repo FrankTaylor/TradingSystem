@@ -29,9 +29,6 @@ public class DataLoadMonitorTask implements Runnable {
 	/** 监控间隔时间（单位毫秒）。*/
 	private final long monitoringInterval;
 	
-	/** 监控线程任务的执行控制信号，true：执行；false：停止。*/
-	private boolean executionSignal;
-	
 	/**
 	 * 构造函数。
 	 * 
@@ -43,17 +40,17 @@ public class DataLoadMonitorTask implements Runnable {
 		this.marketDataFilepathNum = marketDataFilepathNum;
 		this.currentReadMarketDataNum = currentReadMarketDataNum;
 		this.monitoringInterval = monitoringInterval;
-		
-		this.executionSignal = true;
 	}
-
+	
 	@Override
 	public void run() {
 		log.info("准备开启行情数据载入监控线程。");
 		Thread current = Thread.currentThread();
 		String name = current.getName();
+		
 		try {
-			while (executionSignal) {
+			while (true) {
+				
 				BigDecimal fileNum = BigDecimal.valueOf(marketDataFilepathNum.intValue());
 				BigDecimal readNum = BigDecimal.valueOf(currentReadMarketDataNum.get());
 				
@@ -64,12 +61,17 @@ public class DataLoadMonitorTask implements Runnable {
 					rate = readNum.divide(fileNum, 2, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));					
 				}
 				
-				log.info("当前载入行情数据的进度为：" + rate.floatValue() + "%");
-				
+				// 如果读取比率达到 100%，则设置 “中断标志位” 退出监控。
 				if (rate.floatValue() >= 100) {
-					shutdown();
+					Thread.currentThread().interrupt();
 				}
 				
+				log.info("当前载入行情数据的进度为：" + rate.floatValue() + "%");
+				
+				if (Thread.currentThread().isInterrupted()) {
+					break;
+				}
+
 				TimeUnit.MILLISECONDS.sleep(monitoringInterval);
 			}
 		} catch (Exception e) {
@@ -77,12 +79,4 @@ public class DataLoadMonitorTask implements Runnable {
 			log.error(e);
 		}
 	}
-	
-	/**
-	 * 停止运行监控任务。
-	 */
-	public void shutdown() {
-		this.executionSignal = false;
-	}
-	
 }

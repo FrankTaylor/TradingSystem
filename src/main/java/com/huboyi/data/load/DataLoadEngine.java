@@ -134,10 +134,7 @@ public class DataLoadEngine {
 			 */
 			ExecutorService workerExec = getLoadMarketDataThreadPool(loadDataThreadNums);
 			marketDataList = readMarketDataToBean(workerExec, marketDataFilepathMapList, startMonitorTask, currentReadMarketDataNum);
-			if (this.startMonitorTask && dataLoadMonitorTask != null) {
-				dataLoadMonitorTask.shutdown();
-			}
-
+			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
