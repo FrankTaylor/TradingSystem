@@ -2,9 +2,9 @@ package com.huboyi.system.module.fractal.signal.calc;
 
 import java.util.List;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.engine.indicators.technology.PatternAlogrithm;
-import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.indicators.technology.PatternAlogrithm;
+import com.huboyi.indicators.technology.entity.pattern.FractalBean;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 
 /**
@@ -31,11 +31,11 @@ public class FractalDataCalculator {
 		List<StockDataBean> noContainKLineList = PatternAlogrithm.getNoContainKLineList(stockDataList);
 		
 		// 有效的顶底分型集合。
-		List<FractalBean> fractalBeanList = (PatternAlogrithm.getFractalBeanList(noContainKLineList));
-		bean.setValidFractalBeanList(PatternAlogrithm.getValidFractalBeanList(fractalBeanList));
+		List<FractalBean> invalidFractalBeanList = (PatternAlogrithm.getInvalidFractalBeanList(noContainKLineList));
+		bean.setValidFractalBeanList(PatternAlogrithm.getValidFractalBeanList(invalidFractalBeanList));
 		
 		// 波段集合。
-		bean.setBandBeanList(PatternAlogrithm.getBandBeanList(bean.getValidFractalBeanList(), stockDataList));
+		bean.setBandBeanList(PatternAlogrithm.getBandBeanList(bean.getValidFractalBeanList()));
 		
 		// 中枢集合。
 		if (null != bean.getBandBeanList() && !bean.getBandBeanList().isEmpty()) {			

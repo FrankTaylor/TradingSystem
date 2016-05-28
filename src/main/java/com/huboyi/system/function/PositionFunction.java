@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.constant.DealSignal;
 
 /**
  * 交易模块中使用的仓位函数。

@@ -1,4 +1,4 @@
-package com.huboyi.position.dao.mongodb.impl;
+package com.huboyi.position.repository.mongodb.impl;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.huboyi.position.dao.FundsFlowRepository;
-import com.huboyi.position.po.FundsFlowPO;
+import com.huboyi.position.entity.po.FundsFlowPO;
+import com.huboyi.position.repository.FundsFlowRepository;
 
 /**
  * 资金流水DAO实现类。

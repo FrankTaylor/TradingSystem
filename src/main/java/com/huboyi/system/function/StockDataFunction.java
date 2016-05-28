@@ -5,10 +5,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.engine.indicators.technology.constant.KTypeInFractal;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.indicators.technology.constant.KTypeInFractal;
+import com.huboyi.indicators.technology.entity.pattern.BandBean;
+import com.huboyi.indicators.technology.entity.pattern.FractalBean;
 
 /**
  * 交易模块中使用的K线函数。

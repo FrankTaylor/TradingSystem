@@ -3,10 +3,10 @@ package com.huboyi.system.function;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.engine.indicators.technology.TechAlgorithm;
-import com.huboyi.engine.indicators.technology.energy.bean.MACDBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.indicators.technology.TechAlgorithm;
+import com.huboyi.indicators.technology.entity.energy.MACDBean;
+import com.huboyi.indicators.technology.entity.pattern.BandBean;
 
 /**
  * 交易模块中使用的买点和卖点函数。

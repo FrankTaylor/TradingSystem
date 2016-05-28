@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.indicators.technology.constant.SingleMaPattern;
 import com.huboyi.indicators.technology.entity.energy.MACDBean;
@@ -24,48 +26,47 @@ import com.huboyi.indicators.technology.entity.volume.VolMoveAverageBean;
 public class TechAlgorithm {
 	
 	/**
-	 * 计算今日的涨停价格。
+	 * 计算今日的涨停价格（如果入参为 null 将返回 null）。</p>
+	 * <b>涨停价计算规则</b>：昨日的收盘价 * 110%
 	 * 
 	 * @param today 今日的行情数据
 	 * @return BigDecimal
 	 */
-	public static BigDecimal calcLimitUp (StockDataBean today) {
+	public static BigDecimal calcLimitUp(StockDataBean today) {
 		if (today.getPrev() == null) {
 			return null;
 		}
 		
-		/*
-		 * 涨停价计算规则：昨日的收盘价 * 110%
-		 */
 		BigDecimal limitUp = 
-			today.getPrev().getClose().multiply(BigDecimal.valueOf(1.1)).setScale(3, RoundingMode.HALF_UP);
+			today.getPrev().getClose()
+			.multiply(BigDecimal.valueOf(1.1))
+			.setScale(3, RoundingMode.HALF_UP);
 		
 		return limitUp;
 	}
 	
 	/**
-	 * 计算今日的跌停价格。
-	 * 
+	 * 计算今日的跌停价格（如果入参为 null 将返回 null）。</p>
+	 * <b>跌停价计算规则</b>：昨日的收盘价 * 90%
 	 * @param today 今日的行情数据
 	 * @return BigDecimal
 	 */
-	public static BigDecimal calcLimitDown (StockDataBean today) {
+	public static BigDecimal calcLimitDown(StockDataBean today) {
 		if (today.getPrev() == null) {
 			return null;
 		}
 		
-		/*
-		 * 跌停价计算规则：昨日的收盘价 * 90%
-		 */
 		BigDecimal limitDown = 
-			today.getPrev().getClose().multiply(BigDecimal.valueOf(0.9)).setScale(3, RoundingMode.HALF_UP);
+			today.getPrev().getClose()
+			.multiply(BigDecimal.valueOf(0.9))
+			.setScale(3, RoundingMode.HALF_UP);
 		
 		return limitDown;
 	}
 	
 	/**
-	 * 计算普通成交量的均值。
-	 * </p> 注意：可用的行情数据的数量必须大于周期，且最好是最长周期的两倍或以上，若不然不能返回较完整的计算数据。
+	 * 计算普通成交量的均值。</p>
+	 * <b>注意</b>：可用的行情数据的数量必须大于周期，且最好是最长周期的两倍或以上，若不然不能返回较完整的计算数据。
 	 * 
 	 * @param <T>
 	 * @param stockDataList 行情数据集合
@@ -74,13 +75,13 @@ public class TechAlgorithm {
 	 * @return List<VolMoveAverageBean> 
 	 */
 	public static <T extends StockDataBean> List<VolMoveAverageBean> 
-	VMA (final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
-		List<VolMoveAverageBean> vmaBeanList = new ArrayList<VolMoveAverageBean>();
-		
+	VMA(final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
+				
 		if (stockDataList == null || stockDataList.isEmpty() || (usefulSdBeanNums < n)) {
 			return new ArrayList<VolMoveAverageBean>(0);
 		}
 		
+		List<VolMoveAverageBean> vmaBeanList = new ArrayList<VolMoveAverageBean>();
 		int toIndex = stockDataList.size();
 		int fromIndex = stockDataList.size() - (usefulSdBeanNums + n);
 		List<T> usefulSdBeanList = 
@@ -128,7 +129,7 @@ public class TechAlgorithm {
 	 * @return List<MACDBean> 
 	 */
 	public static <T extends StockDataBean> List<MACDBean> 
-	MACD (final List<T> stockDataList, final int usefulSdBeanNums, final int s, final int l, final int m) {
+	MACD(final List<T> stockDataList, final int usefulSdBeanNums, final int s, final int l, final int m) {
 		List<MACDBean> macdBeanList = new ArrayList<MACDBean>();
 		if (null != stockDataList && !stockDataList.isEmpty()) {
 			// 首先、计算长、短均线。
@@ -201,7 +202,7 @@ public class TechAlgorithm {
 	 * @return List<RSIBean> 
 	 */
 	public static <T extends StockDataBean> List<RSIBean> 
-	RSI (final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
+	RSI(final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
 		List<RSIBean> rsiBeanList = new ArrayList<RSIBean>();
 		
 		if (stockDataList == null || stockDataList.isEmpty() || (usefulSdBeanNums < n)) {
@@ -267,7 +268,7 @@ public class TechAlgorithm {
 	 * @return List<BollBean> 
 	 */
 	public static <T extends StockDataBean> List<BollBean> 
-	BOLL (final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
+	BOLL(final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
 		List<BollBean> bollBeanList = new ArrayList<BollBean>();
 		if (null != stockDataList && !stockDataList.isEmpty()) {
 			// 首先、计算中轨值（使用MA函数是因为布林带中轨值就是普通移动平均），为了提高计算速度，这里没有使用完整的均线数据。
@@ -338,7 +339,7 @@ public class TechAlgorithm {
 	 * @return MaSpeedChangeResult
 	 */
 	public static <T extends StockDataBean> 
-	MoveAverageSpeedChangeBean MASC (final List<MoveAverageBean> maList, int timeRangeOfLongTrend, int speedSpanOfLongTrend) {
+	MoveAverageSpeedChangeBean MASC(final List<MoveAverageBean> maList, int timeRangeOfLongTrend, int speedSpanOfLongTrend) {
 		
 		// --- 参数整理 ---
 		if (maList == null || maList.isEmpty()) { return null; }
@@ -429,7 +430,7 @@ public class TechAlgorithm {
 	 * @return MoveAverageStatisticsBean
 	 */
 	public static <T extends StockDataBean> MoveAverageStatisticsBean 
-	MAS (final List<T> stockDataList, final int cycle, final int compareNums, int backwardsNums) {
+	MAS(final List<T> stockDataList, final int cycle, final int compareNums, int backwardsNums) {
 		
 		// --- 参数整理 ---
 		backwardsNums = (backwardsNums > 0) ? 0 : backwardsNums;                                                                                           // backwardsNums只能为0或负数。
@@ -500,9 +501,9 @@ public class TechAlgorithm {
 	 * @return List<MoveAverageBean> 
 	 */
 	public static <T extends StockDataBean> List<MoveAverageBean> 
-	partOfMA (final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
+	partOfMA(final List<T> stockDataList, final int usefulSdBeanNums, final int n) {
 		
-		if (stockDataList == null || stockDataList.isEmpty() || (usefulSdBeanNums < n)) {
+		if (CollectionUtils.isEmpty(stockDataList) || (usefulSdBeanNums < n)) {
 			return new ArrayList<MoveAverageBean>(0);
 		}
 		
@@ -524,38 +525,43 @@ public class TechAlgorithm {
 	 * @return List<MoveAverageBean> 
 	 */
 	public static <T extends StockDataBean> List<MoveAverageBean> 
-	MA (final List<T> stockDataList, final int n) {
-		List<MoveAverageBean> maBeanList = new ArrayList<MoveAverageBean>();
-		if (null != stockDataList && !stockDataList.isEmpty()) {
-			
-			if (stockDataList.size() < n) { return maBeanList; }
-			
-			for (int i = 0; i < stockDataList.size(); i++) {
-				// 只有当行情数据的数量大于n时才能计算其平均值。
-				if (i >= (n - 1)) {
-					StockDataBean sdBean = stockDataList.get(i);
-					// --- 计算移动平均 ---
-					MoveAverageBean maBean = new MoveAverageBean();
-					// 日期。
-					maBean.setDate(sdBean.getDate());
-					// 计算前的值。
-					maBean.setSource(sdBean.getClose());
-					
-					// 计算每日收盘价之和。
-					BigDecimal temp = new BigDecimal(0);
-					for (int j = i; j > (i - n); j--) {
-						temp = temp.add(stockDataList.get(j).getClose());
-					}
-					
-					// 计算移动平均。
-					if (temp.doubleValue() != 0) {
-						maBean.setAvg(temp.divide(BigDecimal.valueOf(n), 3, RoundingMode.HALF_UP));
-					}
-					maBeanList.add(maBean);
-				}
-				// --- 计算移动平均 ---
-			}
+	MA(final List<T> stockDataList, final int n) {
+		
+		if (CollectionUtils.isEmpty(stockDataList) || stockDataList.size() < n) {
+			return new ArrayList<MoveAverageBean>(0);
 		}
+		
+		List<MoveAverageBean> maBeanList = new ArrayList<MoveAverageBean>(stockDataList.size());
+		
+		for (int i = 0; i < stockDataList.size(); i++) {
+			
+			// 只有当行情数据的数量大于n时才能计算其平均值。
+			if (i < (n - 1)) { continue; }
+			
+			StockDataBean sdBean = stockDataList.get(i);
+			
+			// --- 计算移动平均 ---
+			MoveAverageBean maBean = new MoveAverageBean();
+			// 日期。
+			maBean.setDate(sdBean.getDate());
+			// 计算前的值。
+			maBean.setSource(sdBean.getClose());
+			
+			// 计算收盘价之和。
+			BigDecimal temp = BigDecimal.valueOf(0);
+			for (int j = i; j > (i - n); j--) {
+				temp = temp.add(stockDataList.get(j).getClose());
+			}
+			
+			// 计算移动平均。
+			if (temp.doubleValue() != 0) {
+				maBean.setAvg(temp.divide(BigDecimal.valueOf(n), 3, RoundingMode.HALF_UP));
+			}
+			
+			maBeanList.add(maBean);
+		}
+		
 		return maBeanList;
 	}
+	
 }

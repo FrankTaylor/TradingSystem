@@ -24,7 +24,7 @@
     <bean id="dataLoadEngine" class="com.huboyi.data.load.DataLoadEngine"
         p:marketDataFolderpath="F:/BondData/Stock"
         p:cpuNums="2"
-        p:startMonitorTask="false"
+        p:startMonitorTask="true"
         p:monitoringInterval="5000" />
     
     <!-- 笔记本上配置的装载股票数据的引擎类

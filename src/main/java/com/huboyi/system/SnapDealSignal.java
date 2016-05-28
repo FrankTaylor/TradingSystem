@@ -2,7 +2,7 @@ package com.huboyi.system;
 
 import java.util.List;
 
-import com.huboyi.data.load.bean.StockDataBean;
+import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 import com.huboyi.system.bean.PositionInfoBean;
@@ -11,8 +11,7 @@ import com.huboyi.system.bean.PositionInfoBean;
  * 捕捉交易信号接口类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 2015/9/12
- * @version 1.0
+ * @since 1.2
  */
 public interface SnapDealSignal {
 	

@@ -15,9 +15,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import com.huboyi.position.dao.EverySumPositionInfoRepository;
-import com.huboyi.position.po.EverySumPositionInfoPO;
-
 /**
  * 每一笔持仓信息DAO实现类 。
  * 

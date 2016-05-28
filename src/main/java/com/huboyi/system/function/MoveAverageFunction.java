@@ -2,9 +2,9 @@ package com.huboyi.system.function;
 
 import java.util.List;
 
-import com.huboyi.data.load.bean.StockDataBean;
-import com.huboyi.engine.indicators.technology.TechAlgorithm;
-import com.huboyi.engine.indicators.technology.trend.bean.MoveAverageBean;
+import com.huboyi.data.entity.StockDataBean;
+import com.huboyi.indicators.technology.TechAlgorithm;
+import com.huboyi.indicators.technology.entity.trend.MoveAverageBean;
 
 /**
  * 交易模块中使用的均线函数。

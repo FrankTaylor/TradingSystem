@@ -57,7 +57,7 @@ public class MACDBean implements Serializable {
 	 * @return String
 	 * @throws JsonProcessingException
 	 */
-	public String toDefaultJson () 
+	public String toDefaultJson() 
 	throws JsonProcessingException {
 		return JAXBHelper.javaToDefaultJson(this);
 	}
@@ -68,7 +68,7 @@ public class MACDBean implements Serializable {
 	 * @return String
 	 * @throws JsonProcessingException
 	 */
-	public String toMiniJson () 
+	public String toMiniJson() 
 	throws JsonProcessingException {
 		return JAXBHelper.javaToMiniJson(this);
 	}
@@ -85,7 +85,7 @@ public class MACDBean implements Serializable {
 	 * @throws IOException
 	 */
 	public static MACDBean 
-	jsonToJava (String json) throws JsonParseException, JsonMappingException, IOException {
+	jsonToJava(String json) throws JsonParseException, JsonMappingException, IOException {
 		return JAXBHelper.jsonToJava(json, MACDBean.class);
 	}
 

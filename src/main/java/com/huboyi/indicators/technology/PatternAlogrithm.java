@@ -5,7 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
+
+import org.springframework.util.CollectionUtils;
 
 import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.indicators.technology.constant.BandType;
@@ -32,7 +35,8 @@ public class PatternAlogrithm {
 	 */
 	@SuppressWarnings("unused")
 	public static List<PowerBean> 
-	getNoContainPowerBeanList (List<PowerBean> powerBeanList) throws CloneNotSupportedException {
+	getNoContainPowerBeanList(List<PowerBean> powerBeanList) throws CloneNotSupportedException {
+		
 		List<PowerBean> noContainPowerBeanList = new ArrayList<PowerBean>();
 		
 		if (powerBeanList == null || powerBeanList.size() < 2) {
@@ -114,7 +118,7 @@ public class PatternAlogrithm {
 	 * @return List<PowerBean> 
 	 */
 	public static List<PowerBean> 
-	getPowerBeanList (BandBean refBandBean) {
+	getPowerBeanList(BandBean refBandBean) {
 		
 		List<PowerBean> powerBeanList = new ArrayList<PowerBean>();
 		
@@ -262,22 +266,22 @@ public class PatternAlogrithm {
 	 * 得到行情波段集合。
 	 * 
 	 * @param validFractalBeanList 装载有效的顶底分型集合
-	 * @param stockDataList 未经处理的K线集合
-	 * 
 	 * @return List<BandBean> 
 	 */
 	
 	public static List<BandBean> 
-	getBandBeanList (List<FractalBean> validFractalBeanList, List<StockDataBean> stockDataList) {
+	getBandBeanList(List<FractalBean> validFractalBeanList) {
 
-		List<BandBean> bandBeanList = new ArrayList<BandBean>();
 		
-		if (null == validFractalBeanList || validFractalBeanList.isEmpty()) {
-			return bandBeanList;
+		if (CollectionUtils.isEmpty(validFractalBeanList)) {
+			return new ArrayList<BandBean>(0);
 		}
+		
+		List<BandBean> bandBeanList = new ArrayList<BandBean>(validFractalBeanList.size());
 		
 		//--- 从分型中找出波段 ---
 		for (int i = 0; i < validFractalBeanList.size(); i++) {
+			
 			// 在处理完最后一个分型后退出程序。
 			if (i == validFractalBeanList.size() - 1) {
 				break;
@@ -364,68 +368,71 @@ public class PatternAlogrithm {
 		}
         // --- 从分型中找出波段 ---
 		
-//		/*
-//		 * 根据最后一根K线的
-//		 */
-//		if (bandBeanList != null && !bandBeanList.isEmpty()) {
-//			BandBean lastBandBean = bandBeanList.get(bandBeanList.size() - 1);                            // 得到最后一个波段。
-//			Integer lastFractalData = (lastBandBean.getBandType() == BandType.UP)                         // 得到最后一个波段中最后一个分型的右侧K线的日期。
-//			? lastBandBean.getTop().getRight().getDate() : lastBandBean.getBottom().getRight().getDate();
-//			
-//			int cycleIndex = -1;                                                                          // 计算用于循环判断的索引。
-//			for (int i = (stockDataList.size() - 1); i > 0; i--) {
-//				if (stockDataList.get(i).getDate().equals(lastFractalData)) {
-//					cycleIndex = i;
-//					break;
-//				}
-//			}
-//			
-//			if (cycleIndex == -1 || (cycleIndex == (stockDataList.size() - 1))) {
-//				return bandBeanList;
-//			}
-//			
-//			for (int i = (cycleIndex + 1); i < stockDataList.size(); i++) {
-//				StockDataBean sdBean = stockDataList.get(i);
-//				
-//				if (lastBandBean.getBandType() == BandType.UP) {
-//					if (sdBean.getHigh().compareTo(lastBandBean.getTop().getCenter().getHigh()) == 1) {
-//						bandBeanList.remove(bandBeanList.size() - 1);
-//						break;
-//					}
-//				}
-//				
-//				if (lastBandBean.getBandType() == BandType.DOWN) {
-//					if (sdBean.getLow().compareTo(lastBandBean.getBottom().getCenter().getLow()) == -1) {
-//						bandBeanList.remove(bandBeanList.size() - 1);
-//						break;
-//					}
-//				}
-//			}
-//		}
+		/*
+		这段算法还没考虑好。
+		if (bandBeanList != null && !bandBeanList.isEmpty()) {
+			BandBean lastBandBean = bandBeanList.get(bandBeanList.size() - 1);                            // 得到最后一个波段。
+			Integer lastFractalData = (lastBandBean.getBandType() == BandType.UP)                         // 得到最后一个波段中最后一个分型的右侧K线的日期。
+			? lastBandBean.getTop().getRight().getDate() : lastBandBean.getBottom().getRight().getDate();
+			
+			int cycleIndex = -1;                                                                          // 计算用于循环判断的索引。
+			for (int i = (stockDataList.size() - 1); i > 0; i--) {
+				if (stockDataList.get(i).getDate().equals(lastFractalData)) {
+					cycleIndex = i;
+					break;
+				}
+			}
+			
+			if (cycleIndex == -1 || (cycleIndex == (stockDataList.size() - 1))) {
+				return bandBeanList;
+			}
+			
+			for (int i = (cycleIndex + 1); i < stockDataList.size(); i++) {
+				StockDataBean sdBean = stockDataList.get(i);
+				
+				if (lastBandBean.getBandType() == BandType.UP) {
+					if (sdBean.getHigh().compareTo(lastBandBean.getTop().getCenter().getHigh()) == 1) {
+						bandBeanList.remove(bandBeanList.size() - 1);
+						break;
+					}
+				}
+				
+				if (lastBandBean.getBandType() == BandType.DOWN) {
+					if (sdBean.getLow().compareTo(lastBandBean.getBottom().getCenter().getLow()) == -1) {
+						bandBeanList.remove(bandBeanList.size() - 1);
+						break;
+					}
+				}
+			}
+		}
+		*/
 		
 		return bandBeanList;
 	}
 	
 	/**
-	 * 过滤掉无效的顶底分型，返回有效的顶底分型集合。
+	 * 返回有效的顶底分型集合。
 	 * 
-	 * @param fractalBeanList 装载顶底分型的集合
+	 * @param 过滤掉无效的顶底分型， 无效顶底分型的集合
 	 * @return List<FractalBean> 
 	 * @throws ParseException 
 	 */
 	public static List<FractalBean> 
-	getValidFractalBeanList (List<FractalBean> fractalBeanList) {
+	getValidFractalBeanList(List<FractalBean> invalidFractalBeanList) {
+		
+		List<FractalBean> validFractalBeanList = new LinkedList<FractalBean>(invalidFractalBeanList);
+		
 		// --- 过滤无效的顶底分型 ---
-		for (int i = 0; i < fractalBeanList.size(); i++) {
+		for (int i = 0; i < validFractalBeanList.size(); i++) {
 
 			// 在处理完最后一个分型后退出程序。
-			if (i == fractalBeanList.size() - 1) { break; }
+			if (i == validFractalBeanList.size() - 1) { break; }
 			
 			// 如果出现-1的情况，就重置循环。
 			if (i < 0) { i = 0; }
 			
 			// 找出两个相邻的分型进行比对。
-			FractalBean one = fractalBeanList.get(i);
+			FractalBean one = validFractalBeanList.get(i);
 			FractalBean two = one.getNext();
 
 			/*
@@ -450,32 +457,32 @@ public class PatternAlogrithm {
 					if (two.getCenter().getHigh().compareTo(
 							one.getCenter().getHigh()) != -1) {
 						if (i > 0) {
-							two.setPrev(fractalBeanList.get(i - 1));
-							fractalBeanList.get(i - 1).setNext(two);
+							two.setPrev(validFractalBeanList.get(i - 1));
+							validFractalBeanList.get(i - 1).setNext(two);
 						}
-						fractalBeanList.remove(one);
+						validFractalBeanList.remove(one);
 						
 					} else {
 						if (two.getNext() != null) {
 							two.getNext().setPrev(one);
 							one.setNext(two.getNext());
 						}
-						fractalBeanList.remove(two);
+						validFractalBeanList.remove(two);
 					}
 				} else {                                                                        // 当one和two都是底分型时
 					if (two.getCenter().getLow().compareTo(
 							one.getCenter().getLow()) != 1) {
 						if (i > 0) {
-							two.setPrev(fractalBeanList.get(i - 1));
-							fractalBeanList.get(i - 1).setNext(two);
+							two.setPrev(validFractalBeanList.get(i - 1));
+							validFractalBeanList.get(i - 1).setNext(two);
 						}
-						fractalBeanList.remove(one);
+						validFractalBeanList.remove(one);
 					} else {
 						if (two.getNext() != null) {
 							two.getNext().setPrev(one);
 							one.setNext(two.getNext());
 						}
-						fractalBeanList.remove(two);
+						validFractalBeanList.remove(two);
 					}
 				}
 				i--;
@@ -513,13 +520,13 @@ public class PatternAlogrithm {
 						 *             
  						 */     
 						if (i > 1) {
-							if (two.getCenter().getLow().compareTo(fractalBeanList.get(i - 1).getCenter().getLow()) == -1) {
+							if (two.getCenter().getLow().compareTo(validFractalBeanList.get(i - 1).getCenter().getLow()) == -1) {
 								
-								if (one.getCenter().getHigh().compareTo(fractalBeanList.get(i - 2).getCenter().getHigh()) == -1) {
-									two.setPrev(fractalBeanList.get(i - 1));
-									fractalBeanList.get(i - 1).setNext(two);
+								if (one.getCenter().getHigh().compareTo(validFractalBeanList.get(i - 2).getCenter().getHigh()) == -1) {
+									two.setPrev(validFractalBeanList.get(i - 1));
+									validFractalBeanList.get(i - 1).setNext(two);
 									
-									fractalBeanList.remove(one);
+									validFractalBeanList.remove(one);
 									i--;i--;
 									continue;
 								}
@@ -544,13 +551,13 @@ public class PatternAlogrithm {
 						 *               
 						 */
 						if (i > 1) {
-							if (two.getCenter().getHigh().compareTo(fractalBeanList.get(i - 1).getCenter().getHigh()) == 1) {
+							if (two.getCenter().getHigh().compareTo(validFractalBeanList.get(i - 1).getCenter().getHigh()) == 1) {
 								
-								if (one.getCenter().getLow().compareTo(fractalBeanList.get(i - 2).getCenter().getLow()) == 1) {
-									two.setPrev(fractalBeanList.get(i - 1));
-									fractalBeanList.get(i - 1).setNext(two);
+								if (one.getCenter().getLow().compareTo(validFractalBeanList.get(i - 2).getCenter().getLow()) == 1) {
+									two.setPrev(validFractalBeanList.get(i - 1));
+									validFractalBeanList.get(i - 1).setNext(two);
 									
-									fractalBeanList.remove(one);
+									validFractalBeanList.remove(one);
 									i--;i--;
 									continue;
 								}
@@ -564,14 +571,14 @@ public class PatternAlogrithm {
 						one.setNext(two.getNext());
 					}
 					
-					fractalBeanList.remove(two);
+					validFractalBeanList.remove(two);
 					i--;
 					continue;
 				}
 			}
 		}
 		
-		return fractalBeanList;
+		return validFractalBeanList;
 	}
 	
 	/**
@@ -581,13 +588,14 @@ public class PatternAlogrithm {
 	 * @return List<FractalBean> 
 	 */
 	public static List<FractalBean> 
-	getFractalBeanList (List<StockDataBean> noContainKLineList) {
+	getInvalidFractalBeanList(List<StockDataBean> noContainKLineList) {
 		
-		List<FractalBean> fractalBeanList = new ArrayList<FractalBean>();
 		
-		if (null == noContainKLineList || noContainKLineList.isEmpty()) {
-			return fractalBeanList;
+		if (CollectionUtils.isEmpty(noContainKLineList)) {
+			return new ArrayList<FractalBean>(0);
 		}
+		
+		List<FractalBean> invalidFractalBeanList = new ArrayList<FractalBean>(noContainKLineList.size());
 		
 		for (int i = 0; i < noContainKLineList.size(); i++) {
 			
@@ -626,20 +634,20 @@ public class PatternAlogrithm {
 				fractalBean.setRight(three);
 				
 				// 把上一个分型的next赋值为这个分析。
-				if (fractalBeanList.size() > 0) {
-					FractalBean prev = fractalBeanList.get(fractalBeanList.size() - 1);
+				if (invalidFractalBeanList.size() > 0) {
+					FractalBean prev = invalidFractalBeanList.get(invalidFractalBeanList.size() - 1);
 					// 上一个分型。
 					fractalBean.setPrev(prev);
 					// 下一个分型。
 					prev.setNext(fractalBean);
 				}
 				
-				fractalBeanList.add(fractalBean);
+				invalidFractalBeanList.add(fractalBean);
 			}
 			// --- 找出顶底分型 ---
 		}
 
-		return fractalBeanList;
+		return invalidFractalBeanList;
 	}
 	
 	/**
@@ -649,8 +657,9 @@ public class PatternAlogrithm {
 	 * @return List<StockDataBean>
 	 */
 	public static List<StockDataBean> 
-	getNoContainKLineList (List<StockDataBean> sdBeanList) {
-		List<StockDataBean> noContainKLineList = new ArrayList<StockDataBean>();
+	getNoContainKLineList(List<StockDataBean> sdBeanList) {
+		
+		List<StockDataBean> noContainKLineList = new LinkedList<StockDataBean>();
 		
 		// 为行情数据集合产生一个副本。
 		try {			
@@ -683,7 +692,6 @@ public class PatternAlogrithm {
 				noContainKLineList.remove(pklcBean);
 				i--;
 			}
-			
 		}
 		// --- 处理K线之间包含的问题 ---
 		
@@ -700,8 +708,9 @@ public class PatternAlogrithm {
 	 * @throws CloneNotSupportedException
 	 */
 	@SuppressWarnings("unused")
-	private static List<PowerBean> processBetweenPowerContain 
-	(List<PowerBean> powerBeanList) throws CloneNotSupportedException {
+	private static List<PowerBean> 
+	processBetweenPowerContain(List<PowerBean> powerBeanList) 
+	throws CloneNotSupportedException {
 		
 		if (powerBeanList == null || powerBeanList.size() < 2) {
 			return powerBeanList;
@@ -781,7 +790,7 @@ public class PatternAlogrithm {
 	 * @param current 当前的中枢
 	 * @return PowerBean
 	 */
-	private static PowerBean mergePower (PowerBean prev, PowerBean current) {
+	private static PowerBean mergePower(PowerBean prev, PowerBean current) {
 		
 		if (prev == null || current == null) {
 			throw new RuntimeException("在合并中枢时，前一中枢和当前中枢都不能为null！");
@@ -874,7 +883,7 @@ public class PatternAlogrithm {
 	 * @param current 当前比较的波段
 	 * @return BandBean
 	 */
-	private static BandBean getReferenceBandBean (BandBean reference, BandBean current) {
+	private static BandBean getReferenceBandBean(BandBean reference, BandBean current) {
 		
 		/*
 		 * 如果参照波段为null则直接返回null。
@@ -1184,7 +1193,7 @@ public class PatternAlogrithm {
 	 * @return String “TOP”：顶分型；“BOTTOM”：底分型；“OTHER”：不是分型
 	 */
 	private static String 
-	judgeFractalType (StockDataBean one, StockDataBean two, StockDataBean three) {
+	judgeFractalType(StockDataBean one, StockDataBean two, StockDataBean three) {
 		String fractalType = "OTHER";
 		
 		/*
@@ -1226,7 +1235,7 @@ public class PatternAlogrithm {
 	 * @return StockDataBean
 	 */
 	private static StockDataBean 
-	processKLineContain (StockDataBean one, StockDataBean two, StockDataBean three) {
+	processKLineContain(StockDataBean one, StockDataBean two, StockDataBean three) {
 		/*
 		 * 在处理K线合并时的规则：
 		 * 1、相等包含关系条件：N等于N+1——即(N的最高价 == N+1的最高价) && (N的最低价 == N+1的最低价)时，采取返回N的策略；
@@ -1305,7 +1314,7 @@ public class PatternAlogrithm {
 	 */
 	@SuppressWarnings("unused")
 	private static Integer 
-	getNextDealDate (Integer currentDealDate) throws ParseException {
+	getNextDealDate(Integer currentDealDate) throws ParseException {
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 		

@@ -29,6 +29,9 @@ public class DataLoadMonitorTask implements Runnable {
 	/** 监控间隔时间（单位毫秒）。*/
 	private final long monitoringInterval;
 	
+	/** 记录监控线程的运行状态。*/
+	private volatile boolean isRun = false;
+	
 	/**
 	 * 构造函数。
 	 * 
@@ -47,6 +50,7 @@ public class DataLoadMonitorTask implements Runnable {
 		log.info("准备开启行情数据载入监控线程。");
 		Thread current = Thread.currentThread();
 		String name = current.getName();
+		isRun = true;
 		
 		try {
 			while (true) {
@@ -68,15 +72,22 @@ public class DataLoadMonitorTask implements Runnable {
 				
 				log.info("当前载入行情数据的进度为：" + rate.floatValue() + "%");
 				
-				if (Thread.currentThread().isInterrupted()) {
+				if (Thread.currentThread().isInterrupted() || !isRun) {
 					break;
 				}
-
+				
 				TimeUnit.MILLISECONDS.sleep(monitoringInterval);
 			}
 		} catch (Exception e) {
 			log.error("[name = " + name + "]在监控行情数据载入的过程中出现错误！");
 			log.error(e);
 		}
+	}
+	
+	/**
+	 * 设置监控的运行状态为 false，以停止监控线程的运行（该方法更多是作为一个停止保险而已）。
+	 */
+	public void stop() {
+		isRun = false;
 	}
 }

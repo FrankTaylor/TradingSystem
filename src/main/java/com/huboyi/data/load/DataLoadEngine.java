@@ -57,7 +57,7 @@ public class DataLoadEngine {
 	private boolean startMonitorTask = true;
 	/** 监听任务的监控间隔时间（毫秒）。*/
 	private long monitoringInterval = 1000;
-	
+
 	/**
 	 * 读取全部的行情数据。
 	 * 
@@ -89,7 +89,7 @@ public class DataLoadEngine {
 		long startTime = System.nanoTime();
 		
 		// 初始市场行情数据的集合。
-		List<MarketDataBean> marketDataList = new ArrayList<MarketDataBean>();
+		List<MarketDataBean> marketDataList = new ArrayList<MarketDataBean>(0);
 		
 		try {
 			
@@ -134,6 +134,9 @@ public class DataLoadEngine {
 			 */
 			ExecutorService workerExec = getLoadMarketDataThreadPool(loadDataThreadNums);
 			marketDataList = readMarketDataToBean(workerExec, marketDataFilepathMapList, startMonitorTask, currentReadMarketDataNum);
+			if (startMonitorTask && dataLoadMonitorTask != null) {
+				dataLoadMonitorTask.stop();
+			}
 			
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -260,7 +263,6 @@ public class DataLoadEngine {
 			ExecutorService worker, List<Map<String, String>> marketDataFilepathMapList, 
 			boolean startMonitorTask, AtomicInteger currentReadMarketDataNum) 
 			throws InterruptedException, ExecutionException {
-		List<MarketDataBean> marketDataList = new CopyOnWriteArrayList<MarketDataBean>();
 		
 		// 根据装载市场数据文件路径集合的尺寸，创建同样多个装载数据的任务类。
 		List<DataLoadTask> dataLoadTaskList = getDataLoadTaskList(marketDataFilepathMapList, startMonitorTask, currentReadMarketDataNum);
@@ -268,6 +270,8 @@ public class DataLoadEngine {
 		// 使用线程池驱动任务。
 		List<Future<List<MarketDataBean>>> futureList = worker.invokeAll(dataLoadTaskList);
 		worker.shutdown();
+		
+		List<MarketDataBean> marketDataList = new CopyOnWriteArrayList<MarketDataBean>();
 		
 		if (null != futureList && !futureList.isEmpty()) {
 			for (Future<List<MarketDataBean>> future : futureList) {

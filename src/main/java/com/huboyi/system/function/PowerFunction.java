@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean.PowerType;
+import com.huboyi.indicators.technology.entity.pattern.PowerBean;
+import com.huboyi.indicators.technology.entity.pattern.PowerBean.PowerType;
 import com.huboyi.system.bean.PositionInfoBean;
 
 /**

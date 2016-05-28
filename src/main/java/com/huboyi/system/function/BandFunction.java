@@ -3,8 +3,8 @@ package com.huboyi.system.function;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.constant.BandType;
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
+import com.huboyi.indicators.technology.constant.BandType;
+import com.huboyi.indicators.technology.entity.pattern.BandBean;
 
 /**
  * 交易模块中使用的波段函数。

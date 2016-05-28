@@ -2,9 +2,9 @@ package com.huboyi.system.module.fractal.signal.bean;
 
 import java.util.List;
 
-import com.huboyi.engine.indicators.technology.pattern.bean.BandBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.FractalBean;
-import com.huboyi.engine.indicators.technology.pattern.bean.PowerBean;
+import com.huboyi.indicators.technology.entity.pattern.BandBean;
+import com.huboyi.indicators.technology.entity.pattern.FractalBean;
+import com.huboyi.indicators.technology.entity.pattern.PowerBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 
 /**

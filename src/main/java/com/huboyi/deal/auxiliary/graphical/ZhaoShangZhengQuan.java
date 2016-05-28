@@ -13,10 +13,9 @@ import java.util.Map;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import com.huboyi.indicators.technology.bean.pattern.BandBean;
-import com.huboyi.indicators.technology.bean.pattern.PowerBean;
 import com.huboyi.indicators.technology.constant.BandType;
-import com.huboyi.system.po.EverySumPositionInfoPO;
+import com.huboyi.indicators.technology.entity.pattern.BandBean;
+import com.huboyi.indicators.technology.entity.pattern.PowerBean;
 
 /**
  * 根据计算结果生成可用于在招商证券上展示的代码。
