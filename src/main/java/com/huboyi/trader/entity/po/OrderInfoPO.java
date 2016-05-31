@@ -1,4 +1,4 @@
-package com.huboyi.position.entity.po;
+package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -12,8 +12,8 @@ import org.springframework.data.annotation.Id;
  * @since 1.0
  */
 public class OrderInfoPO implements Serializable {
-
-	private static final long serialVersionUID = 6544912225103249353L;
+	
+	private static final long serialVersionUID = -4059114031070394655L;
 	
 	/** id */
 	@Id
@@ -30,6 +30,8 @@ public class OrderInfoPO implements Serializable {
 	private Long tradeDate;
 	/** 买卖类型（在数据库中实际记录的值，主要用于查询）。*/
 	private int tradeType;
+	/** 交易状态。*/
+	private int tradeStatus;
 	/** 买卖说明（不在数据库中记录该值，主要用于显示）。*/
 	private String tradeName;
 	/** 成交价格。*/
@@ -59,6 +61,7 @@ public class OrderInfoPO implements Serializable {
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
 		.append("    ").append("tradeType").append(":").append("'").append(tradeType).append("'").append(", \n")
+		.append("    ").append("tradeStatus").append(":").append("'").append(tradeStatus).append("'").append(", \n")
 		.append("    ").append("tradeName").append(":").append("'").append(tradeName).append("'").append(", \n")
 		.append("    ").append("tradePrice").append(":").append("'").append(tradePrice).append("'").append(", \n")
 		.append("    ").append("tradeNumber").append(":").append("'").append(tradeNumber).append("'").append(", \n")
@@ -71,13 +74,13 @@ public class OrderInfoPO implements Serializable {
 	}
 	
 	/** 订单信息中的买卖标志枚举类。*/
-	public enum Trade {
-		STOCK_BUY(2, "证券买入"),
-		STOCK_SELL(3, "证券卖出");
+	public enum TradeTypeEnum {
+		STOCK_BUY(1, "证券买入"),
+		STOCK_SELL(2, "证券卖出");
 		
 		private final int type;
 		private final String name;
-		private Trade (int type, String name) {
+		private TradeTypeEnum (int type, String name) {
 			this.type = type;
 			this.name = name;
 		}
@@ -88,7 +91,25 @@ public class OrderInfoPO implements Serializable {
 			return name;
 		}
 	}
-
+	
+	public enum TradeStatusEnum {
+		TRADE_SUCCESS(1, "交易成功"),
+		TRADE_FAIL(2, "交易失败");
+		
+		private final int type;
+		private final String name;
+		private TradeStatusEnum (int type, String name) {
+			this.type = type;
+			this.name = name;
+		}
+		public int getType () {
+			return type;
+		}
+		public String getName() {
+			return name;
+		}
+	}
+	
 	// --- get method and set method ---
 	
 	public long getId() {
@@ -138,7 +159,22 @@ public class OrderInfoPO implements Serializable {
 	public void setTradeType(int tradeType) {
 		this.tradeType = tradeType;
 		
-		for (Trade e : Trade.values()) {
+		for (TradeTypeEnum e : TradeTypeEnum.values()) {
+			if (tradeType == e.getType()) {
+				setTradeName(e.getName());
+				break;
+			}
+		}
+	}
+	
+	public int getTradeStatus() {
+		return tradeStatus;
+	}
+	
+	public void setTradeStatus(int tradeStatus) {
+		this.tradeStatus = tradeStatus;
+		
+		for (TradeStatusEnum e : TradeStatusEnum.values()) {
 			if (tradeType == e.getType()) {
 				setTradeName(e.getName());
 				break;

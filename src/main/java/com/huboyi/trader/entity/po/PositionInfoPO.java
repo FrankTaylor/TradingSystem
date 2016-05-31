@@ -1,4 +1,4 @@
-package com.huboyi.position.entity.po;
+package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,11 +1,11 @@
-package com.huboyi.position.entity.po;
+package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 import org.springframework.data.annotation.Id;
 
-import com.huboyi.position.entity.po.OrderInfoPO.Trade;
+import com.huboyi.trader.entity.po.OrderInfoPO.TradeTypeEnum;
 
 /**
  * 资金流水PO。
@@ -14,8 +14,8 @@ import com.huboyi.position.entity.po.OrderInfoPO.Trade;
  * @since 1.0
  */
 public class FundsFlowPO implements Serializable {
-
-	private static final long serialVersionUID = -2803161677982469792L;
+	
+	private static final long serialVersionUID = -5127730872089145332L;
 	
 	/** id */
 	@Id
@@ -209,7 +209,7 @@ public class FundsFlowPO implements Serializable {
 	public void setBusinessType(int businessType) {
 		this.businessType = businessType;
 		
-		for (Trade e : Trade.values()) {
+		for (TradeTypeEnum e : TradeTypeEnum.values()) {
 			if (businessType == e.getType()) {
 				setBusinessName(e.getName());
 				break;

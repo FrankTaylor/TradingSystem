@@ -75,15 +75,26 @@ public class DataLoadEngine {
 			throw new IllegalArgumentException("市场行情数据文件夹路径不能为空 [" + marketDataFolderpath + "]！");
 		}
 		
-		// 由于此操作属于 I/O 密集型操作，阻塞系数设为 0.6。
-		if (loadDataThreadNums <= 0) { loadDataThreadNums = (int)(virtualCPUNums / (1 - 0.6));}
+		/* 
+		 * 任务可分为 “计算密集型” 和 “IO 密集型” 两种，该任务属于 I/O 密集型操作，阻塞系数暂定为 0.6
+		 * 第一种计算方法：线程数 = 虚拟 CPU 数量 / (1 - 阻塞系数)
+		 * loadDataThreadNums = (int)(virtualCPUNums / (1 - 0.6));
+		 * 
+		 * 参考 Java Concurrency in Practice 得出了一个估算线程池大小的经验公式
+		 * 第二种计算方法：线程数 = 虚拟 CPU 数量 * 目标 CPU 使用率 * (1 + 等待时间 / 计算时间)
+		 * loadDataThreadNums = (int)(virtualCPUNums * 0.8 * (1 + 1/100))
+		 * 
+		 * 经测试，第一种方法计算出的线程数为 118，平均执行耗时 16 秒，第二种方法计算出的线程数为 57，平均执行耗时 29 秒，第一种明显优于第二种，
+		 * 可见第二种方法没有考虑到任务的场景。
+		 */
+		if (loadDataThreadNums <= 0) { loadDataThreadNums = (int)(virtualCPUNums / (1 - 0.6)); }
 		
 		if (monitoringInterval < 1000) { monitoringInterval = 1000; }
 		
 		// --- 具体业务 ---
 		
-		log.info("虚拟 CPU 数量 = " + virtualCPUNums + ", 装载市场行情数据的线程数 = " + loadDataThreadNums);
-		log.info("是否启动监听线程 = " + startMonitorTask + ", 监听任务的监控间隔时间（毫秒） = " + monitoringInterval);
+		System.out.println("虚拟 CPU 数量 = " + virtualCPUNums + ", 装载市场行情数据的线程数 = " + loadDataThreadNums);
+		System.out.println("是否启动监听线程 = " + startMonitorTask + ", 监听任务的监控间隔时间（毫秒） = " + monitoringInterval);
 		
 		// 开始时间。
 		long startTime = System.nanoTime();
@@ -312,12 +323,14 @@ public class DataLoadEngine {
 	 */
 	private ExecutorService getMonitorLoadMarketDataThreadPool() {
 		log.info("得到监控装载股票行情数据进度的线程池。");
+		
 		ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
 				t.setName("监控载入股票行情数据线程");
 				t.setPriority(Thread.MAX_PRIORITY);
+				t.setDaemon(true);
 				
 				t.setUncaughtExceptionHandler(new UncaughtExceptionHandler () {
 					@Override
