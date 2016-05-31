@@ -1,14 +1,14 @@
-package com.huboyi.position.service;
+package com.huboyi.trader.service;
 
 import java.util.List;
 
-import com.huboyi.position.entity.po.OrderInfoPO;
+import com.huboyi.trader.entity.po.OrderInfoPO;
 
 /**
  * 订单信息Service。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.1
+ * @since 1.2
  */
 public interface OrderInfoService {
 	

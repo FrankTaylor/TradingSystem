@@ -1,9 +1,9 @@
-package com.huboyi.position.repository;
+package com.huboyi.trader.repository;
 
 import java.util.List;
 
-import com.huboyi.position.entity.po.PositionInfoPO;
-import com.huboyi.position.service.PositionInfoService.SortType;
+import com.huboyi.trader.entity.po.PositionInfoPO;
+import com.huboyi.trader.service.PositionInfoService.SortType;
 
 /**
  * 持仓信息Repository。

@@ -9,8 +9,8 @@ import java.util.UUID;
 import org.apache.log4j.Logger;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import com.huboyi.position.dao.FundsFlowRepository;
-import com.huboyi.position.po.FundsFlowPO;
+import com.huboyi.trader.entity.po.FundsFlowPO;
+import com.huboyi.trader.repository.FundsFlowRepository;
 
 
 /**

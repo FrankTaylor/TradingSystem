@@ -1,4 +1,4 @@
-package com.huboyi.position.repository.mysql.impl;
+package com.huboyi.trader.repository.mysql.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.stereotype.Repository;
 
-import com.huboyi.position.entity.po.PositionInfoPO;
-import com.huboyi.position.repository.PositionInfoRepository;
-import com.huboyi.position.service.PositionInfoService.SortType;
+import com.huboyi.trader.entity.po.PositionInfoPO;
+import com.huboyi.trader.repository.PositionInfoRepository;
+import com.huboyi.trader.service.PositionInfoService.SortType;
 
 /**
  * 持仓信息Repository的实现类。
@@ -21,6 +22,7 @@ import com.huboyi.position.service.PositionInfoService.SortType;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
+@Repository("positionInfoRepository")
 public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 
 	/** 日志。*/

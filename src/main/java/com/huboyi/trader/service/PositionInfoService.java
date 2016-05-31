@@ -1,15 +1,15 @@
-package com.huboyi.position.service;
+package com.huboyi.trader.service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.position.entity.po.PositionInfoPO;
+import com.huboyi.trader.entity.po.PositionInfoPO;
 
 /**
  * 仓位信息Service。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.1
+ * @since 1.2
  */
 public interface PositionInfoService {
 	

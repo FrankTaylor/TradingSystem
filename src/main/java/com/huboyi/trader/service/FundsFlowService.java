@@ -1,15 +1,15 @@
-package com.huboyi.position.service;
+package com.huboyi.trader.service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.position.entity.po.FundsFlowPO;
+import com.huboyi.trader.entity.po.FundsFlowPO;
 
 /**
  * 资金流水Service。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.1
+ * @since 1.2
  */
 public interface FundsFlowService {
 	
@@ -20,9 +20,8 @@ public interface FundsFlowService {
 	 * @param tradeMoney 成交金额
 	 * @param stockholder 股东代码
 	 */
-	public void 
-	transferInto(Long tradeDate, BigDecimal tradeMoney, String stockholder);
-
+	public void transferInto(Long tradeDate, BigDecimal tradeMoney, String stockholder);
+	
 	/**
 	 * 删除所有的资金流水记录。
 	 */

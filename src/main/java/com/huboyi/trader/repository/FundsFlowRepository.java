@@ -1,8 +1,10 @@
-package com.huboyi.position.repository;
+package com.huboyi.trader.repository;
 
 import java.util.List;
 
-import com.huboyi.position.entity.po.FundsFlowPO;
+import org.springframework.stereotype.Repository;
+
+import com.huboyi.trader.entity.po.FundsFlowPO;
 
 /**
  * 资金流水Repository。
@@ -10,6 +12,7 @@ import com.huboyi.position.entity.po.FundsFlowPO;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
+@Repository
 public interface FundsFlowRepository {
 	
 	/**

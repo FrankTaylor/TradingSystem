@@ -1,4 +1,4 @@
-package com.huboyi.position.repository.mysql.impl;
+package com.huboyi.trader.repository.mysql.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,15 +12,15 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import com.huboyi.position.entity.po.FundsFlowPO;
-import com.huboyi.position.repository.FundsFlowRepository;
+import com.huboyi.trader.entity.po.FundsFlowPO;
+import com.huboyi.trader.repository.FundsFlowRepository;
 
 /**
  * 资金流水Repository的实现类。
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
-@Repository
+@Repository("fundsFlowRepository")
 public class FundsFlowRepositoryImpl implements FundsFlowRepository {
 
 	/** 日志。*/

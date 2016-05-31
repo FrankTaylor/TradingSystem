@@ -1,4 +1,4 @@
-package com.huboyi.position.service.impl;
+package com.huboyi.trader.service.impl;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -12,10 +12,14 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.huboyi.position.entity.po.FundsFlowPO;
-import com.huboyi.position.repository.FundsFlowRepository;
-import com.huboyi.position.service.FundsFlowService;
+import com.huboyi.trader.entity.po.FundsFlowPO;
+import com.huboyi.trader.repository.FundsFlowRepository;
+import com.huboyi.trader.service.FundsFlowService;
 
 /**
  * 资金流水Service实现类。
@@ -23,6 +27,7 @@ import com.huboyi.position.service.FundsFlowService;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
+@Service("fundsFlowService")
 public class FundsFlowServiceImpl implements FundsFlowService {
 	
 	/** 日志。*/
@@ -35,6 +40,7 @@ public class FundsFlowServiceImpl implements FundsFlowService {
 	@Qualifier("fundsFlowRepository")
 	private FundsFlowRepository fundsFlowRepository;
 	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ, readOnly=false, rollbackForClassName="{*Exception}")
 	@Override
 	public void transferInto(Long tradeDate, BigDecimal tradeMoney, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
@@ -105,21 +111,25 @@ public class FundsFlowServiceImpl implements FundsFlowService {
 		fundsFlowRepository.insert(savePo);
 	}
 	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ, readOnly=false, rollbackForClassName="{*Exception}")
 	@Override
 	public void deleteAllRecords() {
 		fundsFlowRepository.truncate();
 	}
-
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ, readOnly=false, rollbackForClassName="{*Exception}")
 	@Override
 	public void deleteRecords(String stockholder) {
 		fundsFlowRepository.delete(stockholder);
 	}
-
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ, readOnly=true, rollbackForClassName="{*Exception}")
 	@Override
 	public FundsFlowPO findNewRecord(String stockholder) {
 		return fundsFlowRepository.findLastOne(stockholder);
 	}
-
+	
+	@Transactional(propagation=Propagation.REQUIRES_NEW, isolation=Isolation.REPEATABLE_READ, readOnly=true, rollbackForClassName="{*Exception}")
 	@Override
 	public List<FundsFlowPO> findRecords(String stockholder) {
 		return fundsFlowRepository.findAll(stockholder);

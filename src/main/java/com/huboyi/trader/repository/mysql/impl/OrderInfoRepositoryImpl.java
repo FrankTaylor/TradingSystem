@@ -1,4 +1,4 @@
-package com.huboyi.position.repository.mysql.impl;
+package com.huboyi.trader.repository.mysql.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import com.huboyi.position.entity.po.OrderInfoPO;
-import com.huboyi.position.repository.OrderInfoRepository;
+import com.huboyi.trader.entity.po.OrderInfoPO;
+import com.huboyi.trader.repository.OrderInfoRepository;
 
 /**
  * 订单信息Repository实现类。
@@ -21,7 +21,7 @@ import com.huboyi.position.repository.OrderInfoRepository;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
-@Repository
+@Repository("orderInfoRepository")
 public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 
 	/** 日志。*/

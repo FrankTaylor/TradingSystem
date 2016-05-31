@@ -14,8 +14,8 @@ import org.springframework.data.mongodb.core.index.IndexInfo;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import com.huboyi.position.entity.po.FundsFlowPO;
-import com.huboyi.position.repository.FundsFlowRepository;
+import com.huboyi.trader.entity.po.FundsFlowPO;
+import com.huboyi.trader.repository.FundsFlowRepository;
 
 /**
  * 资金流水DAO实现类。

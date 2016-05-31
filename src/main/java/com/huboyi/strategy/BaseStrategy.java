@@ -1,4 +1,4 @@
-package com.huboyi.system.strategy;
+package com.huboyi.strategy;
 
 /**
  * 策略实现类的抽象类。

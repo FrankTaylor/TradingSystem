@@ -1,8 +1,10 @@
-package com.huboyi.position.repository;
+package com.huboyi.trader.repository;
 
 import java.util.List;
 
-import com.huboyi.position.entity.po.OrderInfoPO;
+import org.springframework.stereotype.Repository;
+
+import com.huboyi.trader.entity.po.OrderInfoPO;
 
 /**
  * 订单信息Repository。
@@ -10,6 +12,7 @@ import com.huboyi.position.entity.po.OrderInfoPO;
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1
  */
+@Repository
 public interface OrderInfoRepository {
 	
 	/**

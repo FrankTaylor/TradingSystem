@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import org.springframework.data.annotation.Id;
 
 /**
- * 订单信息PO。
+ * 报单信息PO。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.0
