@@ -2,6 +2,7 @@ package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import org.springframework.data.annotation.Id;
 
@@ -26,14 +27,23 @@ public class OrderInfoPO implements Serializable {
 	private String stockCode;
 	/** 证券名称。*/
 	private String stockName;
+	/** 买卖类型（在数据库中实际记录的值，主要用于查询）。*/
+	private Integer tradeType;
+	
+	
+	
+	
+	
 	/** 成交日期（格式：yyyyMMddhhmmssSSS）。*/
 	private Long tradeDate;
-	/** 买卖类型（在数据库中实际记录的值，主要用于查询）。*/
-	private int tradeType;
-	/** 交易状态。*/
-	private int tradeStatus;
-	/** 买卖说明（不在数据库中记录该值，主要用于显示）。*/
-	private String tradeName;
+	
+	/** 买卖类型说明（不在数据库中记录该值，主要用于显示）。*/
+	private String tradeTypeDesc;
+	/** 处理状态（在数据库中实际记录的值，主要用于查询）。*/
+	private Integer dealStatus;
+	/** 处理状态说明（不在数据库中记录该值，主要用于显示）。*/
+	private String dealStatusDesc;
+	
 	/** 成交价格。*/
 	private BigDecimal tradePrice;
 	/** 成交数量。*/
@@ -49,6 +59,10 @@ public class OrderInfoPO implements Serializable {
 	/** 股东代码。*/
 	private String stockholder = "672288";
 	
+	// ---
+	/** 创建时间。*/
+	private Timestamp createTime;
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -61,14 +75,18 @@ public class OrderInfoPO implements Serializable {
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
 		.append("    ").append("tradeType").append(":").append("'").append(tradeType).append("'").append(", \n")
-		.append("    ").append("tradeStatus").append(":").append("'").append(tradeStatus).append("'").append(", \n")
-		.append("    ").append("tradeName").append(":").append("'").append(tradeName).append("'").append(", \n")
+		.append("    ").append("tradeTypeDesc").append(":").append("'").append(tradeTypeDesc).append("'").append(", \n")
+		.append("    ").append("dealStatus").append(":").append("'").append(dealStatus).append("'").append(", \n")
+		.append("    ").append("dealStatusDesc").append(":").append("'").append(dealStatusDesc).append("'").append(", \n")
 		.append("    ").append("tradePrice").append(":").append("'").append(tradePrice).append("'").append(", \n")
 		.append("    ").append("tradeNumber").append(":").append("'").append(tradeNumber).append("'").append(", \n")
 		.append("    ").append("tradeMoney").append(":").append("'").append(tradeMoney).append("'").append(", \n")
 		
 		// --- 
-		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n");
+		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n")
+		
+		// --- 
+		.append("    ").append("createTime").append(":").append("'").append(createTime).append("'").append(", \n");
 		builder.append("} \n");
 		return builder.toString();
 	}
@@ -79,35 +97,27 @@ public class OrderInfoPO implements Serializable {
 		STOCK_SELL(2, "证券卖出");
 		
 		private final int type;
-		private final String name;
-		private TradeTypeEnum (int type, String name) {
+		private final String desc;
+		private TradeTypeEnum(int type, String desc) {
 			this.type = type;
-			this.name = name;
+			this.desc = desc;
 		}
-		public int getType () {
-			return type;
-		}
-		public String getName() {
-			return name;
-		}
+		public int getType () { return type; }
+		public String getDesc() { return desc; }
 	}
 	
-	public enum TradeStatusEnum {
+	public enum DealTypeEnum {
 		TRADE_SUCCESS(1, "交易成功"),
 		TRADE_FAIL(2, "交易失败");
 		
 		private final int type;
-		private final String name;
-		private TradeStatusEnum (int type, String name) {
+		private final String desc;
+		private DealTypeEnum(int type, String desc) {
 			this.type = type;
-			this.name = name;
+			this.desc = desc;
 		}
-		public int getType () {
-			return type;
-		}
-		public String getName() {
-			return name;
-		}
+		public int getType() { return type; }
+		public String getDesc() { return desc; }
 	}
 	
 	// --- get method and set method ---

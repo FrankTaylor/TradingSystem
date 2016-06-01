@@ -2,10 +2,9 @@ package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import org.springframework.data.annotation.Id;
-
-import com.huboyi.trader.entity.po.OrderInfoPO.TradeTypeEnum;
 
 /**
  * 资金流水PO。
@@ -14,16 +13,18 @@ import com.huboyi.trader.entity.po.OrderInfoPO.TradeTypeEnum;
  * @since 1.0
  */
 public class FundsFlowPO implements Serializable {
-	
-	private static final long serialVersionUID = -5127730872089145332L;
+
+	private static final long serialVersionUID = 6296479517096521083L;
 	
 	/** id */
 	@Id
 	private long id;
 	/** 合同编号。*/
 	private String contractCode;
-	/** 币种。*/
-	private String currency = "人民币";
+	/** 币种类型（在数据库中实际记录的值，主要用于查询）。*/
+	private Integer currencyType;
+	/** 币种类型说明（不在数据库中记录该值，主要用于显示）。*/
+	private String currencyTypeDesc;
 	
 	// --- 
 	/** 证券代码。*/
@@ -35,21 +36,21 @@ public class FundsFlowPO implements Serializable {
 	/** 成交价格。*/
 	private BigDecimal tradePrice;
 	/** 成交数量。*/
-	private Long tradeNumber;
+	private Long tradeVolume;
 	/**
 	 * 成交金额。
 	 * 买入时：成交金额 ==（交易总金额 + 手续费 + 印花税 + 过户费 + 结算费）。
 	 * 卖出时：成交金额 ==（交易总金额 - 手续费 - 印花税 - 过户费 - 结算费）。
 	 */
-	private BigDecimal tradeMoney;
+	private BigDecimal turnover;
 	/** 资金余额。*/
 	private BigDecimal fundsBalance;
 	
 	// ---
 	/** 业务类型（在数据库中实际记录的值，主要用于查询）。*/
-	private int businessType;
-	/** 业务名称（不在数据库中记录该值，主要用于显示）。*/
-	private String businessName;
+	private Integer businessType;
+	/** 业务类型说明（不在数据库中记录该值，主要用于显示）。*/
+	private String businessTypeDesc;
 	
 	// --- 
 	/** 手续费。*/
@@ -65,26 +66,31 @@ public class FundsFlowPO implements Serializable {
 	/** 股东代码。*/
 	private String stockholder = "672288";
 	
+	// ---
+	/** 创建时间。*/
+	private Timestamp createTime;
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ \n")
 		.append("    ").append("id").append(":").append("'").append(id).append("'").append(", \n")
 		.append("    ").append("contractCode").append(":").append("'").append(contractCode).append("'").append(", \n")
-		.append("    ").append("currency").append(":").append("'").append(currency).append("'").append(", \n")
+		.append("    ").append("currencyType").append(":").append("'").append(currencyType).append("'").append(", \n")
+		.append("    ").append("currencyTypeDesc").append(":").append("'").append(currencyTypeDesc).append("'").append(", \n")
 		
 		// --- 
 		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
 		.append("    ").append("tradePrice").append(":").append("'").append(tradePrice).append("'").append(", \n")
-		.append("    ").append("tradeNumber").append(":").append("'").append(tradeNumber).append("'").append(", \n")
-		.append("    ").append("tradeMoney").append(":").append("'").append(tradeMoney).append("'").append(", \n")
+		.append("    ").append("tradeVolume").append(":").append("'").append(tradeVolume).append("'").append(", \n")
+		.append("    ").append("turnover").append(":").append("'").append(turnover).append("'").append(", \n")
 		.append("    ").append("fundsBalance").append(":").append("'").append(fundsBalance).append("'").append(", \n")
 		
 		// --- 
 		.append("    ").append("businessType").append(":").append("'").append(businessType).append("'").append(", \n")
-		.append("    ").append("businessName").append(":").append("'").append(businessName).append("'").append(", \n")
+		.append("    ").append("businessTypeDesc").append(":").append("'").append(businessTypeDesc).append("'").append(", \n")
 		
 		// --- 
 		.append("    ").append("charges").append(":").append("'").append(charges).append("'").append(", \n")
@@ -93,13 +99,16 @@ public class FundsFlowPO implements Serializable {
 		.append("    ").append("clearingFee").append(":").append("'").append(clearingFee).append("'").append(", \n")
 		
 		// --- 
-		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n");
+		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n")
+		
+		// --- 
+		.append("    ").append("createTime").append(":").append("'").append(createTime).append("'").append(", \n");
 		builder.append("} \n");
 		return builder.toString();
 	}
 	
 	/** 资金流水业务类型枚举。*/
-	public enum Business {
+	public enum BusinessTypeEnum {
 		ROLL_IN(0, "银行转入"),
 		ROLL_OUT(1, "资金转出"),
 		
@@ -107,17 +116,27 @@ public class FundsFlowPO implements Serializable {
 		STOCK_SELL(3, "证券卖出");
 		
 		private final int type;
-		private final String name;
-		private Business (int type, String name) {
+		private final String desc;
+		private BusinessTypeEnum(int type, String desc) {
 			this.type = type;
-			this.name = name;
+			this.desc = desc;
 		}
-		public int getType () {
-			return type;
+		public int getType() { return type; }
+		public String getDesc() { return desc; }
+	}
+	
+	/** 币种类型枚举。*/
+	public enum CurrencyTypeEnum {
+		CHINA(1, "人民币");
+		
+		private final int type;
+		private final String desc;
+		private CurrencyTypeEnum(int type, String desc) {
+			this.type = type;
+			this.desc = desc;
 		}
-		public String getName() {
-			return name;
-		}
+		public int getType() { return type; }
+		public String getDesc() { return desc; }
 	}
 	
 	// --- get method and set method ---
@@ -138,14 +157,39 @@ public class FundsFlowPO implements Serializable {
 		this.contractCode = contractCode;
 	}
 
-	public String getCurrency() {
-		return currency;
+	public CurrencyTypeEnum getCurrencyType() {
+		
+		if (currencyType != null) {
+			for (CurrencyTypeEnum e : CurrencyTypeEnum.values()) {
+				if (currencyType == e.getType()) {
+					return e;
+				}
+			}
+		}
+		
+		return null;
 	}
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
+	public void setCurrencyType(Integer currencyType) {
+		this.currencyType = currencyType;
+		
+		for (CurrencyTypeEnum e : CurrencyTypeEnum.values()) {
+			if (this.currencyType == e.getType()) {
+				setCurrencyTypeDesc(e.desc);
+				break;
+			}
+		}
+		
 	}
-
+	
+	public String getCurrencyTypeDesc() {
+		return currencyTypeDesc;
+	}
+	
+	public void setCurrencyTypeDesc(String currencyTypeDesc) {
+		this.currencyTypeDesc = currencyTypeDesc;
+	}
+	
 	public String getStockCode() {
 		return stockCode;
 	}
@@ -178,20 +222,20 @@ public class FundsFlowPO implements Serializable {
 		this.tradePrice = tradePrice;
 	}
 
-	public Long getTradeNumber() {
-		return tradeNumber;
+	public Long getTradeVolume() {
+		return tradeVolume;
 	}
 
-	public void setTradeNumber(Long tradeNumber) {
-		this.tradeNumber = tradeNumber;
+	public void setTradeVolume(Long tradeVolume) {
+		this.tradeVolume = tradeVolume;
 	}
 
-	public BigDecimal getTradeMoney() {
-		return tradeMoney;
+	public BigDecimal getTurnover() {
+		return turnover;
 	}
 
-	public void setTradeMoney(BigDecimal tradeMoney) {
-		this.tradeMoney = tradeMoney;
+	public void setTurnover(BigDecimal turnover) {
+		this.turnover = turnover;
 	}
 
 	public BigDecimal getFundsBalance() {
@@ -202,27 +246,35 @@ public class FundsFlowPO implements Serializable {
 		this.fundsBalance = fundsBalance;
 	}
 
-	public int getBusinessType() {
-		return businessType;
+	public BusinessTypeEnum getBusinessType() {
+		
+		if (businessType != null) {
+			for (BusinessTypeEnum e : BusinessTypeEnum.values()) {
+				if (businessType == e.getType()) {
+					return e;
+				}
+			}
+		}
+		
+		return null;
 	}
 
-	public void setBusinessType(int businessType) {
+	public void setBusinessType(Integer businessType) {
 		this.businessType = businessType;
-		
-		for (TradeTypeEnum e : TradeTypeEnum.values()) {
-			if (businessType == e.getType()) {
-				setBusinessName(e.getName());
+		for (BusinessTypeEnum e : BusinessTypeEnum.values()) {
+			if (this.businessType == e.getType()) {
+				setBusinessTypeDesc(e.getDesc());
 				break;
 			}
 		}
 	}
 
-	public String getBusinessName() {
-		return businessName;
+	public String getBusinessTypeDesc() {
+		return businessTypeDesc;
 	}
 
-	public void setBusinessName(String businessName) {
-		this.businessName = businessName;
+	public void setBusinessTypeDesc(String businessTypeDesc) {
+		this.businessTypeDesc = businessTypeDesc;
 	}
 
 	public BigDecimal getCharges() {
@@ -263,5 +315,13 @@ public class FundsFlowPO implements Serializable {
 
 	public void setStockholder(String stockholder) {
 		this.stockholder = stockholder;
+	}
+
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 }

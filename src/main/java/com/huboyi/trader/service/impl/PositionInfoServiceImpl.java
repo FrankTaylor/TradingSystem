@@ -1,4 +1,4 @@
-package com.huboyi.position.service.impl;
+package com.huboyi.trader.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,16 +12,16 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.huboyi.position.DealFeeCalculator;
-import com.huboyi.position.entity.po.FundsFlowPO;
-import com.huboyi.position.entity.po.FundsFlowPO.Business;
-import com.huboyi.position.entity.po.OrderInfoPO;
-import com.huboyi.position.entity.po.OrderInfoPO.Trade;
-import com.huboyi.position.entity.po.PositionInfoPO;
-import com.huboyi.position.repository.FundsFlowRepository;
-import com.huboyi.position.repository.OrderInfoRepository;
-import com.huboyi.position.repository.PositionInfoRepository;
-import com.huboyi.position.service.PositionInfoService;
+import com.huboyi.trader.DealFeeCalculator;
+import com.huboyi.trader.entity.po.FundsFlowPO;
+import com.huboyi.trader.entity.po.FundsFlowPO.Business;
+import com.huboyi.trader.entity.po.OrderInfoPO;
+import com.huboyi.trader.entity.po.PositionInfoPO;
+import com.huboyi.trader.repository.FundsFlowRepository;
+import com.huboyi.trader.repository.OrderInfoRepository;
+import com.huboyi.trader.repository.PositionInfoRepository;
+import com.huboyi.trader.service.PositionInfoService;
+import com.huboyi.trader.service.PositionInfoService.SortType;
 
 /**
  * 仓位信息Service实现类。

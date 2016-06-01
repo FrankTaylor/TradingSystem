@@ -1,13 +1,13 @@
-package com.huboyi.position.service.impl;
+package com.huboyi.trader.service.impl;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.huboyi.position.entity.po.OrderInfoPO;
-import com.huboyi.position.repository.OrderInfoRepository;
-import com.huboyi.position.service.OrderInfoService;
+import com.huboyi.trader.entity.po.OrderInfoPO;
+import com.huboyi.trader.repository.OrderInfoRepository;
+import com.huboyi.trader.service.OrderInfoService;
 
 /**
  * 订单信息Service实现类。
