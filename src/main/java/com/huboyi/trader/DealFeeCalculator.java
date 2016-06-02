@@ -1,4 +1,4 @@
-package com.huboyi.position;
+package com.huboyi.trader;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
