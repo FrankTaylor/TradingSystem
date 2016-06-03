@@ -3,7 +3,8 @@ package com.huboyi.strategy;
 import java.util.List;
 
 import com.huboyi.data.entity.StockDataBean;
-import com.huboyi.trader.entity.po.OrderInfoPO;
+import com.huboyi.trader.entity.po.DealOrderPO;
+import com.huboyi.trader.entity.po.EntrustOrderPO;
 
 /**
  * 策略实现类的基础接口。
@@ -47,10 +48,23 @@ public interface IBaseStrategy {
 	// ------ processOrder
 
 	/**
-	 * 下单回调函数。
+	 * 委托单回调函数。
 	 * 
-	 * @param orderInfo 报单信息
+	 * @param entrustOrderPO 委托单
 	 */
-	public void processOrder (OrderInfoPO orderInfo);
+	public void processEntrustOrder(EntrustOrderPO entrustOrderPO);
 	
+	/**
+	 * 撤销委托单回调函数。
+	 * 
+	 * @param entrustOrderPO 委托单
+	 */
+	public void processCancelEntrustOrder(EntrustOrderPO entrustOrderPO);
+	
+	/**
+	 * 交易单回调函数。
+	 * 
+	 * @param dealOrderPO 交易单
+	 */
+	public void processDealOrder(DealOrderPO dealOrderPO);
 }

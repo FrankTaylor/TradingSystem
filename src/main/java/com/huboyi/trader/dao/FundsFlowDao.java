@@ -1,4 +1,4 @@
-package com.huboyi.trader.repository;
+package com.huboyi.trader.dao;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import com.huboyi.trader.entity.po.FundsFlowPO;
  * @since 1.1
  */
 @Repository
-public interface FundsFlowRepository {
+public interface FundsFlowDao {
 	
 	/**
 	 * 插入一条资金流水记录。

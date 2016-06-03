@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.huboyi.trader.entity.po.OrderInfoPO;
-
 /**
  * 订单信息Repository。
  * 
@@ -13,14 +11,14 @@ import com.huboyi.trader.entity.po.OrderInfoPO;
  * @since 1.1
  */
 @Repository
-public interface OrderInfoRepository {
+public interface OrderInfoDao {
 	
 	/**
 	 * 插入一条订单信息。
 	 * 
-	 * @param po OrderInfoPO
+	 * @param po OrderPO
 	 */
-	public void insert(OrderInfoPO po);
+	public void insert(OrderPO po);
 	
 	/**
 	 * 删除所有的订单信息。
@@ -38,15 +36,15 @@ public interface OrderInfoRepository {
 	 * 找到最后的一条订单信息（按照 tradeDate 降序）。
 	 * 
 	 * @param stockholder 股东代码
-	 * @return OrderInfoPO
+	 * @return OrderPO
 	 */
-	public OrderInfoPO findLastOne(String stockholder);
+	public OrderPO findLastOne(String stockholder);
 	
 	/**
 	 * 查询所有的订单信息（按照tradeDate升序）。
 	 * 
 	 * @param stockholder 股东代码
-	 * @return List<OrderInfoPO>
+	 * @return List<OrderPO>
 	 */
-	public List<OrderInfoPO> findAll(String stockholder);
+	public List<OrderPO> findAll(String stockholder);
 }

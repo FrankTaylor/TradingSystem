@@ -2,18 +2,19 @@ package com.huboyi.trader.entity.po;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 import org.springframework.data.annotation.Id;
 
 /**
- * 持仓信息PO。
+ * 持仓信息 PO。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.0
+ * @since 1.2
  */
-public class PositionInfoPO implements Serializable {
-
-	private static final long serialVersionUID = 3146330724412870775L;
+public class PositionPO implements Serializable {
+	
+	private static final long serialVersionUID = -1810039042094218571L;
 
 	@Id
 	/** id */
@@ -24,6 +25,8 @@ public class PositionInfoPO implements Serializable {
 	private String stockCode;
 	/** 证券名称。*/
 	private String stockName;
+	
+	// ---
 	/** 证券数量。*/
 	private Long stockNumber;
 	/** 可卖数量。*/
@@ -47,32 +50,51 @@ public class PositionInfoPO implements Serializable {
 	
 	// --- 
 	/** 今买数量。*/
-	private Long todayBuyNumber = 0L;
+	private Long todayBuyVolume = 0L;
 	/** 今卖数量。*/
-	private Long todaySellNumber = 0L;
+	private Long todaySellVolume = 0L;
 	
 	// --- 
 	/** 股东代码。*/
 	private String stockholder = "672288";
+	
+	// ---
+	/** 创建时间。*/
+	private Timestamp createTime;
 	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{ \n")
 		.append("    ").append("id").append(":").append("'").append(id).append("'").append(", \n")
+		
+		// ---
 		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
 		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
+		
+		// ---
 		.append("    ").append("stockNumber").append(":").append("'").append(stockNumber).append("'").append(", \n")
 		.append("    ").append("canSellNumber").append(":").append("'").append(canSellNumber).append("'").append(", \n")
+		
+		// ---
 		.append("    ").append("costPrice").append(":").append("'").append(costPrice).append("'").append(", \n")
 		.append("    ").append("costMoney").append(":").append("'").append(costMoney).append("'").append(", \n")
+		
+		// ---
 		.append("    ").append("newPrice").append(":").append("'").append(newPrice).append("'").append(", \n")
 		.append("    ").append("newMarketValue").append(":").append("'").append(newMarketValue).append("'").append(", \n")
 		.append("    ").append("floatProfitAndLoss").append(":").append("'").append(floatProfitAndLoss).append("'").append(", \n")
 		.append("    ").append("profitAndLossRatio").append(":").append("'").append(profitAndLossRatio).append("'").append(", \n")
-		.append("    ").append("todayBuyNumber").append(":").append("'").append(todayBuyNumber).append("'").append(", \n")
-		.append("    ").append("todaySellNumber").append(":").append("'").append(todaySellNumber).append("'").append(", \n")
-		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n");
+		
+		// ---
+		.append("    ").append("todayBuyVolume").append(":").append("'").append(todayBuyVolume).append("'").append(", \n")
+		.append("    ").append("todaySellVolume").append(":").append("'").append(todaySellVolume).append("'").append(", \n")
+		
+		// ---
+		.append("    ").append("stockholder").append(":").append("'").append(stockholder).append("'").append(", \n")
+		
+		// ---
+		.append("    ").append("createTime").append(":").append("'").append(createTime).append("'").append(", \n");
 		builder.append("} \n");
 		return builder.toString();
 	}
@@ -167,20 +189,20 @@ public class PositionInfoPO implements Serializable {
 		this.profitAndLossRatio = profitAndLossRatio;
 	}
 
-	public Long getTodayBuyNumber() {
-		return todayBuyNumber;
+	public Long getTodayBuyVolume() {
+		return todayBuyVolume;
 	}
 
-	public void setTodayBuyNumber(Long todayBuyNumber) {
-		this.todayBuyNumber = todayBuyNumber;
+	public void setTodayBuyVolume(Long todayBuyVolume) {
+		this.todayBuyVolume = todayBuyVolume;
 	}
 
-	public Long getTodaySellNumber() {
-		return todaySellNumber;
+	public Long getTodaySellVolume() {
+		return todaySellVolume;
 	}
 
-	public void setTodaySellNumber(Long todaySellNumber) {
-		this.todaySellNumber = todaySellNumber;
+	public void setTodaySellVolume(Long todaySellVolume) {
+		this.todaySellVolume = todaySellVolume;
 	}
 
 	public String getStockholder() {
@@ -189,5 +211,13 @@ public class PositionInfoPO implements Serializable {
 
 	public void setStockholder(String stockholder) {
 		this.stockholder = stockholder;
+	}
+
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
 	}
 }
