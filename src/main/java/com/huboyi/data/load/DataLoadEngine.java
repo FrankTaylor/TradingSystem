@@ -65,7 +65,6 @@ public class DataLoadEngine {
 	 */
 	public List<MarketDataBean> loadMarketData() {
 		log.info("准备读取上交所和深交所的股票数据！");
-		
 		// 根据 “CPU 个数” 和 “单个 CPU 核数” 计算出 “虚拟 CPU 数量”。
 		int virtualCPUNums = cpuNums * coreNums;
 		
