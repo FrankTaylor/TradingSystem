@@ -1,4 +1,4 @@
-package com.huboyi.trader.repository.mysql.impl;
+package com.huboyi.trader.dao.mysql.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,57 +12,60 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import com.huboyi.trader.entity.po.PositionInfoPO;
-import com.huboyi.trader.repository.PositionInfoRepository;
-import com.huboyi.trader.service.PositionInfoService.SortType;
+import com.huboyi.trader.dao.PositionDao;
+import com.huboyi.trader.entity.po.PositionPO;
 
 /**
- * 持仓信息Repository的实现类。
+ * 持仓信息 Dao 实现类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.1
+ * @since 1.2
  */
-@Repository("positionInfoRepository")
-public class PositionInfoRepositoryImpl implements PositionInfoRepository {
+@Repository("positionDao")
+public class PositionDaoImpl implements PositionDao {
 
 	/** 日志。*/
-	private final Logger log = Logger.getLogger(PositionInfoRepositoryImpl.class);
+	private final Logger log = Logger.getLogger(PositionDaoImpl.class);
 	
 	@Autowired
-	@Qualifier("namedParameterJdbcTemplate")
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	@Qualifier("npJdbcTemplate")
+	private NamedParameterJdbcTemplate npJdbcTemplate;
 	
 	@Override
-	public void insert(PositionInfoPO po) {
+	public void insert(PositionPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 insert 方法").append("\n");
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO position_info ");
+		sql.append("INSERT INTO position ");
 		sql.append(" ( ");
-		sql.append("stock_code, stock_name, stock_number, can_sell_number, ");
+		sql.append("stock_code, stock_name, ");
+		sql.append("stock_number, can_sell_number, ");
 		sql.append("cost_price, cost_money, ");
 		sql.append("new_price, new_market_value, float_profit_and_loss, profit_and_loss_ratio, ");
-		sql.append("todayBuyNumber, todaySellNumber, ");
+		sql.append("today_buy_volume, today_sell_volume, ");
 		sql.append("stockholder");
+		sql.append("create_time");
 		sql.append(" ) "); 
 		
 		sql.append(" VALUES ");
 		sql.append(" ( ");
-		sql.append(":stockCode, :stockName, :stockNumber, :canSellNumber, ");
+		sql.append(":stockCode, :stockName, ");
+		sql.append(":stockNumber, :canSellNumber, ");
 		sql.append(":costPrice, :costMoney, ");
 		sql.append(":newPrice, :newMarketValue, :floatProfitAndLoss, :profitAndLossRatio, ");
-		sql.append(":todayBuyNumber, :todaySellNumber, ");
+		sql.append(":todayBuyVolume, :todaySellVolume, ");
 		sql.append(":stockholder");
+		sql.append(":createTime");
 		sql.append(" ) "); 
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(po);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		npJdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
@@ -72,11 +75,11 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("TRUNCATE position_info");
+		sql.append("TRUNCATE position");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
-		namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+		npJdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
 
 	@Override
@@ -87,48 +90,51 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM position_info WHERE stockholder = :stockholder");
+		sql.append("DELETE FROM position WHERE stockholder = :stockholder");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+		npJdbcTemplate.update(sql.toString(), paramMap);
 	}
 
 	@Override
-	public void delete(String stockholder, String stockCode) {
+	public void delete(String stockCode, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 delete 方法").append("\n");
 		logMsg.append("@param [stockholder = " + stockholder + "]");
+		logMsg.append("@param [stockCode = " + stockCode + "]");
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM position_info WHERE stockholder = :stockholder AND stock_code = :stockCode");
+		sql.append("DELETE FROM position WHERE stock_code = :stockCode AND stockholder = :stockholder");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockCode", stockCode);
 		paramMap.put(":stockholder", stockholder);
-		paramMap.put(":stockholder", stockCode);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+		npJdbcTemplate.update(sql.toString(), paramMap);
 	}
 
 	@Override
-	public void update(PositionInfoPO po) {
+	public void update(PositionPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 update 方法").append("\n");
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE position_info SET ");
+		sql.append("UPDATE position SET ");
 		
 		// --- 
 		if (po.getStockCode() != null) { sql.append("stock_code = :stockCode, "); }
 		if (po.getStockName() != null) { sql.append("stock_name = :stockName, "); }
+		
+		// --- 
 		if (po.getStockNumber() != null) { sql.append("stock_number = :stockNumber, "); }
 		if (po.getCanSellNumber() != null) { sql.append("can_sell_number = :canSellNumber, "); }
 		
@@ -143,8 +149,8 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		if (po.getProfitAndLossRatio() != null) { sql.append("profit_and_loss_ratio = :profitAndLossRatio, "); }
 		
 		// ---
-		if (po.getTodayBuyNumber() != null) { sql.append("today_buy_number = :todayBuyNumber, "); }
-		if (po.getTodaySellNumber() != null) { sql.append("today_sell_number = :todaySellNumber, "); }
+		if (po.getTodayBuyVolume() != null) { sql.append("today_buy_volume = :todayBuyVolume, "); }
+		if (po.getTodaySellVolume() != null) { sql.append("today_sell_volume = :todaySellVolume, "); }
 
 		// ---
 		if (po.getStockholder() != null) { sql.append("stockholder = :stockholder, "); }
@@ -157,31 +163,31 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(po);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		npJdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
-	public PositionInfoPO findOne(String stockholder, String stockCode) {
+	public PositionPO findOne(String stockCode, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findOne 方法").append("\n");
-		logMsg.append("@param [stockholder = " + stockholder + "]");
 		logMsg.append("@param [stockCode = " + stockCode + "]");
+		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM position_info WHERE stockholder = :stockholder AND stock_code = :stockCode");
+		sql.append("SELECT * FROM position WHERE stock_code = :stockCode AND stockholder = :stockholder");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put(":stockholder", stockholder);
 		paramMap.put(":stockCode", stockCode);
+		paramMap.put(":stockholder", stockholder);
 		
-		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, PositionInfoPO.class);
+		return npJdbcTemplate.queryForObject(sql.toString(), paramMap, PositionPO.class);
 	}
 	
 	@Override
-	public List<PositionInfoPO> findAll(String stockholder, SortType sortType) {
+	public List<PositionPO> findAll(String stockholder, SortType sortType) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findAll 方法").append("\n");
 		logMsg.append("@param [stockholder = " + stockholder + "]");
@@ -189,7 +195,7 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		log.info(logMsg.toString());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM position_info WHERE stockholder = :stockholder ");
+		sql.append("SELECT * FROM position WHERE stockholder = :stockholder ");
 		
 		if (sortType != null) {
 			sql.append("ORDER BY ");
@@ -235,6 +241,6 @@ public class PositionInfoRepositoryImpl implements PositionInfoRepository {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put(":stockholder", stockholder);
 		
-		return namedParameterJdbcTemplate.queryForList(sql.toString(), paramMap, PositionInfoPO.class);
+		return npJdbcTemplate.queryForList(sql.toString(), paramMap, PositionPO.class);
 	}
 }

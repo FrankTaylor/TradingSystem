@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.huboyi.trader.entity.po.FundsFlowPO;
 
 /**
- * 资金流水Repository。
+ * 资金流水 Dao。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.1

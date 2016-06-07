@@ -28,12 +28,6 @@ public class EntrustOrderPO implements Serializable {
 	/** 被撤销委托单编号。*/
 	private String cancelEntrustOrderCode;
 	
-	// --- 
-	/** 证券代码。*/
-	private String stockCode;
-	/** 证券名称。*/
-	private String stockName;
-	
 	// ---
 	/** 交易类型（在数据库中实际记录的值，主要用于查询）。*/
 	private Integer dealType;
@@ -47,6 +41,12 @@ public class EntrustOrderPO implements Serializable {
 	private Integer quoteType;
 	/** 报价方式说明（不在数据库中记录该值，主要用于显示）。*/
 	private String quoteTypeDesc;
+	
+	// --- 
+	/** 证券代码。*/
+	private String stockCode;
+	/** 证券名称。*/
+	private String stockName;
 	
 	// ---
 	/** 委托日期（格式：yyyyMMddhhmmssSSS）。*/
@@ -74,10 +74,6 @@ public class EntrustOrderPO implements Serializable {
 		.append("    ").append("entrustOrderCode").append(":").append("'").append(entrustOrderCode).append("'").append(", \n")
 		.append("    ").append("cancelEntrustOrderCode").append(":").append("'").append(cancelEntrustOrderCode).append("'").append(", \n")
 		
-		// --- 
-		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
-		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
-		
 		// ---
 		.append("    ").append("dealType").append(":").append("'").append(dealType).append("'").append(", \n")
 		.append("    ").append("dealTypeDesc").append(":").append("'").append(dealTypeDesc).append("'").append(", \n")
@@ -85,6 +81,10 @@ public class EntrustOrderPO implements Serializable {
 		.append("    ").append("dealStatusDesc").append(":").append("'").append(dealStatusDesc).append("'").append(", \n")
 		.append("    ").append("quoteType").append(":").append("'").append(quoteType).append("'").append(", \n")
 		.append("    ").append("quoteTypeDesc").append(":").append("'").append(quoteTypeDesc).append("'").append(", \n")
+		
+		// --- 
+		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
+		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		
 		// ---
 		.append("    ").append("entrustDate").append(":").append("'").append(entrustDate).append("'").append(", \n")
@@ -125,22 +125,6 @@ public class EntrustOrderPO implements Serializable {
 
 	public void setCancelEntrustOrderCode(String cancelEntrustOrderCode) {
 		this.cancelEntrustOrderCode = cancelEntrustOrderCode;
-	}
-
-	public String getStockCode() {
-		return stockCode;
-	}
-
-	public void setStockCode(String stockCode) {
-		this.stockCode = stockCode;
-	}
-
-	public String getStockName() {
-		return stockName;
-	}
-
-	public void setStockName(String stockName) {
-		this.stockName = stockName;
 	}
 
 	public DealType getDealType() {
@@ -232,7 +216,23 @@ public class EntrustOrderPO implements Serializable {
 	public void setQuoteTypeDesc(String quoteTypeDesc) {
 		this.quoteTypeDesc = quoteTypeDesc;
 	}
+	
+	public String getStockCode() {
+		return stockCode;
+	}
 
+	public void setStockCode(String stockCode) {
+		this.stockCode = stockCode;
+	}
+
+	public String getStockName() {
+		return stockName;
+	}
+
+	public void setStockName(String stockName) {
+		this.stockName = stockName;
+	}
+	
 	public Long getEntrustDate() {
 		return entrustDate;
 	}

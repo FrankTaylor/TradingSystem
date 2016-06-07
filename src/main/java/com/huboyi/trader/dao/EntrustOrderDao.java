@@ -16,14 +16,14 @@ import com.huboyi.trader.entity.po.EntrustOrderPO;
 public interface EntrustOrderDao {
 	
 	/**
-	 * 插入一条订单信息。
+	 * 插入一条委托单信息。
 	 * 
 	 * @param po EntrustOrderPO
 	 */
 	public void insert(EntrustOrderPO po);
 	
 	/**
-	 * 删除所有的订单信息。
+	 * 删除所有的委托单信息。
 	 */
 	public void truncate();
 	
@@ -36,7 +36,7 @@ public interface EntrustOrderDao {
 	public void delete(String stockCode, String stockholder);
 	
 	/**
-	 * 找到最后的一条订单信息（按照 tradeDate 降序）。
+	 * 找到最后的一条委托单信息（按照 entrustDate 降序）。
 	 * 
 	 * @param stockCode 股票代码
 	 * @param stockholder 股东代码
@@ -45,7 +45,7 @@ public interface EntrustOrderDao {
 	public EntrustOrderPO findLastOne(String stockCode, String stockholder);
 	
 	/**
-	 * 查询所有的订单信息（按照tradeDate升序）。
+	 * 查询所有的委托单信息（按照 entrustDate 升序）。
 	 * 
 	 * @param stockholder 股东代码
 	 * @return List<EntrustOrderPO>

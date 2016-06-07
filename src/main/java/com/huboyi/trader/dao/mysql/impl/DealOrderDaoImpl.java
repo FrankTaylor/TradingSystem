@@ -1,4 +1,4 @@
-package com.huboyi.trader.repository.mysql.impl;
+package com.huboyi.trader.dao.mysql.impl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,52 +12,58 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
-import com.huboyi.trader.entity.po.OrderInfoPO;
-import com.huboyi.trader.repository.OrderInfoRepository;
+import com.huboyi.trader.dao.DealOrderDao;
+import com.huboyi.trader.entity.po.DealOrderPO;
 
 /**
- * 订单信息Repository实现类。
+ * 交易单 PO 实现类。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
- * @since 1.1
+ * @since 1.2
  */
-@Repository("orderInfoRepository")
-public class OrderInfoRepositoryImpl implements OrderInfoRepository {
+@Repository("dealOrderDao")
+public class DealOrderDaoImpl implements DealOrderDao {
 
 	/** 日志。*/
-	private final Logger log = Logger.getLogger(OrderInfoRepositoryImpl.class);
+	private final Logger log = Logger.getLogger(DealOrderDaoImpl.class);
 	
 	@Autowired
-	@Qualifier("namedParameterJdbcTemplate")
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	@Qualifier("npJdbcTemplate")
+	private NamedParameterJdbcTemplate npJdbcTemplate;
 	
 	@Override
-	public void insert(OrderInfoPO po) {
+	public void insert(DealOrderPO po) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 insert 方法").append("\n");
 		logMsg.append("@param [po = " + po + "]");
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("INSERT INTO order_info ");
+		sql.append("INSERT INTO deal_order ");
 		sql.append(" ( ");
-		sql.append("contract_code, ");
-		sql.append("stock_code, stock_name, trade_date, trade_type, trade_price, trade_number, trade_money, ");
-		sql.append("stockholder");
+		sql.append("deal_order_code, entrust_order_code, ");
+		sql.append("deal_type, ");
+		sql.append("stock_code, stock_name, ");
+		sql.append("trade_date, trade_price, trade_volume, turnover, ");
+		sql.append("stockholder, ");
+		sql.append("create_time, ");
 		sql.append(" ) "); 
 		
 		sql.append(" VALUES ");
 		sql.append(" ( ");
-		sql.append(":contractCode, ");
-		sql.append(":stockCode, :stockName, :tradeDate, :tradeType, :tradePrice, :tradeNumber, :tradeMoney, ");
-		sql.append(":stockholder");
+		sql.append(":dealOrderCode, :entrustOrderCode, ");
+		sql.append(":dealType, ");
+		sql.append(":stockCode, :stockName, ");
+		sql.append(":tradeDate, :tradePrice, :tradeVolume, :turnover, ");
+		sql.append(":stockholder, ");
+		sql.append(":createTime, ");
 		sql.append(" ) "); 
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(po);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramSource);
+		npJdbcTemplate.update(sql.toString(), paramSource);
 	}
 
 	@Override
@@ -67,66 +73,72 @@ public class OrderInfoRepositoryImpl implements OrderInfoRepository {
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("TRUNCATE order_info");
+		sql.append("TRUNCATE deal_order");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
-		namedParameterJdbcTemplate.getJdbcOperations().update(sql.toString());
+		npJdbcTemplate.getJdbcOperations().update(sql.toString());
 	}
-
+	
 	@Override
-	public void delete(String stockholder) {
+	public void delete(String stockCode, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 delete 方法").append("\n");
+		logMsg.append("@param [stockCode = " + stockCode + "]");
 		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("DELETE FROM order_info WHERE stockholder = :stockholder");
+		sql.append("DELETE FROM deal_order WHERE stock_code = :stockCode AND stockholder = :stockholder");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockCode", stockCode);
 		paramMap.put(":stockholder", stockholder);
 		
-		namedParameterJdbcTemplate.update(sql.toString(), paramMap);
+		npJdbcTemplate.update(sql.toString(), paramMap);
 	}
 	
 	@Override
-	public OrderInfoPO findLastOne(String stockholder) {
+	public DealOrderPO findLastOne(String stockCode, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findLastOne 方法").append("\n");
+		logMsg.append("@param [stockCode = " + stockCode + "]");
 		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date DESC LIMIT 1");
+		sql.append("SELECT * FROM deal_order WHERE stock_code = :stockCode AND stockholder = :stockholder ");
+		sql.append("ORDER BY trade_date DESC LIMIT 1");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockCode", stockCode);
 		paramMap.put(":stockholder", stockholder);
 
-		return namedParameterJdbcTemplate.queryForObject(sql.toString(), paramMap, OrderInfoPO.class);
+		return npJdbcTemplate.queryForObject(sql.toString(), paramMap, DealOrderPO.class);
 	}
 
 	@Override
-	public List<OrderInfoPO> findAll(String stockholder) {
+	public List<DealOrderPO> findAll(String stockCode, String stockholder) {
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("调用 findAll 方法").append("\n");
+		logMsg.append("@param [stockCode = " + stockCode + "]");
 		logMsg.append("@param [stockholder = " + stockholder + "]");
 		log.info(logMsg.toString());
 		
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT * FROM order_info WHERE stockholder = :stockholder ORDER BY trade_date ASC");
+		sql.append("SELECT * FROM deal_order WHERE stock_code = :stockCode AND stockholder = :stockholder ");
+		sql.append("ORDER BY trade_date ASC");
 		
 		log.info("执行的 sql 语句 -> " + sql);
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put(":stockCode", stockCode);
 		paramMap.put(":stockholder", stockholder);
 		
-		
-		return namedParameterJdbcTemplate.queryForList(sql.toString(), paramMap, OrderInfoPO.class);
+		return npJdbcTemplate.queryForList(sql.toString(), paramMap, DealOrderPO.class);
 	}
-	
 }

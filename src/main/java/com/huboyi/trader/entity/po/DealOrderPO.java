@@ -26,17 +26,17 @@ public class DealOrderPO implements Serializable {
 	/** 委托单编号。*/
 	private String entrustOrderCode;
 	
-	// --- 
-	/** 证券代码。*/
-	private String stockCode;
-	/** 证券名称。*/
-	private String stockName;
-	
 	// ---
 	/** 交易类型（在数据库中实际记录的值，主要用于查询）。*/
 	private Integer dealType;
 	/** 交易类型说明（不在数据库中记录该值，主要用于显示）。*/
 	private String dealTypeDesc;
+	
+	// --- 
+	/** 证券代码。*/
+	private String stockCode;
+	/** 证券名称。*/
+	private String stockName;
 	
 	// ---
 	/** 成交日期（格式：yyyyMMddhhmmssSSS）。*/
@@ -64,13 +64,13 @@ public class DealOrderPO implements Serializable {
 		.append("    ").append("dealOrderCode").append(":").append("'").append(dealOrderCode).append("'").append(", \n")
 		.append("    ").append("entrustOrderCode").append(":").append("'").append(entrustOrderCode).append("'").append(", \n")
 		
-		// --- 
-		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
-		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
-		
 		// ---
 		.append("    ").append("dealType").append(":").append("'").append(dealType).append("'").append(", \n")
 		.append("    ").append("dealTypeDesc").append(":").append("'").append(dealTypeDesc).append("'").append(", \n")
+		
+		// --- 
+		.append("    ").append("stockCode").append(":").append("'").append(stockCode).append("'").append(", \n")
+		.append("    ").append("stockName").append(":").append("'").append(stockName).append("'").append(", \n")
 		
 		// ---
 		.append("    ").append("tradeDate").append(":").append("'").append(tradeDate).append("'").append(", \n")
@@ -113,22 +113,6 @@ public class DealOrderPO implements Serializable {
 		this.entrustOrderCode = entrustOrderCode;
 	}
 
-	public String getStockCode() {
-		return stockCode;
-	}
-
-	public void setStockCode(String stockCode) {
-		this.stockCode = stockCode;
-	}
-
-	public String getStockName() {
-		return stockName;
-	}
-
-	public void setStockName(String stockName) {
-		this.stockName = stockName;
-	}
-
 	public DealType getDealType() {
 		if (this.dealType != null) {
 			for (DealType e : DealType.values()) {
@@ -158,7 +142,23 @@ public class DealOrderPO implements Serializable {
 	public void setDealTypeDesc(String dealTypeDesc) {
 		this.dealTypeDesc = dealTypeDesc;
 	}
+	
+	public String getStockCode() {
+		return stockCode;
+	}
 
+	public void setStockCode(String stockCode) {
+		this.stockCode = stockCode;
+	}
+
+	public String getStockName() {
+		return stockName;
+	}
+
+	public void setStockName(String stockName) {
+		this.stockName = stockName;
+	}
+	
 	public Long getTradeDate() {
 		return tradeDate;
 	}
