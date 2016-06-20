@@ -563,8 +563,4 @@ public class TechAlgorithm {
 		
 		return maBeanList;
 	}
-	
-	public static void main(String[] args) {
-		System.arraycopy(src, srcPos, dest, destPos, length);
-	}
 }
