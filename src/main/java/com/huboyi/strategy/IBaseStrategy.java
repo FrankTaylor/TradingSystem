@@ -22,7 +22,7 @@ public interface IBaseStrategy {
 	 * <b>注意</b>：此方法的调用发生在 processStockData() 之前。
 	 * 
 	 * @param stockData 触发此次调用的 K 线
-	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(0) 与 stockData 是等价的)
+	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(stockDataList.size() - 1) 与 stockData 是等价的)
 	 * @return boolean
 	 */
 	public boolean preProcessStockData(StockDataBean stockData, List<StockDataBean> stockDataList) ;
@@ -31,7 +31,7 @@ public interface IBaseStrategy {
 	 * K 线处理函数。
 	 * 
 	 * @param stockData 触发此次调用的 K 线
-	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(0) 与 stockData 是等价的)
+	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(stockDataList.size() - 1) 与 stockData 是等价的)
 	 */
 	public void processStockData(StockDataBean stockData, List<StockDataBean> stockDataList) ;
 	
@@ -41,7 +41,7 @@ public interface IBaseStrategy {
 	 * <b>注意</b>：此方法的调用发生在 processStockData() 之后。
 	 * 
 	 * @param stockData 触发此次调用的 K 线
-	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(0) 与 stockData 是等价的)
+	 * @param stockDataList 此次 K 线所对应的K线序列(stockDataList.get(stockDataList.size() - 1) 与 stockData 是等价的)
 	 */
 	public void postProcessStockData(StockDataBean stockData, List<StockDataBean> stockDataList) ;
 	

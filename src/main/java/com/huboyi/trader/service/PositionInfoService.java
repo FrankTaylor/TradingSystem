@@ -3,7 +3,8 @@ package com.huboyi.trader.service;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.huboyi.trader.entity.po.PositionInfoPO;
+import com.huboyi.trader.dao.PositionDao.SortType;
+import com.huboyi.trader.entity.po.PositionPO;
 
 /**
  * 仓位信息Service。
@@ -14,10 +15,10 @@ import com.huboyi.trader.entity.po.PositionInfoPO;
 public interface PositionInfoService {
 	
 	/**
-	 * 买入开仓。
-	 * 执行顺序： 1、增加一条资金流水记录；
-	 *        2、增加一条买入订单信息；
-	 *        3、修改持仓信息。
+	 * 买入开仓，执行顺序： 
+	 * 1、增加一条资金流水记录；
+	 * 2、增加一条买入订单信息；
+	 * 3、修改持仓信息。
 	 * 
 	 * @param stockCode 证券代码
 	 * @param tradeDate 交易日期 （格式：yyyyMMddhhmmssSSS）
@@ -29,10 +30,10 @@ public interface PositionInfoService {
 	buyToOpen(String stockCode, Long tradeDate, Long tradeNumber, BigDecimal tradePrice, String stockholder);
 
 	/**
-	 * 卖出平仓。
-	 * 执行顺序： 1、修改每一笔持仓记录；
-	 *        2、增加一条卖出订单信息；
-	 *        3、增加一条资金流水记录。
+	 * 卖出平仓，执行顺序： 
+	 * 1、修改每一笔持仓记录；
+	 * 2、增加一条卖出订单信息；
+	 * 3、增加一条资金流水记录。
 	 * 
 	 * @param stockCode 证券代码
 	 * @param tradeDate 交易日期 （格式：yyyyMMddhhmmssSSS）
@@ -69,24 +70,24 @@ public interface PositionInfoService {
 	 * 
 	 * @param stockholder 股东代码
 	 * @param stockCode 证券代码
-	 * @return PositionInfoPO
+	 * @return PositionPO
 	 */
-	public PositionInfoPO findRecord(String stockholder, String stockCode) ;
+	public PositionPO findRecord(String stockholder, String stockCode) ;
 	
 	/**
 	 * 查询全部持仓记录（默认按照profitAndLossRatio降序）。
 	 * 
 	 * @param stockholder 股东代码
-	 * @return List<PositionInfoPO>
+	 * @return List<PositionPO>
 	 */
-	public List<PositionInfoPO> findRecords(String stockholder) ;
+	public List<PositionPO> findRecords(String stockholder) ;
 	
 	/**
 	 * 查询全部持仓记录。
 	 * 
 	 * @param stockholder 股东代码
 	 * @param sortType SortType
-	 * @return List<PositionInfoPO>
+	 * @return List<PositionPO>
 	 */
-	public List<PositionInfoPO> findRecords(String stockholder, SortType sortType) ;
+	public List<PositionPO> findRecords(String stockholder, SortType sortType) ;
 }

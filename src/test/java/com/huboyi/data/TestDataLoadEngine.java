@@ -80,7 +80,7 @@ public class TestDataLoadEngine {
 				
 				if (num != marketData.getStockDataList().size()) {
 					throw new RuntimeException("[读取的行情数据量 = " + marketData.getStockDataList().size() + "] 和 [数据源中的数据量 =  " + num + "]不匹配！" +
-							"code = " + marketData.getCode() + 
+							"stockCode = " + marketData.getStockCode() + 
 							", 数据源路径" + marketData.getDataPath());
 				}
 				
@@ -88,7 +88,7 @@ public class TestDataLoadEngine {
 						"[第 " + b + "条比对数据]" +
 								"[读取的行情数据量 = " + marketData.getStockDataList().size() + "]" +
 										"[数据源中的数据量 = " + num + "]" +
-												"[编码 = " + marketData.getCode() + "]" +
+												"[编码 = " + marketData.getStockCode() + "]" +
 														"[数据源路径 = " + marketData.getDataPath() + "]");
 			}
 			

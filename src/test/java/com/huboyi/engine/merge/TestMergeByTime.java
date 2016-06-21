@@ -43,7 +43,7 @@ public class TestMergeByTime {
 		List<MarketDataBean> marketDataList = dataLoadEngine.loadMarketData();
 		
 		for (MarketDataBean marketData : marketDataList) {
-			String code = marketData.getCode();
+			String stockCode = marketData.getStockCode();
 			List<StockDataBean> originalStockDataList = marketData.getStockDataList();
 			
 			List<StockDataBean> mergeStockDataList = mergeByTime.merge(originalStockDataList, MergeTimeType.MINUTE_30);
@@ -52,7 +52,7 @@ public class TestMergeByTime {
 				StringBuilder builder = new StringBuilder();
 				builder
 				.append("[")
-				.append("stockCode = ").append(code).append(",")
+				.append("stockCode = ").append(stockCode).append(",")
 				.append("date = ").append(stockData.getDate()).append(",")
 				.append("open = ").append(stockData.getOpen()).append(",")
 				.append("high = ").append(stockData.getHigh()).append(",")

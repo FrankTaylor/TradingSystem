@@ -1,4 +1,4 @@
-package com.huboyi.system.function;
+package com.huboyi.strategy.function;
 
 import java.util.List;
 

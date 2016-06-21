@@ -651,7 +651,7 @@ public class PatternAlogrithm {
 	}
 	
 	/**
-	 * 得到没有包含关系的K线集合。
+	 * 得到没有包含关系的 K 线集合。
 	 * 
 	 * @param sdBeanList 装载行情数据的集合
 	 * @return List<StockDataBean>

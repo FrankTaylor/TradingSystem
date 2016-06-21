@@ -13,16 +13,16 @@ import com.huboyi.indicators.technology.constant.BandType;
 import com.huboyi.indicators.technology.entity.pattern.BandBean;
 import com.huboyi.indicators.technology.entity.pattern.FractalBean;
 import com.huboyi.indicators.technology.entity.pattern.PowerBean;
+import com.huboyi.strategy.function.BPAndSPFunction;
+import com.huboyi.strategy.function.BandFunction;
+import com.huboyi.strategy.function.FractalFunction;
+import com.huboyi.strategy.function.PowerFunction;
+import com.huboyi.strategy.function.StockDataFunction;
 import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.IndicatorsInfoBean;
 import com.huboyi.system.bean.PositionInfoBean;
-import com.huboyi.system.function.BPAndSPFunction;
-import com.huboyi.system.function.BandFunction;
-import com.huboyi.system.function.FractalFunction;
 import com.huboyi.system.function.PositionFunction;
-import com.huboyi.system.function.PowerFunction;
-import com.huboyi.system.function.StockDataFunction;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 
 /**

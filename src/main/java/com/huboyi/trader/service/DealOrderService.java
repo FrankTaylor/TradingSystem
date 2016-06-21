@@ -2,33 +2,33 @@ package com.huboyi.trader.service;
 
 import java.util.List;
 
-import com.huboyi.trader.entity.po.OrderInfoPO;
+import com.huboyi.trader.entity.po.DealOrderPO;
 
 /**
- * 订单信息Service。
+ * 交易单 Service。
  * 
  * @author FrankTaylor <mailto:franktaylor@163.com>
  * @since 1.2
  */
-public interface OrderInfoService {
+public interface DealOrderService {
 	
 	/**
-	 * 删除所有的订单信息记录。
+	 * 删除所有的交易单记录。
 	 */
 	public void deleteAllRecords();
 	
 	/**
-	 * 删除订单信息。
+	 * 删除交易单信息。
 	 * 
 	 * @param stockholder 股东代码
 	 */
 	public void deleteRecords(String stockholder);
 	
 	/**
-	 * 查询所有的订单信息（按照tradeDate升序）。
+	 * 查询所有的交易单信息（按照 tradeDate 升序）。
 	 * 
 	 * @param stockholder 股东代码
-	 * @return List<OrderInfoPO>
+	 * @return List<DealOrderPO>
 	 */
-	public List<OrderInfoPO> findRecords(String stockholder);
+	public List<DealOrderPO> findRecords(String stockholder);
 }

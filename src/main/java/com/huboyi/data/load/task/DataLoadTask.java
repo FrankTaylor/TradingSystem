@@ -27,7 +27,7 @@ import com.huboyi.data.entity.StockDataBean;
 import com.huboyi.data.load.DataLoadEngine;
 
 /**
- * 这个类主要用于，读取由“招商证券、金魔方、飞狐交易师”导出的股票行情文件。</p>
+ * 该任务主要用于，读取由“招商证券、金魔方、飞狐交易师”导出的股票行情文件。</p>
  * 
  * 文件名及内容格式解释：
  * 1、文件名示例：SH600015.txt。其中，SH代表上证交易所、SZ代表深证交易所；600015则表示挣钱代码。
@@ -53,19 +53,19 @@ public class DataLoadTask implements Callable<List<MarketDataBean>> {
 	
 	/** 是否启动监听线程。*/
 	private final boolean startMonitorTask;
-	/** 当前已经载入的股票行情数据的个数。*/
-	private final AtomicInteger currentReadMarketDataNum;
+	/** 已经载入的股票行情数据的个数。*/
+	private final AtomicInteger readMarketDataNum;
 	
 	/**
 	 * 构造函数。
 	 * 
 	 * @param marketDataFilepathMap 行情数据文件路径集合
-	 * @param currentReadMarketDataNum 当前已经载入的股票行情数据的个数
+	 * @param readMarketDataNum 已经载入的股票行情数据的个数
 	 */
-	public DataLoadTask(Map<String, String> marketDataFilepathMap, boolean startMonitorTask, AtomicInteger currentReadMarketDataNum) {
+	public DataLoadTask(Map<String, String> marketDataFilepathMap, boolean startMonitorTask, AtomicInteger readMarketDataNum) {
 		this.marketDataFilepathMap = marketDataFilepathMap;
 		this.startMonitorTask = startMonitorTask;
-		this.currentReadMarketDataNum = currentReadMarketDataNum;
+		this.readMarketDataNum = readMarketDataNum;
 	}
 	
 	/**
@@ -93,9 +93,9 @@ public class DataLoadTask implements Callable<List<MarketDataBean>> {
 				
 				// 把市场行情数据载入集合。
 				MarketDataBean marketData = new MarketDataBean();
-				marketData.setCode(code);
-				marketData.setName("");
 				marketData.setDataPath(marketDataFilepath);
+				marketData.setStockCode(code);
+				marketData.setStockName("");
 				marketData.setStockDataList(loadDataIntoStockDataBean(marketDataFilepath, ","));
 				
 				marketDataList.add(marketData);
@@ -103,7 +103,7 @@ public class DataLoadTask implements Callable<List<MarketDataBean>> {
 				// 由于 CAS 在多线程竞争时有性能消耗，如果不需要监控，则可以避免消耗，从而加快读取速度。
 				if (startMonitorTask) {
 					// 把当前完成读取的股票数量加一。
-					currentReadMarketDataNum.addAndGet(1);
+					readMarketDataNum.addAndGet(1);
 					log.debug("当前线程[name = " + name + "]完成读取[证券代码：" + code + "]的股票行情数据。");
 				}
 			}

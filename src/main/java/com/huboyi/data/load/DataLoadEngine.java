@@ -131,10 +131,10 @@ public class DataLoadEngine {
 			 * 4、启用一根线程对处理进度进行监控。
 			 */
 			ExecutorService moniterExec = getMonitorLoadMarketDataThreadPool();
-			AtomicInteger currentReadMarketDataNum = new AtomicInteger(0);
+			AtomicInteger readMarketDataNum = new AtomicInteger(0);
 			DataLoadMonitorTask dataLoadMonitorTask = null;
 			if (this.startMonitorTask) {
-				dataLoadMonitorTask = new DataLoadMonitorTask(marketDataFilepathMap.size(), currentReadMarketDataNum, this.monitoringInterval);
+				dataLoadMonitorTask = new DataLoadMonitorTask(marketDataFilepathMap.size(), readMarketDataNum, this.monitoringInterval);
 				moniterExec.execute(dataLoadMonitorTask);
 				moniterExec.shutdown();
 			}
@@ -143,7 +143,7 @@ public class DataLoadEngine {
 			 * 5、多线程读取沪深A股和沪深指数的行情数据。
 			 */
 			ExecutorService workerExec = getLoadMarketDataThreadPool(loadDataThreadNums);
-			marketDataList = readMarketDataToBean(workerExec, marketDataFilepathMapList, startMonitorTask, currentReadMarketDataNum);
+			marketDataList = readMarketDataToBean(workerExec, marketDataFilepathMapList, startMonitorTask, readMarketDataNum);
 			if (startMonitorTask && dataLoadMonitorTask != null) {
 				dataLoadMonitorTask.stop();
 			}

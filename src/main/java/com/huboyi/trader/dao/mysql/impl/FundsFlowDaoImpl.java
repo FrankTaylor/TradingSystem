@@ -3,8 +3,6 @@ package com.huboyi.trader.dao.mysql.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,26 +139,5 @@ public class FundsFlowDaoImpl implements FundsFlowDao {
 		
 		
 		return npJdbcTemplate.queryForList(sql.toString(), paramMap, FundsFlowPO.class);
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		
-		final SynchronousQueue<String> q = new SynchronousQueue<String>();
-		
-		for (int i = 0; i < 10; i++) {			
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						System.out.println("线程 ：" + Thread.currentThread() + ", " + q.take());
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-		}
-		
-		TimeUnit.SECONDS.sleep(2);
-		
-		Thread.currentThread().isInterrupted()
 	}
 }

@@ -16,13 +16,13 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.huboyi.data.load.bean.StockDataBean;
+import com.huboyi.strategy.function.BandFunction;
 import com.huboyi.system.SnapDealSignal;
 import com.huboyi.system.bean.DealSignalBean;
 import com.huboyi.system.bean.PositionInfoBean;
 import com.huboyi.system.constant.DealSignal;
 import com.huboyi.system.constant.FundsFlowBusiness;
 import com.huboyi.system.constant.OrderInfoTradeFlag;
-import com.huboyi.system.function.BandFunction;
 import com.huboyi.system.module.fractal.signal.bean.FractalIndicatorsInfoBean;
 import com.huboyi.system.module.fractal.signal.calc.FractalDataCalculator;
 import com.huboyi.system.po.EverySumPositionInfoPO;
