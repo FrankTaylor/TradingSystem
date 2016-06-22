@@ -10,6 +10,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.log4j.LogManager;
@@ -54,21 +56,17 @@ public class IOHelper {
 	 * @return byte[]
 	 */
 	public static byte[] readFileToBytes(String filepath) {
-		try {
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)));
-			try {
-				byte[] bytes = new byte[bis.available()];
-				bis.read(bytes);
-				return bytes;
-			} finally {
-				if (null != bis) {
-					bis.close();
-				}
-			}
+		
+		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(new File(filepath)))) {
+			byte[] bytes = new byte[bis.available()];
+			bis.read(bytes);
+			return bytes;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.info("以二进制的方式读取文件中的内容失败！" + e);
 		}
+		
 		return new byte[0];
 	}
 	
@@ -89,16 +87,10 @@ public class IOHelper {
 			return;
 		}
 		
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filepath));
-			try {
-				oos.writeObject(obj);
-			} finally {
-				if (oos != null) {
-					oos.flush();
-					oos.close();
-				}
-			}
+		try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filepath));) {
+			
+			oos.writeObject(obj);
+			
 		} catch (Exception e) {
 			log.error(e);
 		}
@@ -123,15 +115,10 @@ public class IOHelper {
 			return null;
 		}
 		
-		try {
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filepath));
-			try {
-				return clazz.cast(ois.readObject());
-			} finally {
-				if (ois != null) {
-					ois.close();
-				}
-			}
+		try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filepath))) {
+			
+			return clazz.cast(ois.readObject());
+			
 		} catch (Exception e) {
 			log.error(e);
 		}
@@ -180,32 +167,18 @@ public class IOHelper {
 			return;
 		}
 		
-		try {
-			File file = new File(outputFilepath);
-			if (file.exists()) {
-				file.delete();
-			}
+		File file = new File(outputFilepath);
+		if (file.exists()) {
+			file.delete();
+		}
+		
+		try (
+				RandomAccessFile rag = new RandomAccessFile(outputFilepath, "rw");
+				FileChannel channel = rag.getChannel();
+				FileLock lock = channel.tryLock()) {
 			
-			RandomAccessFile rag = null;
-			FileChannel channel = null;
-			FileLock lock = null;
-			try {
-				rag = new RandomAccessFile(outputFilepath, "rw");
-				channel = rag.getChannel();
-				// 使用文件锁对象,对本地文件进行操作.
-				lock = channel.tryLock();
-				lock.channel().write(ByteBuffer.wrap(array));
-			} finally {
-				if (null != lock) {
-					lock.release();
-				}
-				if (null != channel) {
-					channel.close();
-				}
-				if (null != rag) {
-					rag.close();
-				}
-			}
+			lock.channel().write(ByteBuffer.wrap(array));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

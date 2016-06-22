@@ -16,9 +16,12 @@ public abstract class BaseStrategy implements IBaseStrategy {
 
     /** 股东代码。*/
     private String stockholder;
+    
     /** 股票代码。*/
     private String stockCode;
-
+    /** 股票名称。*/
+    private String stockName;
+    
     /** 触发此次调用的 K 线。*/
     private StockDataBean stockData;
     /** 此次 K 线所对应的K线序列(stockDataList.get(stockDataList.size() - 1) 与 stockData 是等价的)。*/
@@ -136,6 +139,14 @@ public abstract class BaseStrategy implements IBaseStrategy {
 
 	public void setStockCode(String stockCode) {
 		this.stockCode = stockCode;
+	}
+
+	public String getStockName() {
+		return stockName;
+	}
+
+	public void setStockName(String stockName) {
+		this.stockName = stockName;
 	}
 
 	public StockDataBean getStockData() {
