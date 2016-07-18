@@ -607,7 +607,6 @@ public class HttpClientHelper {
 		
 		if (week <= 0 ) { week = 1; }
 		
-		
 		Map<String, String> ticketMap = new HashMap<String, String>();
 		
         HttpGet httpGet = new HttpGet("http://www.bjguahao.gov.cn/dpt/appoint/" + idOfDep + ".htm?week=" + week);  
