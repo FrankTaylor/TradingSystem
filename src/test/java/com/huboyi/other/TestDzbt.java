@@ -20,8 +20,8 @@ public class TestDzbt {
     private Dzbt dzbt;
 
     @Test
-    public void testExecute() throws InterruptedException {
+    public void testExecute() {
         dzbt.execute();
-        Thread.currentThread().join();
+
     }
 }

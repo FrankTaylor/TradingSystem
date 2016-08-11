@@ -57,13 +57,11 @@ public class Dzbt {
         marketDataList = dataLoadEngine.loadMarketData();
 
         try (
-                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileAbsolutePath));
-                BufferedOutputStream bos = new BufferedOutputStream(new ByteArrayOutputStream())
+                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(fileAbsolutePath))
         ) {
             byte[] b = new byte[bis.available()];
             bis.read(b);
 
-            bos.write(b);
             bais = new ByteArrayInputStream(b);
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,9 +91,9 @@ public class Dzbt {
             // --- 设置显示风格 ---
             XSSFDataFormat fmt = workbook.createDataFormat();
             short stringDataFromat = fmt.getFormat("@");                                                     // 字符显示风格。
-            short dateDataFromat = fmt.getFormat("yyyy年mm月dd");                                            // 日期显示风格。
-            short intDataFromat = fmt.getFormat("#,##0");                                                    // 整数显示风格。
-            short floatDataFormat = fmt.getFormat("#,##0.00");                                               // 浮点显示风格。
+            short dateDataFromat = fmt.getFormat("yyyy\"年\"mm\"月\"dd\"日\"");                                            // 日期显示风格。
+            short intDataFromat = fmt.getFormat("0");                                                    // 整数显示风格。
+            short floatDataFormat = fmt.getFormat("0.0000");                                               // 浮点显示风格。
             short moneyDataFormat = fmt.getFormat("¥#,##0.00;¥-#,##0.00");                                   // 金钱显示风格。
             short rateDataFormat = fmt.getFormat("0.00%");                                                   // 比例显示风格。
 
@@ -125,8 +123,8 @@ public class Dzbt {
             // --- 浮点单元格风格 ---
             XSSFCellStyle floatCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                          // 日期单元格风格。
             floatCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-            dateCellStyle.setFont(normalFont);
-            dateCellStyle.setDataFormat(floatDataFormat);
+            floatCellStyle.setFont(normalFont);
+            floatCellStyle.setDataFormat(floatDataFormat);
 
             // --- 比例单元格风格 ---
             XSSFCellStyle redRateCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                        // 红色比例单元格风格。
@@ -140,41 +138,38 @@ public class Dzbt {
             for (int i = 1; i < physicalNumberOfRows; i++) {
                 XSSFRow row = sheet.getRow(i);
 
-                System.out.println("row.getCell(1).getNumericCellValue() = " + new DecimalFormat().format(row.getCell(1).getNumericCellValue()));
+
 
                 String stockCode = row.getCell(0).getStringCellValue();                          // 股票代码。
-                String dzDate = new DecimalFormat().format(row.getCell(1).getNumericCellValue());            // 定增日期。
+
+                DecimalFormat decimalFormat = new DecimalFormat();
+                decimalFormat.setGroupingUsed(false);
+                String dzDate = decimalFormat.format(row.getCell(1).getNumericCellValue());      // 定增日期。
+                dzDate = dzDate.substring(0, 4) + "-"
+                        + dzDate.substring(4, 6) + "-"
+                        + dzDate.substring(6, dzDate.length());
+
                 double zfStockNums = row.getCell(2).getNumericCellValue();                       // 增发股数。
-                double ltStockNums = row.getCell(4).getNumericCellValue();                       // 总流通股数。
+                double ltStockNums = row.getCell(3).getNumericCellValue();                       // 总流通股数。
                 String dzdx = row.getCell(5).getStringCellValue();                               // 定增对象。
                 double zfPrice = row.getCell(6).getNumericCellValue();                           // 增发价格。
 
-                System.out.println("stockCode = " + stockCode);
-                System.out.println("dzDate = " + dzDate);
-                System.out.println("zfStockNums = " + zfStockNums);
-                System.out.println("ltStockNums = " + ltStockNums);
-                System.out.println("dzdx = " + dzdx);
-                System.out.println("zfPrice = " + zfPrice);
-
                 // --- 设置单元格风格 ----
-//                row.getCell(0).setCellStyle(codeCellStyle);                                      // 设置 “股票代码” 风格。
-//                row.getCell(1).setCellStyle(dateCellStyle);                                      // 设置 “定增日期” 风格。
-//                row.getCell(2).setCellStyle(floatCellStyle);                                     // 设置 “增发股数” 风格。
-//                row.getCell(3).setCellStyle(floatCellStyle);                                     // 设置 “总流通股数” 风格。
-//                row.getCell(4).setCellStyle(redRateCellStyle);                                   // 设置 “增发与流通占比” 风格。
-//                row.getCell(5).setCellStyle(stringCellStyle);                                    // 设置 “定增对象” 风格。
-//                row.getCell(6).setCellStyle(floatCellStyle);                                     // 设置 “增发价格” 风格。
-//                row.getCell(7).setCellStyle(floatCellStyle);                                     // 设置 “当前价格” 风格。
-//                row.getCell(8).setCellStyle(redRateCellStyle);                                   // 设置 “折、溢价幅度” 风格。
+                row.getCell(0).setCellStyle(codeCellStyle);                                      // 设置 “股票代码” 风格。
+                row.getCell(1).setCellStyle(dateCellStyle);                                      // 设置 “定增日期” 风格。
+                row.getCell(2).setCellStyle(floatCellStyle);                                     // 设置 “增发股数” 风格。
+                row.getCell(3).setCellStyle(floatCellStyle);                                     // 设置 “总流通股数” 风格。
+                row.getCell(4).setCellStyle(redRateCellStyle);                                   // 设置 “增发与流通占比” 风格。
+                row.getCell(5).setCellStyle(stringCellStyle);                                    // 设置 “定增对象” 风格。
+                row.getCell(6).setCellStyle(floatCellStyle);                                     // 设置 “增发价格” 风格。
+                row.getCell(7).setCellStyle(floatCellStyle);                                     // 设置 “当前价格” 风格。
+                row.getCell(8).setCellStyle(redRateCellStyle);                                   // 设置 “折、溢价幅度” 风格。
 
 
                 if (StringUtils.isBlank(stockCode) || zfPrice <= 0) {
                     continue;
                 }
 
-                dzDate = dzDate.substring(0, 4) + "-" +
-                        dzDate.substring(3, 5) + "-" +
-                        dzDate.substring(5, dzDate.length());
                 row.getCell(1).setCellValue(dzDate);
 
                 double zfRate = BigDecimal.valueOf(zfStockNums)
