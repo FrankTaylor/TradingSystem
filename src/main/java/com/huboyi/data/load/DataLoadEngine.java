@@ -116,13 +116,17 @@ public class DataLoadEngine {
 
 			/*
 			 * 3、根据 “数据文件数量” 和 “线程数” 计算分隔系数，对装载市场行情数据文件路径的集合进行分割。
-			 * 分组系数 = 文件数量 / 线程数 * 0.2；也就是说每个线程只承担 “最大读取量的 20%”，目的是减少每线程执行任务的时长，但这会增加任务量。
+			 *    分组系数 = 文件数量 / 线程数 * 0.2；也就是说每个线程只承担 “最大读取量的 20%”，目的是减少每线程执行任务的时长，但这会增加任务量。
+			 *
+			 *    当 “文件数量” < “线程数” 时，(文件数量 / 线程数) = 0，此时 “分组系数 = 1”；
 			 */
 			BigDecimal numberOfFiles = BigDecimal.valueOf(marketDataFilepathMap.size());
 			int splitNum = numberOfFiles
 			.divide(BigDecimal.valueOf(loadDataThreadNums), 0, RoundingMode.UP)
 			.multiply(BigDecimal.valueOf(0.2)).setScale(0, RoundingMode.HALF_UP)
 			.intValue();
+			splitNum = (splitNum <= 0) ? 1 : splitNum;
+
 			List<Map<String, String>> marketDataFilepathMapList = splitMarketDataFilepathMap(marketDataFilepathMap, splitNum);
 			
 			log.info("总共要读取的行情文件数 = " + numberOfFiles + ", 行情文件分组系数（每线程读取行情文件数） = " + splitNum);
