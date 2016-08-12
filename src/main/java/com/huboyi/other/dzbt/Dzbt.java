@@ -79,67 +79,10 @@ public class Dzbt {
             sheet.createFreezePane(1, 1);                                  // 冻结窗口。（冻结第 1 列、第 1 行）
             int physicalNumberOfRows = sheet.getPhysicalNumberOfRows();    // 得到物理行的数量。
 
-            // --- 设置单元格风格 ---
-            XSSFCellStyle defaultCellStyle = createDefaultResultCellStyle(workbook);                         // 创建输出测试结果的默认结果单元的风格。
-
-            // --- 设置字体风格 ---
-            XSSFFont normalFont = createDefaultXSSFFont(workbook, false, false, new int[] {0, 112, 192});    // 普通内容专用的字体风格。
-            XSSFFont codeFont = createDefaultXSSFFont(workbook, true, false, new int[] {112, 50, 160});      // 证券代码专用的字体风格。
-            XSSFFont redFont = createDefaultXSSFFont(workbook, false, false, new int[] {192, 0, 0});         // 红色字体风格。
-            XSSFFont greenFont = createDefaultXSSFFont(workbook, false, false, new int[] {0, 101, 65});      // 绿色字体风格。
-
-            // --- 设置显示风格 ---
-            XSSFDataFormat fmt = workbook.createDataFormat();
-            short stringDataFromat = fmt.getFormat("@");                                                     // 字符显示风格。
-            short dateDataFromat = fmt.getFormat("yyyy\"年\"mm\"月\"dd\"日\"");                                            // 日期显示风格。
-            short intDataFromat = fmt.getFormat("0");                                                    // 整数显示风格。
-            short floatDataFormat = fmt.getFormat("0.0000");                                               // 浮点显示风格。
-            short moneyDataFormat = fmt.getFormat("¥#,##0.00;¥-#,##0.00");                                   // 金钱显示风格。
-            short rateDataFormat = fmt.getFormat("0.00%");                                                   // 比例显示风格。
-
-            // --- 字符单元格风格 ---
-            XSSFCellStyle stringCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                         // 普通字符单元格风格。
-            stringCellStyle.setAlignment(CellStyle.ALIGN_LEFT);
-            stringCellStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
-            stringCellStyle.setDataFormat(stringDataFromat);
-
-            // --- 代码单元格风格 ---
-            XSSFCellStyle codeCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                           // 证券代码单元格风格。
-            codeCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-            codeCellStyle.setFont(codeFont);
-            codeCellStyle.setDataFormat(stringDataFromat);
-
-            // --- 日期单元格风格 ---
-            XSSFCellStyle dateCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                           // 日期单元格风格。
-            dateCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-            dateCellStyle.setFont(normalFont);
-            dateCellStyle.setDataFormat(dateDataFromat);
-
-            // --- 金钱单元格风格 ---
-            XSSFCellStyle normalMoneyCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                    // 普通金钱单元格风格。
-            normalMoneyCellStyle.setFont(normalFont);
-            normalMoneyCellStyle.setDataFormat(moneyDataFormat);
-
-            // --- 浮点单元格风格 ---
-            XSSFCellStyle floatCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                          // 日期单元格风格。
-            floatCellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-            floatCellStyle.setFont(normalFont);
-            floatCellStyle.setDataFormat(floatDataFormat);
-
-            // --- 比例单元格风格 ---
-            XSSFCellStyle redRateCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                        // 红色比例单元格风格。
-            redRateCellStyle.setFont(redFont);
-            redRateCellStyle.setDataFormat(rateDataFormat);
-
-            XSSFCellStyle greenRateCellStyle = (XSSFCellStyle)defaultCellStyle.clone();                      // 绿色比例单元格风格。
-            greenRateCellStyle.setFont(greenFont);
-            greenRateCellStyle.setDataFormat(rateDataFormat);
-
             for (int i = 1; i < physicalNumberOfRows; i++) {
                 XSSFRow row = sheet.getRow(i);
 
-
-
+                // --- 得到单元格内容 ---
                 String stockCode = row.getCell(0).getStringCellValue();                          // 股票代码。
 
                 DecimalFormat decimalFormat = new DecimalFormat();
@@ -155,40 +98,38 @@ public class Dzbt {
                 double zfPrice = row.getCell(6).getNumericCellValue();                           // 增发价格。
 
                 // --- 设置单元格风格 ----
-                row.getCell(0).setCellStyle(codeCellStyle);                                      // 设置 “股票代码” 风格。
-                row.getCell(1).setCellStyle(dateCellStyle);                                      // 设置 “定增日期” 风格。
-                row.getCell(2).setCellStyle(floatCellStyle);                                     // 设置 “增发股数” 风格。
-                row.getCell(3).setCellStyle(floatCellStyle);                                     // 设置 “总流通股数” 风格。
-                row.getCell(4).setCellStyle(redRateCellStyle);                                   // 设置 “增发与流通占比” 风格。
-                row.getCell(5).setCellStyle(stringCellStyle);                                    // 设置 “定增对象” 风格。
-                row.getCell(6).setCellStyle(floatCellStyle);                                     // 设置 “增发价格” 风格。
-                row.getCell(7).setCellStyle(floatCellStyle);                                     // 设置 “当前价格” 风格。
-                row.getCell(8).setCellStyle(redRateCellStyle);                                   // 设置 “折、溢价幅度” 风格。
+                row.getCell(0).setCellStyle(createCodeStringCellStyle(workbook));                // 设置 “股票代码” 风格。
+                row.getCell(1).setCellStyle(createDateCellStyle(workbook));                      // 设置 “定增日期” 风格。
+                row.getCell(2).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “增发股数” 风格。
+                row.getCell(3).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “总流通股数” 风格。
+                row.getCell(4).setCellStyle(createRedRateCellStyle(workbook));                   // 设置 “增发与流通占比” 风格。
+                row.getCell(5).setCellStyle(createStringCellStyle(workbook));                    // 设置 “定增对象” 风格。
+                row.getCell(6).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “增发价格” 风格。
+                row.getCell(7).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “当前价格” 风格。
+                row.getCell(8).setCellStyle(createRedRateCellStyle(workbook));                   // 设置 “折、溢价幅度” 风格。
 
-
-                if (StringUtils.isBlank(stockCode) || zfPrice <= 0) {
-                    continue;
-                }
-
+                // --- 计算出其他单元格内容 ---
+                // 对于没有 “证券代码” 和 “增发价格错误” 的数据不进行计算。
+                if (StringUtils.isBlank(stockCode) || zfPrice <= 0) { continue; }
+                // 把重新处理过的 “增发日期” 设置到单元格中。
                 row.getCell(1).setCellValue(dzDate);
-
+                // 计算 “增发比率”，并设置到单元格中。
                 double zfRate = BigDecimal.valueOf(zfStockNums)
                         .divide(BigDecimal.valueOf(ltStockNums), 4, RoundingMode.HALF_UP)
                         .doubleValue();
                 row.getCell(4).setCellValue(zfRate);
-
-                double cpPrice = findCloseByStockCode(stockCode, marketDataList);                // 得到该股最新的收盘价。
+                // 根据 “证券代码” 得到该股最新的 “收盘价”，如果该价格错误，则直接跳过 设置到单元格，和计算“折、溢价比率”。
+                double cpPrice = findCloseByStockCode(stockCode, marketDataList);
                 if (cpPrice == -1) { continue; }
-                double zyRate = BigDecimal.valueOf(zfPrice)                                      // 得到增发价相对于最新收盘价的折/溢比率。
+                row.getCell(7).setCellValue(cpPrice);
+                // 根据 “增发价” 和 “收盘价”，计算 “折/溢比率”，并设置到单元格中，正的用红色表示，负的用绿色表示。
+                double zyRate = BigDecimal.valueOf(zfPrice)
                         .subtract(BigDecimal.valueOf(cpPrice))
                         .divide(BigDecimal.valueOf(cpPrice), 4, RoundingMode.HALF_UP)
                         .doubleValue();
                 if (zyRate < 0) {
-                    row.getCell(8).setCellStyle(greenRateCellStyle);
+                    row.getCell(8).setCellStyle(createGreenRateCellStyle(workbook));
                 }
-
-                // --- 把 “收盘价” 和 “折/溢比率” 设置到 Excel 中 ---
-                row.getCell(7).setCellValue(cpPrice);
                 row.getCell(8).setCellValue(zyRate);
             }
 
@@ -228,6 +169,109 @@ public class Dzbt {
     }
 
     // --- 修饰 Excel 风格的方法 ---
+
+    /**
+     * 普通字符单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createStringCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setAlignment(CellStyle.ALIGN_LEFT);
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {0, 0,  0}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("@"));
+
+        return cellStyle;
+    }
+
+    /**
+     * 证券代码单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createCodeStringCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, true, false, new int[] {112, 50, 160}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("@"));
+
+        return cellStyle;
+    }
+
+    /**
+     * 普通日期单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createDateCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {0, 112, 192}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("yyyy\"年\"mm\"月\"dd\"日\""));
+
+        return cellStyle;
+    }
+
+    /**
+     * 普通金钱单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createMoneyCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {0, 112, 192}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("¥#,##0.00;¥-#,##0.00"));
+
+        return cellStyle;
+    }
+
+    /**
+     * 普通浮点单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createDoubleCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {0, 112, 192}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("0.0000"));
+
+        return cellStyle;
+    }
+
+    /**
+     * 普通红色比率单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createRedRateCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {192, 0, 0}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+
+        return cellStyle;
+    }
+
+    /**
+     * 普通绿色比率单元格风格。
+     *
+     * @param workbook XSSFWorkbook
+     * @return XSSFCellStyle
+     */
+    private XSSFCellStyle createGreenRateCellStyle(XSSFWorkbook workbook) {
+        XSSFCellStyle cellStyle = createDefaultResultCellStyle(workbook);
+        cellStyle.setFont(createDefaultXSSFFont(workbook, false, false, new int[] {0, 101, 65}));
+        cellStyle.setDataFormat(workbook.createDataFormat().getFormat("0.00%"));
+
+        return cellStyle;
+    }
 
     /**
      * 创建输出测试结果的默认结果单元的风格。
