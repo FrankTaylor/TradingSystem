@@ -93,44 +93,55 @@ public class Dzbt {
                         + dzDate.substring(6, dzDate.length());
 
                 double zfStockNums = row.getCell(2).getNumericCellValue();                       // 增发股数。
-                double ltStockNums = row.getCell(3).getNumericCellValue();                       // 总流通股数。
-                String dzdx = row.getCell(5).getStringCellValue();                               // 定增对象。
-                double zfPrice = row.getCell(6).getNumericCellValue();                           // 增发价格。
+                double ltStockNums = row.getCell(3).getNumericCellValue();                       // 流通 A 股。
+                double fqhzfPrice = row.getCell(7).getNumericCellValue();                        // 复权后增发价格。
 
                 // --- 设置单元格风格 ----
                 row.getCell(0).setCellStyle(createCodeStringCellStyle(workbook));                // 设置 “股票代码” 风格。
                 row.getCell(1).setCellStyle(createDateCellStyle(workbook));                      // 设置 “定增日期” 风格。
                 row.getCell(2).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “增发股数” 风格。
-                row.getCell(3).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “总流通股数” 风格。
+                row.getCell(3).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “流通 A 股” 风格。
                 row.getCell(4).setCellStyle(createRedRateCellStyle(workbook));                   // 设置 “增发与流通占比” 风格。
                 row.getCell(5).setCellStyle(createStringCellStyle(workbook));                    // 设置 “定增对象” 风格。
                 row.getCell(6).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “增发价格” 风格。
-                row.getCell(7).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “当前价格” 风格。
-                row.getCell(8).setCellStyle(createRedRateCellStyle(workbook));                   // 设置 “折、溢价幅度” 风格。
+                row.getCell(7).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “复权后增发价格” 风格。
+                row.getCell(8).setCellStyle(createDoubleCellStyle(workbook));                    // 设置 “当前收盘价” 风格。
+                row.getCell(9).setCellStyle(createDateCellStyle(workbook));                      // 设置 “收盘日期” 风格。
+                row.getCell(10).setCellStyle(createRedRateCellStyle(workbook));                  // 设置 “折、溢价幅度” 风格。
 
                 // --- 计算出其他单元格内容 ---
-                // 对于没有 “证券代码” 和 “增发价格错误” 的数据不进行计算。
-                if (StringUtils.isBlank(stockCode) || zfPrice <= 0) { continue; }
+                // 对于没有 “证券代码” 和 “复权后增发价格” 错误的数据不进行计算。
+                if (StringUtils.isBlank(stockCode) || fqhzfPrice <= 0) { continue; }
                 // 把重新处理过的 “增发日期” 设置到单元格中。
                 row.getCell(1).setCellValue(dzDate);
+
                 // 计算 “增发比率”，并设置到单元格中。
                 double zfRate = BigDecimal.valueOf(zfStockNums)
                         .divide(BigDecimal.valueOf(ltStockNums), 4, RoundingMode.HALF_UP)
                         .doubleValue();
                 row.getCell(4).setCellValue(zfRate);
-                // 根据 “证券代码” 得到该股最新的 “收盘价”，如果该价格错误，则直接跳过 设置到单元格，和计算“折、溢价比率”。
-                double cpPrice = findCloseByStockCode(stockCode, marketDataList);
-                if (cpPrice == -1) { continue; }
-                row.getCell(7).setCellValue(cpPrice);
-                // 根据 “增发价” 和 “收盘价”，计算 “折/溢比率”，并设置到单元格中，正的用红色表示，负的用绿色表示。
-                double zyRate = BigDecimal.valueOf(zfPrice)
+
+                // 根据股票代码找出其最新的市场信息。
+                StockDataBean stockData = findCloseByStockCode(stockCode, marketDataList);
+                if (stockData == null) { continue; }
+
+                // 找出该股最新抽盘价。
+                double cpPrice = stockData.getClose().doubleValue();
+                if (cpPrice <= 0) { continue; }
+                row.getCell(8).setCellValue(cpPrice);
+
+                // 设置该股票收盘日期。
+                row.getCell(9).setCellValue(stockData.getYear() + "-" + stockData.getMonth() + "-" + stockData.getDay());
+
+                // 计算“折、溢价比率”。
+                double zyRate = BigDecimal.valueOf(fqhzfPrice)
                         .subtract(BigDecimal.valueOf(cpPrice))
                         .divide(BigDecimal.valueOf(cpPrice), 4, RoundingMode.HALF_UP)
                         .doubleValue();
                 if (zyRate < 0) {
-                    row.getCell(8).setCellStyle(createGreenRateCellStyle(workbook));
+                    row.getCell(10).setCellStyle(createGreenRateCellStyle(workbook));
                 }
-                row.getCell(8).setCellValue(zyRate);
+                row.getCell(10).setCellValue(zyRate);
             }
 
             workbook.write(os);
@@ -142,15 +153,15 @@ public class Dzbt {
     }
 
     /**
-     * 根据股票代码找出其最新的收盘价。
+     * 根据股票代码找出其最新的市场信息。
      *
      * @param stockCode 股票代码
      * @param marketDataList 行情数据集合
-     * @return double 返回 -1D 则说明没有找到
+     * @return StockDataBean
      */
-    private double findCloseByStockCode(String stockCode, List<MarketDataBean> marketDataList) {
+    private StockDataBean findCloseByStockCode(String stockCode, List<MarketDataBean> marketDataList) {
         if (StringUtils.isBlank(stockCode) || marketDataList == null || marketDataList.size() == 0) {
-            return -1D;
+            return null;
         }
         for (MarketDataBean marketData : marketDataList) {
             String sc = marketData.getStockCode();
@@ -161,11 +172,11 @@ public class Dzbt {
                 List<StockDataBean> stockDataList = marketData.getStockDataList();
                 if (stockDataList == null || stockDataList.size() == 0) { continue; }
 
-                return stockDataList.get(stockDataList.size() - 1).getClose().doubleValue();
+                return stockDataList.get(stockDataList.size() - 1);
             }
         }
 
-        return -1D;
+        return null;
     }
 
     // --- 修饰 Excel 风格的方法 ---
