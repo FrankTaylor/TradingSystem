@@ -23,7 +23,7 @@
 	<!--  定增被套战法 -->
     <bean id="dzbt" class="com.huboyi.other.dzbt.Dzbt">
     	<property name="inputFilePath" value="config/other/dzbt/定增被套战法.xlsx" />
-    	<property name="outputFilePath" value="F:\\BondData\\定增被套战法.xlsx" />
+    	<property name="outputFilePath" value="E:\\BondData\\定增被套战法.xlsx" />
     </bean>
 
 </beans:beans>
